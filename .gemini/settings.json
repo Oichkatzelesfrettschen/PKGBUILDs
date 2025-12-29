@@ -1,0 +1,94 @@
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": "/home/eirikr/.nvm/versions/node/v22.21.0/bin/node",
+      "args": [
+        "/home/eirikr/.nvm/versions/node/v22.21.0/lib/node_modules/@modelcontextprotocol/server-filesystem/dist/index.js",
+        "/home/eirikr",
+        "/tmp",
+        "/etc"
+      ]
+    },
+    "memory": {
+      "command": "/home/eirikr/.nvm/versions/node/v22.21.0/bin/node",
+      "args": [
+        "/home/eirikr/.nvm/versions/node/v22.21.0/lib/node_modules/@modelcontextprotocol/server-memory/dist/index.js"
+      ]
+    },
+    "playwright": {
+      "command": "/home/eirikr/.nvm/versions/node/v22.21.0/bin/node",
+      "args": [
+        "/home/eirikr/.nvm/versions/node/v22.21.0/lib/node_modules/@playwright/mcp/cli.js"
+      ]
+    },
+    "puppeteer": {
+      "command": "/home/eirikr/.nvm/versions/node/v22.21.0/bin/node",
+      "args": [
+        "/home/eirikr/.nvm/versions/node/v22.21.0/lib/node_modules/puppeteer-mcp-server/dist/index.js"
+      ]
+    },
+    "desktop-commander": {
+      "command": "/home/eirikr/.nvm/versions/node/v22.21.0/bin/node",
+      "args": [
+        "/home/eirikr/.nvm/versions/node/v22.21.0/lib/node_modules/@wonderwhy-er/desktop-commander/dist/index.js"
+      ]
+    },
+    "shell-server": {
+      "command": "/home/eirikr/.nvm/versions/node/v22.21.0/bin/node",
+      "args": [
+        "/home/eirikr/.nvm/versions/node/v22.21.0/lib/node_modules/@mako10k/mcp-shell-server/dist/index.js"
+      ]
+    },
+    "ripgrep": {
+      "command": "/home/eirikr/.nvm/versions/node/v22.21.0/bin/node",
+      "args": [
+        "/home/eirikr/.nvm/versions/node/v22.21.0/lib/node_modules/mcp-ripgrep/dist/index.js"
+      ]
+    },
+    "sqlite": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-server-sqlite-npx",
+        "/home/eirikr/.local/share/claude-memory.db"
+      ]
+    },
+    "fetch": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@anthropics/mcp-server-fetch"
+      ]
+    },
+    "git": {
+      "command": "/home/eirikr/.nvm/versions/node/v22.21.0/bin/node",
+      "args": [
+        "/home/eirikr/.nvm/versions/node/v22.21.0/lib/node_modules/mcp-git/dist/cli.js"
+      ]
+    },
+    "chrome-devtools": {
+      "command": "/home/eirikr/.nvm/versions/node/v22.21.0/bin/node",
+      "args": [
+        "/home/eirikr/.nvm/versions/node/v22.21.0/lib/node_modules/chrome-devtools-mcp/build/src/index.js"
+      ]
+    },
+    "ffmpeg": {
+      "command": "/home/eirikr/.nvm/versions/node/v22.21.0/bin/node",
+      "args": [
+        "/home/eirikr/.nvm/versions/node/v22.21.0/lib/node_modules/mcp-ffmpeg/dist/mcp-ffmpeg.js"
+      ]
+    },
+    "media-processor": {
+      "command": "/home/eirikr/.nvm/versions/node/v22.21.0/bin/node",
+      "args": [
+        "/home/eirikr/.nvm/versions/node/v22.21.0/lib/node_modules/@iflow-mcp/mcp-media-processor/build/index.js"
+      ]
+    },
+    "shell-execute": {
+      "command": "/home/eirikr/.nvm/versions/node/v22.21.0/bin/node",
+      "args": [
+        "/home/eirikr/.nvm/versions/node/v22.21.0/lib/node_modules/mcp-shell-execute/dist/cli.js"
+      ]
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__desktop-commander__list_directory",
+      "mcp__desktop-commander__start_search",
+      "mcp__desktop-commander__get_more_search_results",
+      "mcp__desktop-commander__read_file",
+      "mcp__desktop-commander__create_directory",
+      "mcp__desktop-commander__get_file_info",
+      "Bash(dconf dump:*)",
+      "Bash(gsettings list-recursively:*)",
+      "Bash(xargs:*)",
+      "Bash(wc:*)"
+    ]
+  }
+}

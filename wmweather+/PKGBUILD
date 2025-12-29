@@ -1,0 +1,46 @@
+# Maintainer: eirikr
+# Contributor: Brian Bidulock <bidulock@openss7.org>
+
+pkgname=wmweather+
+pkgver=2.18
+pkgrel=1
+pkgdesc="National Weather Service METAR bulletins, forecasts, and weather maps for WindowMaker dock"
+arch=('x86_64')
+url="https://sourceforge.net/projects/wmweatherplus"
+license=('GPL')
+groups=('x11')
+depends=('pcre2' 'libxpm' 'curl' 'libdockapp' 'windowmaker')
+source=("https://downloads.sourceforge.net/wmweatherplus/$pkgname-$pkgver.tar.gz")
+sha256sums=('SKIP')
+
+prepare() {
+  cd "$srcdir/$pkgname-$pkgver"
+
+  # Fix: configure falsely detects strtod as broken on modern glibc
+  # Replace the placeholder error with a proper wrapper function
+  cat > b0rken/strtod.c << 'EOF'
+/* strtod.c - Wrapper for systems where configure falsely detects broken strtod
+ * Modern glibc strtod works correctly, but autoconf test may fail.
+ * This simply wraps the standard library function.
+ */
+
+#include <stdlib.h>
+
+double
+rpl_strtod(const char *nptr, char **endptr)
+{
+    return strtod(nptr, endptr);
+}
+EOF
+}
+
+build() {
+  cd "$srcdir/$pkgname-$pkgver"
+  ./configure --prefix=/usr
+  make
+}
+
+package() {
+  cd "$srcdir/$pkgname-$pkgver"
+  make DESTDIR="$pkgdir" install
+}

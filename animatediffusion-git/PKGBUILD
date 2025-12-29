@@ -1,0 +1,30 @@
+pkgname=animatediffusion-git
+pkgver=1.0.0
+pkgrel=1
+pkgdesc="AnimateDiffusion: A plug-and-play module for animation generation with diffusion models."
+arch=('x86_64')
+url="https://github.com/guoyww/AnimateDiff"
+license=('custom')
+depends=('miniconda3' 'python')  # Add miniconda3 as a dependency
+makedepends=('git')
+source=("${pkgname}::git+https://github.com/guoyww/AnimateDiff.git",
+        "download_and_setup.py")  # custom script for downloading models
+sha512sums=('SKIP' 'SKIP')  # Use 'SKIP' for VCS sources and local files
+
+package() {
+    cd "$srcdir/$pkgname"
+
+    # Ensure the application directory exists
+    install -dm755 "$pkgdir/opt/animatediffusion"
+    cp -a ./* "$pkgdir/opt/animatediffusion/"
+
+    # Ensure download_and_setup.py is executable
+    chmod +x "$pkgdir/opt/animatediffusion/download_and_setup.py"
+
+    # Instruction reminder for the user
+    echo "Please manually create and activate the AnimateDiffusion environment after installation:"
+    echo "  source /opt/miniconda3/etc/profile.d/conda.sh"
+    echo "  conda env create -f /opt/animatediffusion/environment.yaml -n animatediff"
+    echo "  conda activate animatediff"
+    echo "  python /opt/animatediffusion/download_and_setup.py"
+}

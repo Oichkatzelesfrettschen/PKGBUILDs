@@ -1,0 +1,76 @@
+From: Eirikr <151315375+Oichkatzelesfrettschen@users.noreply.github.com>
+Date: Sun, 22 Dec 2024 00:00:00 -0800
+Subject: [PATCH] Fix GCC 14 and glibc 2.34+ compatibility issues
+
+GCC 14 made -Wincompatible-pointer-types an error by default.
+The sigval array was declared with old-style unspecified function
+arguments: void (*(sigval[]))()
+
+This patch changes the declaration to use proper signal handler type:
+void (*sigval[])(int)
+
+The sigsegv handler uses SA_SIGINFO and has a different signature,
+so it is cast appropriately.
+
+Additionally, SIGSTKSZ is no longer a compile-time constant in
+glibc 2.34+ (it can vary at runtime based on CPU features like
+AVX-512). Use a fixed size for the static signal stack allocation.
+
+diff --git a/fault.c b/fault.c
+--- a/fault.c
++++ b/fault.c
+@@ -43,8 +43,14 @@
+ #include	<errno.h>
+ #include	<string.h>
+
+-static	void (*psig0_func)() = SIG_ERR;	/* previous signal handler for signal 0 */
+-static	char sigsegv_stack[SIGSTKSZ];
++static	void (*psig0_func)(int) = SIG_ERR;	/* previous signal handler for signal 0 */
++/*
++ * SIGSTKSZ is no longer a compile-time constant in glibc 2.34+
++ * Use a fixed size that is sufficient for signal handling.
++ * 16KB is the typical SIGSTKSZ value on Linux.
++ */
++#define	HEIRLOOM_SIGSTKSZ	16384
++static	char sigsegv_stack[HEIRLOOM_SIGSTKSZ];
+
+ static BOOL sleeping = 0;
+ static unsigned char *trapcom[MAXTRAP]; /* array of actions, one per signal */
+@@ -88,8 +94,7 @@ static BOOL trapflg[MAXTRAP] =
+ 	0	/* 	check point thaw */
+ };
+
+-void (*(
+-sigval[MAXTRAP]))() =
++void (*sigval[MAXTRAP])(int) =
+ {
+ 	0,
+ 	0,	/* 	done, 	   hangup */
+@@ -289,7 +294,7 @@ int	err = 0;
+ 	int rtmax = -1;
+ #endif
+
+-	ss.ss_size = SIGSTKSZ;
++	ss.ss_size = HEIRLOOM_SIGSTKSZ;
+ 	ss.ss_sp = sigsegv_stack;
+ 	ss.ss_flags = 0;
+ 	errno = 0;
+@@ -513,7 +518,7 @@ sigsegv(int sig, siginfo_t *sip)
+ void
+ init_sigval(void)
+ {
+-	extern void	(*(sigval[]))();
++	extern void	(*sigval[])(int);
+
+ #ifdef	SIGHUP
+ 	if (SIGHUP < MAXTRAP)
+@@ -557,7 +562,8 @@ init_sigval(void)
+ #endif
+ #ifdef	SIGSEGV
+ 	if (SIGSEGV < MAXTRAP)
+-		sigval[SIGSEGV] = sigsegv;
++		/* Cast sigsegv since it uses SA_SIGINFO with different signature */
++		sigval[SIGSEGV] = (void (*)(int))sigsegv;
+ #endif
+ #ifdef	SIGEMT
+ 	if (SIGEMT < MAXTRAP)

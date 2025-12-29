@@ -1,0 +1,101 @@
+From: Eirikr <151315375+Oichkatzelesfrettschen@users.noreply.github.com>
+Date: Sun, 22 Dec 2024 00:00:00 -0800
+Subject: [PATCH] Fix C99 conflict with 'true' keyword throughout codebase
+
+C99's stdbool.h defines 'true' as a macro/keyword (expanding to 1).
+Plan 9 code predates C99 and uses 'true' as variable names and labels.
+This causes compilation errors on modern compilers.
+
+This patch renames:
+- dd/dd.c: 'true' label -> 'match_found'
+- troff/n5.c: 'true' variable -> 'cond_result' (condition result)
+
+--- a/dd/dd.c
++++ b/dd/dd.c
+@@ -312,11 +312,11 @@ match(char *s)
+ 	cs = string;
+ 	while(*cs++ == *s)
+ 		if(*s++ == '\0')
+-			goto true;
++			goto match_found;
+ 	if(*s != '\0')
+ 		return 0;
+
+-true:
++match_found:
+ 	cs--;
+ 	string = cs;
+ 	return 1;
+--- a/troff/n5.c
++++ b/troff/n5.c
+@@ -642,56 +642,56 @@ void caseif(int x)
+ void caseif1(int x)
+ {
+ 	extern int falsef;
+-	int notflag, true;
++	int notflag, cond_result;
+ 	Tchar i;
+
+ 	if (x == 2) {
+ 		notflag = 0;
+-		true = iflist[ifx];
++		cond_result = iflist[ifx];
+ 		goto i1;
+ 	}
+-	true = 0;
++	cond_result = 0;
+ 	skip();
+ 	if ((cbits(i = getch())) == '!') {
+ 		notflag = 1;
+ 	} else {
+ 		notflag = 0;
+ 		ch = i;
+ 	}
+ 	ifnum++;
+ 	i = atoi0();
+ 	ifnum = 0;
+ 	if (!nonumb) {
+ 		if (i > 0)
+-			true++;
++			cond_result++;
+ 		goto i1;
+ 	}
+ 	i = getch();
+ 	switch (cbits(i)) {
+ 	case 'e':
+ 		if (!(numtabp[PN].val & 01))
+-			true++;
++			cond_result++;
+ 		break;
+ 	case 'o':
+ 		if (numtabp[PN].val & 01)
+-			true++;
++			cond_result++;
+ 		break;
+ 	case 'n':
+ 		if (NROFF)
+-			true++;
++			cond_result++;
+ 		break;
+ 	case 't':
+ 		if (TROFF)
+-			true++;
++			cond_result++;
+ 		break;
+ 	case ' ':
+ 		break;
+ 	default:
+-		true = cmpstr(i);
++		cond_result = cmpstr(i);
+ 	}
+ i1:
+-	true ^= notflag;
++	cond_result ^= notflag;
+ 	if (x == 1)
+-		iflist[ifx] = !true;
+-	if (true) {
++		iflist[ifx] = !cond_result;
++	if (cond_result) {
+ i2:
+ 		while ((cbits(i = getch())) == ' ')
+ 			;

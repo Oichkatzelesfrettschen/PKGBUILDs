@@ -1,0 +1,64 @@
+# Contributor: Army
+# Contributor: aksr <aksr at t-com dot me>
+
+pkgname=9base-git
+pkgver=20190913.117
+pkgrel=2
+pkgdesc="Port of various original Plan9 tools to unix"
+arch=('i686' 'x86_64')
+url="https://tools.suckless.org/9base"
+license=('custom')
+depends=(sh)
+makedepends=('git')
+provides=('9base' 'plan9')
+conflicts=('9base')
+source=("$pkgname::git+https://git.suckless.org/9base"
+        9
+        plan9.sh
+        001-fix-c99-true-keyword.patch)
+sha256sums=('SKIP'
+            '1be92ff34331e3c438bd82849087102d65d59ccb84ebefbfd21e8c1b870f72fa'
+            'c494f86e428cf6c9d3b349e04e26e5cc3fc5c4443ec7901a1497f28939d3d4d4'
+            '136fda4520f373cab6bbcc4d643437f332327a52758952db9ba9f49102904589')
+
+pkgver() {
+  cd "$srcdir/$pkgname"
+  echo "$(git log -1 --format="%cd" --date=short | sed 's|-||g').$(git rev-list --count master)"
+}
+
+prepare() {
+  cd "$srcdir/$pkgname"
+
+  # Fix C99 conflict with 'true' keyword
+  patch -p1 < "$srcdir/001-fix-c99-true-keyword.patch"
+
+  CFLAGS+=' -fcommon' # https://wiki.gentoo.org/wiki/Gcc_10_porting_notes/fno_common
+
+  case $CARCH in
+    i686) sed -i 's#^OBJTYPE\s.*$#OBJTYPE = 386#' config.mk ;;
+    x86_64) sed -i 's#^OBJTYPE\s.*$#OBJTYPE = x86_64#' config.mk ;;
+  esac
+
+  sed -i 's#^PREFIX\s.*$#PREFIX = /opt/plan9#' config.mk
+  sed -i 's#^CFLAGS\s*+=#CFLAGS += -DPLAN9PORT #' config.mk
+
+  # Force dynamic linking.  Several of the programs in 9base won't work
+  # when statically linked against the latest glibc.
+  sed -i '/-static/d' config.mk
+}
+
+build() {
+  cd "$srcdir/$pkgname"
+  # Plan 9 code has multiple symbol definitions (intentional)
+  # mold linker doesn't allow this by default
+  LDFLAGS+=" -Wl,-z,muldefs"
+  make LDFLAGS="$LDFLAGS"
+}
+
+package() {
+  cd "$srcdir/$pkgname"
+  make DESTDIR="$pkgdir" install
+  install -Dm755 ../9 "$pkgdir/opt/plan9/bin/"
+  install -Dm755 ../plan9.sh "$pkgdir/etc/profile.d/plan9.sh"
+  install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+}

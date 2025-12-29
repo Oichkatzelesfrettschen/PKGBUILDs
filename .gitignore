@@ -1,0 +1,29 @@
+# Build artifacts
+src/
+pkg/
+*.pkg.tar.*
+*.log
+*.log.*
+
+# Makepkg
+*.src.tar.*
+.SRCINFO
+
+# Downloaded sources
+*.tar.gz
+*.tar.bz2
+*.tar.xz
+*.tar.zst
+*.zip
+
+# Editor
+*.swp
+*.swo
+*~
+
+# macOS
+.DS_Store
+
+# Database files
+*.db
+picom-custom-git/src-reference

@@ -1,0 +1,47 @@
+# Maintainer: Benjamin Jones <b33n.jamming+aur@gmail.com>
+pkgname=gcc4ti
+pkgver=0.96b11
+pkgrel=1
+pkgdesc="A C cross compiler for the TI-89, TI-89T, TI-92+, and TI-V200"
+url="https://debrouxl.github.io/gcc4ti/"
+depends=('bash')
+makedepends=('git')
+arch=('x86_64')
+license=('GPL')
+source=('git+https://github.com/debrouxl/gcc4ti.git')
+md5sums=('SKIP')
+
+#The build function updates the source code
+#The function does *not* build the package
+#The installation script does not separate the build and installation steps
+#This is why the package must be built inside of the package step
+build(){
+	#Navigate to the scripts directory, where patching scripts are located
+	cd "$pkgname/trunk/tigcc-linux/scripts"
+	#Update the source code
+	./updatesrc
+	./package_src
+}
+
+# PATCHED: Fixed path to Install.sh and made non-interactive
+package(){
+	#Create the installation directories under $pkgdir
+	mkdir -p "$pkgdir/usr/share"
+	mkdir -p "$pkgdir/usr/bin"
+
+	#Navigate to the correct directory for Install.sh
+	cd "$srcdir/$pkgname/trunk/tigcc-linux/scripts"
+
+	#The installation script must be run in its own environment
+	#Provide non-interactive input
+	echo "Y" | env -i PATH="$PATH" PREFIX_GCC4TI="$pkgdir/usr/share/gcc4ti" CFLAGS="$LDFLAGS" ./Install.sh || true
+
+	#Create a wrapper script for tigcc
+	cat > "$pkgdir/usr/bin/tigcc" << 'SCRIPT'
+#!/bin/bash
+export TIGCC=/usr/share/gcc4ti
+exec /usr/share/gcc4ti/bin/tigcc "$@"
+SCRIPT
+	chmod +x "$pkgdir/usr/bin/tigcc"
+}
+

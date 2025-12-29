@@ -1,0 +1,23 @@
+From: Eirikr <151315375+Oichkatzelesfrettschen@users.noreply.github.com>
+Date: Sun, 22 Dec 2024 00:00:00 -0800
+Subject: [PATCH] Fix GCC 14 incompatible pointer type errors in test.c
+
+GCC 14 made -Wincompatible-pointer-types an error by default.
+The statf function pointer was declared with old-style unspecified
+arguments: int (*statf)()
+
+This patch changes it to use proper stat/lstat signature:
+int (*statf)(const char *, struct stat *)
+
+diff --git a/test.c b/test.c
+--- a/test.c
++++ b/test.c
+@@ -268,7 +268,7 @@ static int
+ filtyp(const unsigned char *f, int field)
+ {
+ 	struct stat statb;
+-	int (*statf)() = (field == S_IFLNK) ? lstat : stat;
++	int (*statf)(const char *, struct stat *) = (field == S_IFLNK) ? lstat : stat;
+
+ 	if ((*statf)(f, &statb) < 0)
+ 		return(0);

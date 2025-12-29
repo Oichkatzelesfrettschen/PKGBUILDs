@@ -1,0 +1,27 @@
+From: Eirikr <151315375+Oichkatzelesfrettschen@users.noreply.github.com>
+Date: Sun, 22 Dec 2024 00:00:00 -0800
+Subject: [PATCH] Fix mkproto script proto file format
+
+The install script expects 4 fields for each line:
+  type src dst perm
+
+But mkproto was generating:
+- Line 18: 'd path perm' (missing dst for directory)
+- Line 19: 'c src dst' (missing perm for bc.library)
+
+This caused chmod to fail with "missing operand" errors.
+
+diff --git a/scripts/mkproto b/scripts/mkproto
+--- a/scripts/mkproto
++++ b/scripts/mkproto
+@@ -15,8 +15,8 @@ trap "rm -f $proto" EXIT INT QUIT TERM
+ (set -e
+ echo d $prefix/bin $prefix/bin 755
+ echo d $manprefix/man1 $manprefix/man1 755
+-echo d $prefix/share/misc 755
+-echo c bc.library $prefix/share/misc/bc.library
++echo d $prefix/share/misc $prefix/share/misc 755
++echo c bc.library $prefix/share/misc/bc.library 644
+ ls -ld * make/* |\
+ awk '
+ /^-/ && $1 ~ /x/ {

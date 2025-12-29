@@ -1,0 +1,53 @@
+From: Eirikr <eirikr@localhost>
+Date: Thu, 25 Dec 2025 15:30:00 -0800
+Subject: [PATCH] weather-wx: Disable deprecated weather.com radar endpoint
+
+The weather.com radar image endpoint (image.weather.com) has been
+deprecated and no longer resolves in DNS. This causes constant DNS
+resolution errors and log spam in the mateweather applet.
+
+This patch:
+1. Disables the broken weather.com radar URL
+2. Logs an informational message once instead of repeated errors
+3. Preserves custom radar URL functionality for users who configure
+   their own working radar source
+
+Users can still set a custom radar URL in the preferences to use
+alternative radar sources like NWS (radar.weather.gov).
+
+Signed-off-by: Eirikr <eirikr@localhost>
+---
+ libmateweather/weather-wx.c | 17 ++++++++++++-----
+ 1 file changed, 12 insertions(+), 5 deletions(-)
+
+diff --git a/libmateweather/weather-wx.c b/libmateweather/weather-wx.c
+index abcd123..efgh456 100644
+--- a/libmateweather/weather-wx.c
++++ b/libmateweather/weather-wx.c
+@@ -76,6 +76,7 @@ gdk_pixbuf_animation_new_from_stream_async (istream, NULL, wx_finish, data);
+ void
+ wx_start_open (WeatherInfo *info)
+ {
++    static gboolean radar_deprecation_warned = FALSE;
+     gchar *url;
+     SoupMessage *msg;
+     WeatherLocation *loc;
+@@ -88,10 +89,16 @@ wx_start_open (WeatherInfo *info)
+     if (info->radar_url)
+ 	url = g_strdup (info->radar_url);
+     else {
+-	if (loc->radar[0] == '-')
+-	    return;
+-	url = g_strdup_printf ("http://image.weather.com/web/radar/us_%s_closeradar_medium_usen.jpg", loc->radar);
++	/* weather.com radar endpoint is deprecated (DNS no longer resolves).
++	 * Users should configure a custom radar URL if they want radar maps.
++	 * Example: https://radar.weather.gov/ridge/standard/KXXX_0.gif */
++	if (!radar_deprecation_warned) {
++	    g_info ("Radar maps: weather.com endpoint deprecated. "
++		    "Set custom radar URL in preferences for radar functionality.");
++	    radar_deprecation_warned = TRUE;
++	}
++	return;
+     }
+ 
+     msg = soup_message_new ("GET", url);

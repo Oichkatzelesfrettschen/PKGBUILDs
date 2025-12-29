@@ -1,0 +1,68 @@
+# Maintainer: eirikr
+# Custom picom build with merged animation features from multiple forks
+
+pkgname=picom-custom-git
+pkgver=r2236.df4c6a3
+pkgrel=1
+pkgdesc="Lightweight compositor with animations from FT-Labs, pijulius features"
+arch=(x86_64)
+url="https://github.com/FT-Labs/picom"
+license=(MIT MPL-2.0)
+depends=(
+    hicolor-icon-theme
+    libconfig
+    libdbus
+    libepoxy
+    libev
+    libgl
+    libx11
+    libxcb
+    libxext
+    pcre2
+    pixman
+    xcb-util-image
+    xcb-util-renderutil
+)
+makedepends=(
+    git
+    meson
+    ninja
+    uthash
+    libdrm
+    asciidoctor
+)
+optdepends=(
+    'dbus: for controlling picom via D-Bus'
+    'python: for picom-convgen.py'
+    'rtkit: for realtime scheduling priority'
+    'xorg-xprop: for picom-trans'
+    'xorg-xwininfo: for picom-trans'
+)
+provides=(picom compton)
+conflicts=(picom compton)
+source=("picom-ftlabs::git+https://github.com/FT-Labs/picom.git#branch=next")
+sha256sums=('SKIP')
+
+pkgver() {
+    cd picom-ftlabs
+    printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+build() {
+    cd picom-ftlabs
+    meson setup build \
+        --prefix=/usr \
+        --buildtype=release \
+        -Dwith_docs=false \
+        -Dcompton=false
+    meson compile -C build
+}
+
+package() {
+    cd picom-ftlabs
+    meson install -C build --destdir "$pkgdir"
+
+    # License
+    install -Dm644 LICENSES/MIT "$pkgdir/usr/share/licenses/$pkgname/MIT"
+    install -Dm644 LICENSES/MPL-2.0 "$pkgdir/usr/share/licenses/$pkgname/MPL-2.0"
+}
