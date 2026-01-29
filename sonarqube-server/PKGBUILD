@@ -1,0 +1,156 @@
+# Maintainer: User <user@local>
+# SonarQube Server via Podman Container (native rootless)
+
+pkgname=sonarqube-server
+pkgver=10.6
+pkgrel=2
+pkgdesc="SonarQube Server - Code Quality Analysis (Podman rootless)"
+arch=('x86_64')
+url="https://www.sonarsource.com/products/sonarqube/"
+license=('custom:SONARQUBE')
+depends=('podman')
+optdepends=('sonar-scanner: Client-side code analyzer')
+provides=('sonarqube')
+conflicts=('sonarqube')
+backup=('etc/sonarqube/sonarqube-docker.conf')
+
+source=("sonarqube-docker.conf"
+        "sonarqube-server.service"
+        "sonarqube-setup.sh")
+sha256sums=('SKIP'
+            'SKIP'
+            'SKIP')
+
+prepare() {
+    true
+}
+
+build() {
+    true
+}
+
+package() {
+    # Create configuration directory
+    install -Dm644 "${srcdir}/sonarqube-docker.conf" "${pkgdir}/etc/sonarqube/sonarqube-docker.conf"
+
+    # Create systemd user service
+    install -Dm644 "${srcdir}/sonarqube-server.service" \
+        "${pkgdir}/usr/lib/systemd/user/sonarqube-server.service"
+
+    # Install setup script
+    install -Dm755 "${srcdir}/sonarqube-setup.sh" "${pkgdir}/usr/bin/sonarqube-setup"
+
+    # Create data directories
+    install -dm755 "${pkgdir}/var/lib/sonarqube"
+    install -dm755 "${pkgdir}/opt/sonarqube"
+
+    # Install documentation
+    mkdir -p "${pkgdir}/usr/share/doc/sonarqube"
+    cat > "${pkgdir}/usr/share/doc/sonarqube/README" << 'EOF'
+SonarQube Server Container Setup
+
+INITIAL SETUP:
+  sonarqube-setup          # Deploy Docker image and initialize
+  systemctl --user start sonarqube-server
+  systemctl --user enable sonarqube-server
+
+WEB INTERFACE:
+  http://localhost:9000
+
+DEFAULT CREDENTIALS:
+  Admin: admin / admin
+  (Change on first login)
+
+CONFIGURATION:
+  /etc/sonarqube/sonarqube-docker.conf
+  /var/lib/sonarqube/    (persistent data)
+
+DATA PERSISTENCE:
+  - Database: /var/lib/sonarqube/postgresql
+  - Code: /var/lib/sonarqube/sonarqube
+  - Extensions: /var/lib/sonarqube/extensions
+
+SCANNER INTEGRATION:
+  Install sonar-scanner (via yay)
+  Configure in project: sonar-project.properties
+  Run: sonar-scanner
+
+LOGS:
+  systemctl --user logs sonarqube-server
+  docker logs sonarqube
+
+CLEANUP:
+  systemctl --user stop sonarqube-server
+  docker rm sonarqube
+  rm -rf /var/lib/sonarqube
+
+DOCUMENTATION:
+  https://docs.sonarqube.org/latest/
+EOF
+
+    cat > "${pkgdir}/usr/share/doc/sonarqube/ARCHITECTURE" << 'EOF'
+SonarQube Architecture
+
+COMPONENTS:
+1. Scanner (sonar-scanner)
+   - The "Eye": Code harvester
+   - Runs in CI/CLI environment
+   - Sends metrics to Server
+
+2. Server (this PKGBUILD)
+   - The "Brain": Code analyzer
+   - Stores metrics database
+   - Provides web UI
+   - Detects issues from scanner data
+
+3. Storage (PostgreSQL + filesystem)
+   - Quality metrics storage
+   - Issue tracking
+   - Rule definitions
+
+WORKFLOW:
+  Local Code → sonar-scanner → SonarQube Server → Web UI + Reports
+
+DATA FLOW:
+  sonar-scanner executes analysis rules locally
+  → Serializes results (JSON)
+  → Transmits to http://localhost:9000/api/ce/submit
+  → Server stores in PostgreSQL
+  → Server runs background quality gates
+  → Results visible in web UI
+EOF
+
+    cat > "${pkgdir}/usr/share/doc/sonarqube/TROUBLESHOOTING" << 'EOF'
+Common Issues
+
+PORT ALREADY IN USE (9000):
+  lsof -i :9000
+  kill -9 <PID>
+  systemctl --user restart sonarqube-server
+
+DOCKER IMAGE NOT FOUND:
+  docker pull sonarqube:latest
+  sonarqube-setup
+
+DATABASE ERRORS:
+  docker exec -it sonarqube psql -U sonarqube
+  (Check PostgreSQL connectivity)
+
+SCANNER NOT CONNECTING:
+  curl http://localhost:9000/api/system/health
+  Verify port forwarding and firewall
+
+MEMORY ERRORS:
+  docker update --memory 2g sonarqube
+  Restart: systemctl --user restart sonarqube-server
+
+SLOW ANALYSIS:
+  Dashboard → Administration → System
+  Enable shallow clone for Git (if applicable)
+
+PERSISTENT VOLUME ISSUES:
+  docker inspect sonarqube
+  Check /var/lib/sonarqube permissions
+  chmod -R 755 /var/lib/sonarqube
+EOF
+}

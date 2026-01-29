@@ -1,0 +1,37 @@
+# eirikr-system-optimizations.install
+# Post-install hooks for system optimization package
+
+post_install() {
+    echo "==> eirikr-system-optimizations installed"
+    echo ""
+    echo "    Installed configurations:"
+    echo "    - /etc/sdboot-manage.conf.d/20-eirikr-optimizations.conf (kernel params)"
+    echo "    - /etc/modprobe.d/nvidia-unified.conf (NVIDIA driver options)"
+    echo "    - /etc/sysctl.d/99-unified-performance.conf (kernel tunables)"
+    echo "    - /etc/udev/rules.d/60-ioschedulers.rules (I/O schedulers)"
+    echo ""
+    echo "    To apply changes immediately:"
+    echo "    - sysctl: sudo sysctl --system"
+    echo "    - udev:   sudo udevadm control --reload && sudo udevadm trigger"
+    echo "    - kernel params: sdboot-manage gen (then reboot)"
+    echo "    - NVIDIA: changes apply on next modprobe (reboot or reload)"
+    echo ""
+
+    # Apply sysctl immediately
+    sysctl --system > /dev/null 2>&1 || true
+
+    # Reload udev rules
+    udevadm control --reload > /dev/null 2>&1 || true
+    udevadm trigger > /dev/null 2>&1 || true
+}
+
+post_upgrade() {
+    post_install
+}
+
+post_remove() {
+    echo "==> eirikr-system-optimizations removed"
+    echo ""
+    echo "    Configuration files preserved in /etc (marked as .pacsave if modified)"
+    echo "    To fully revert: remove files and run 'sysctl --system' and 'udevadm trigger'"
+}

@@ -1,0 +1,23 @@
+# makepkg.conf patch for mold linker and optimizations
+# WHY: Faster linking with mold, optimized compilation for AMD Ryzen 5600X3D
+# WHAT: LDFLAGS and RUSTFLAGS changes for native CPU
+# HOW: Apply with: sudo patch /etc/makepkg.conf < makepkg.conf.patch
+#      Or manually edit /etc/makepkg.conf
+#
+# NOTE: This is documentation only; actual patch requires user customization
+# based on their specific makepkg.conf version.
+#
+# Recommended changes:
+#
+# 1. LDFLAGS - Add mold linker:
+#    LDFLAGS="-Wl,-O1 -Wl,--sort-common -Wl,--as-needed -Wl,-z,relro -Wl,-z,now -fuse-ld=mold"
+#
+# 2. RUSTFLAGS - Add native CPU optimization and mold:
+#    RUSTFLAGS="-C opt-level=3 -C target-cpu=native -C link-arg=-fuse-ld=mold"
+#
+# 3. MAKEFLAGS - Use all cores:
+#    MAKEFLAGS="-j$(nproc)"
+#
+# Dependencies:
+#   - mold: Fast linker (optdepend of this package)
+#   - Install with: yay -S mold

@@ -1,0 +1,57 @@
+# Maintainer: Eirikr <eirikr@localhost>
+# System-wide performance optimizations for AMD Ryzen 5600X3D + NVIDIA RTX 4070 Ti on CachyOS
+# WHY: Centralize system tuning in a package for reproducibility
+# WHAT: Kernel params (sdboot), NVIDIA modprobe, sysctl, udev I/O schedulers
+# HOW: makepkg -si
+
+pkgname=eirikr-system-optimizations
+pkgver=3.0.0
+pkgrel=1
+pkgdesc="System-wide performance optimizations for AMD Ryzen 5600X3D + NVIDIA RTX 4070 Ti on CachyOS"
+arch=('any')
+url="https://github.com/eirikr/system-optimizations"
+license=('MIT')
+depends=()
+optdepends=(
+    'nvidia: NVIDIA driver optimizations'
+    'linux-cachyos: CachyOS kernel with optimizations'
+    'mold: Fast linker for Rust compilation'
+    'systemd-boot-manager: Boot manager for kernel params'
+)
+backup=(
+    'etc/sdboot-manage.conf.d/20-eirikr-optimizations.conf'
+    'etc/modprobe.d/nvidia-unified.conf'
+    'etc/sysctl.d/99-unified-performance.conf'
+    'etc/udev/rules.d/60-ioschedulers.rules'
+)
+install=eirikr-system-optimizations.install
+source=(
+    '20-eirikr-optimizations.conf'
+    'nvidia-unified.conf'
+    '99-unified-performance.conf'
+    '60-ioschedulers.rules'
+    'makepkg.conf.patch'
+)
+sha256sums=('SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP')
+
+package() {
+    # sdboot-manage drop-in (no longer conflicts with systemd-boot-manager)
+    install -Dm644 "$srcdir/20-eirikr-optimizations.conf" \
+        "$pkgdir/etc/sdboot-manage.conf.d/20-eirikr-optimizations.conf"
+
+    # NVIDIA modprobe options (unified config)
+    install -Dm644 "$srcdir/nvidia-unified.conf" \
+        "$pkgdir/etc/modprobe.d/nvidia-unified.conf"
+
+    # Sysctl performance overrides (unified config)
+    install -Dm644 "$srcdir/99-unified-performance.conf" \
+        "$pkgdir/etc/sysctl.d/99-unified-performance.conf"
+
+    # I/O scheduler udev rules
+    install -Dm644 "$srcdir/60-ioschedulers.rules" \
+        "$pkgdir/etc/udev/rules.d/60-ioschedulers.rules"
+
+    # Documentation
+    install -Dm644 "$srcdir/makepkg.conf.patch" \
+        "$pkgdir/usr/share/doc/$pkgname/makepkg.conf.patch"
+}
