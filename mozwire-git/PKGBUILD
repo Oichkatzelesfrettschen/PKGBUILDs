@@ -1,0 +1,72 @@
+# Maintainer: HelloImWar <helloimwar at proton dot me>
+
+pkgname=mozwire-git
+_pkgname=${pkgname%-git}
+pkgver=0.8.1.r9.gb680ad2
+pkgrel=2
+pkgdesc='A cross-platform client for MozillaVPN'
+url='https://github.com/NilsIrl/MozWire'
+arch=('x86_64')
+license=('GPL-3.0-or-later')
+depends=('gcc-libs')
+makedepends=('git' 'cargo' 'clang' 'lld' 'llvm')
+source=("${_pkgname}::git+${url}.git")
+provides=(${_pkgname})
+conflicts=(${_pkgname})
+sha512sums=('SKIP')
+
+pkgver() {
+    cd "${_pkgname}"
+    git describe --long --tags | sed 's/^v//;s/\([^-]*-g\)/r\1/;s/-/./g'
+}
+
+prepare() {
+    cd "${_pkgname}"
+    cargo fetch --locked --target "$CARCH-unknown-linux-gnu"
+}
+
+build() {
+    cd "${_pkgname}"
+    export CC=clang
+    export CXX=clang++
+    export AR=llvm-ar
+    export NM=llvm-nm
+    export RANLIB=llvm-ranlib
+    export STRIP=llvm-strip
+
+    # Use system CFLAGS/CXXFLAGS from makepkg.conf; override only toolchain-
+    # specific flags needed for clang+ThinLTO+lld compatibility.
+    export CFLAGS="${CFLAGS} -flto=thin"
+    export CXXFLAGS="${CFLAGS}"
+    export LDFLAGS='-Wl,-O1 -Wl,--as-needed -fuse-ld=lld'
+
+    # makepkg can inject GCC LTO flags into CFLAGS (OPTIONS=lto) which break
+    # ring's C/asm objects when the final link uses lld. Force clang+ThinLTO
+    # to keep LTO enabled and lld-compatible. target-cpu uses the default
+    # from makepkg.conf rather than a hardcoded arch.
+    export RUSTFLAGS="-C opt-level=3 -C codegen-units=1 -C linker=clang -C link-arg=-fuse-ld=lld"
+
+    cargo build --release --locked --all-features --target-dir=target
+}
+
+check() {
+    cd "${_pkgname}"
+    export CC=clang
+    export CXX=clang++
+    export AR=llvm-ar
+    export NM=llvm-nm
+    export RANLIB=llvm-ranlib
+    export STRIP=llvm-strip
+    export CFLAGS="${CFLAGS} -flto=thin"
+    export CXXFLAGS="${CFLAGS}"
+    export LDFLAGS='-Wl,-O1 -Wl,--as-needed -fuse-ld=lld'
+    export RUSTFLAGS="-C opt-level=3 -C codegen-units=1 -C linker=clang -C link-arg=-fuse-ld=lld"
+
+    cargo test --release --locked --all-features --target-dir=target
+}
+
+package() {
+    cd "${_pkgname}"
+    install -Dm 755 "target/release/mozwire" -t "${pkgdir}/usr/bin"
+    install -Dm 644 README.md -t "${pkgdir}/usr/share/doc/${_pkgname}"
+}

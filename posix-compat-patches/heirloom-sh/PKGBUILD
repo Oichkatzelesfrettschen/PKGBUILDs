@@ -7,7 +7,7 @@ pkgrel=5
 pkgdesc="A portable variant of the traditional Unix shell, derived from OpenSolaris code."
 arch=('i686' 'x86_64')
 url="http://heirloom.sourceforge.net/sh.html"
-license=('BSD' 'CDDL')
+license=('BSD-3-Clause' 'CDDL-1.0')
 conflicts=('heirloom-sh-cvs')
 source=("http://sourceforge.net/projects/heirloom/files/$pkgname/$pkgver/$pkgname-$pkgver.tar.bz2"
         '000-config.diff'

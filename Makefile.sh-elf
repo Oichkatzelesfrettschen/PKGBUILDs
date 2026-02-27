@@ -1,0 +1,44 @@
+# Makefile for building sh-elf cross-compiler toolchain (Hitachi SuperH)
+#
+# Build order:
+#   sh-elf-newlib  (provides headers needed by GCC)
+#   -> sh-elf-gcc  (full GCC with C and C++)
+#
+# Note: sh-elf-binutils is expected to come from AUR.
+#
+# USAGE:
+#   make -f Makefile.sh-elf all
+#   make -f Makefile.sh-elf clean
+
+.PHONY: all newlib gcc clean help
+
+MAKEPKG_FLAGS ?= -si --noconfirm
+
+all: gcc
+	@echo "=== sh-elf toolchain installation complete ==="
+
+newlib:
+	@echo "=== Building sh-elf-newlib ==="
+	cd sh-elf-newlib && makepkg $(MAKEPKG_FLAGS)
+
+gcc: newlib
+	@echo "=== Building sh-elf-gcc ==="
+	cd sh-elf-gcc && makepkg $(MAKEPKG_FLAGS)
+
+clean:
+	@echo "=== Cleaning sh-elf build artifacts ==="
+	rm -rf sh-elf-newlib/src sh-elf-newlib/pkg sh-elf-newlib/*.pkg.tar.zst
+	rm -rf sh-elf-gcc/src sh-elf-gcc/pkg sh-elf-gcc/*.pkg.tar.zst
+
+help:
+	@echo "sh-elf Cross-Compiler Toolchain Makefile"
+	@echo ""
+	@echo "Prerequisites: sh-elf-binutils (install via yay -S sh-elf-binutils)"
+	@echo ""
+	@echo "Targets:"
+	@echo "  all     - Build and install complete toolchain"
+	@echo "  newlib  - Build newlib C library"
+	@echo "  gcc     - Build full GCC"
+	@echo "  clean   - Remove build artifacts"
+	@echo ""
+	@echo "Build order: newlib -> gcc"

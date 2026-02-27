@@ -1,0 +1,67 @@
+name: Lint
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  shellcheck:
+    name: shellcheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install shellcheck
+        run: sudo apt-get install -y shellcheck
+
+      - name: Run shellcheck on .sh scripts
+        run: |
+          find . -name '*.sh' -print0 | xargs -0 shellcheck -S error
+
+  namcap:
+    name: namcap + .SRCINFO
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux:latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install tools
+        run: |
+          pacman -Syu --noconfirm namcap pacman-contrib
+
+      - name: Run namcap on all PKGBUILDs
+        run: |
+          errors=0
+          while IFS= read -r -d '' pkgbuild; do
+            dir=$(dirname "$pkgbuild")
+            pkg=$(basename "$dir")
+            out=$(namcap "$pkgbuild" 2>&1)
+            if echo "$out" | grep -q ' E: '; then
+              echo "ERROR: $pkg has namcap errors:"
+              echo "$out" | grep ' E: '
+              errors=$((errors + 1))
+            fi
+          done < <(find . -maxdepth 3 -name PKGBUILD -print0)
+          [ "$errors" -eq 0 ] || exit 1
+
+      - name: Verify .SRCINFO present for all packages
+        run: |
+          missing=0
+          while IFS= read -r -d '' pkgbuild; do
+            dir=$(dirname "$pkgbuild")
+            if [ ! -f "$dir/.SRCINFO" ]; then
+              echo "MISSING .SRCINFO: $dir"
+              missing=$((missing + 1))
+            fi
+          done < <(find . -maxdepth 3 -name PKGBUILD -print0)
+          [ "$missing" -eq 0 ] || { echo "Run: sh scripts/validate-all.sh --fix-srcinfo"; exit 1; }
+
+      - name: Verify SKIP checksums are only on VCS or local sources
+        run: |
+          # Report any SKIP on non-VCS, non-local downloadable sources
+          # (informational -- does not fail the build, requires human review)
+          echo "==> Packages with SKIP checksums on non-VCS sources:"
+          grep -rn 'SKIP' --include=PKGBUILD . | grep -v 'git+' | grep -v '# SKIP' || echo "  None found"

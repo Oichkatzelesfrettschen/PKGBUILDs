@@ -1,10 +1,7 @@
 [Unit]
 Description=SonarQube Server (Podman rootless)
 Documentation=https://docs.sonarqube.org/latest/
-After=podman.service
-Wants=podman.service
-PartOf=graphical-session.target
-Wants=graphical-session-pre.target
+After=network.target
 
 [Service]
 Type=simple
@@ -18,11 +15,11 @@ StandardError=journal
 EnvironmentFile=%h/.config/sonarqube/sonarqube.env
 
 # Create data directory
-ExecStartPre=mkdir -p %h/.local/share/sonarqube
-ExecStartPre=chmod 755 %h/.local/share/sonarqube
+ExecStartPre=mkdir -p /var/lib/sonarqube
+ExecStartPre=chmod 755 /var/lib/sonarqube
 
 # Pull latest image
-ExecStartPre=/usr/bin/podman pull ${SONARQUBE_IMAGE:-docker.io/library/sonarqube:latest}
+ExecStartPre=/usr/bin/podman pull ${SONARQUBE_IMAGE:-sonarqube:latest}
 
 # Remove existing container if present
 ExecStartPre=-/usr/bin/podman rm -f ${SONARQUBE_CONTAINER_NAME:-sonarqube}
@@ -35,16 +32,16 @@ ExecStart=/usr/bin/podman run \
   --cpus ${SONARQUBE_CPUS_LIMIT:-2} \
   -p ${SONARQUBE_PORT:-9000}:9000 \
   -p 9092:9092 \
-  -v %h/.local/share/sonarqube/postgresql:/var/lib/postgresql \
-  -v %h/.local/share/sonarqube/sonarqube:/opt/sonarqube/data \
-  -v %h/.local/share/sonarqube/extensions:/opt/sonarqube/extensions \
-  -v %h/.local/share/sonarqube/logs:/opt/sonarqube/logs \
+  -v /var/lib/sonarqube/postgresql:/var/lib/postgresql \
+  -v /var/lib/sonarqube/sonarqube:/opt/sonarqube/data \
+  -v /var/lib/sonarqube/extensions:/opt/sonarqube/extensions \
+  -v /var/lib/sonarqube/logs:/opt/sonarqube/logs \
   -e SONAR_ES_BOOTSTRAP_CHECKS_DISABLED=true \
   -e SONAR_TELEMETRY_ENABLE=false \
-  ${SONARQUBE_IMAGE:-docker.io/library/sonarqube:latest}
+  ${SONARQUBE_IMAGE:-sonarqube:latest}
 
 # Stop container cleanly
 ExecStop=/usr/bin/podman stop ${SONARQUBE_CONTAINER_NAME:-sonarqube}
 
 [Install]
-WantedBy=graphical-session.target
+WantedBy=default.target

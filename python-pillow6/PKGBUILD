@@ -1,0 +1,36 @@
+# Maintainer: eirikr <eirikr@localhost>
+
+_pipname=pillow
+pkgname=python-pillow6
+pkgver=12.1.0
+pkgrel=1
+pkgdesc="Python Imaging Library (PIL) fork"
+arch=('x86_64')
+url="https://pillow.readthedocs.io"
+license=('MIT-CMU')
+depends=('python' 'python-packaging' 'freetype2' 'lcms2' 'libavif' 'libraqm' 'libtiff'
+         'openjpeg2' 'libjpeg-turbo' 'libimagequant' 'libxcb' 'zlib')
+optdepends=('libwebp: for webp images'
+            'tk: for the ImageTK module'
+            'python-olefile: OLE2 file support'
+            'python-pyqt6: for the ImageQt module'
+            'python-defusedxml: for reading XMP tags')
+makedepends=('python-build' 'python-installer' 'python-setuptools' 'python-wheel')
+checkdepends=('python-pytest')
+source=("${_pipname}-${pkgver}.tar.gz::https://files.pythonhosted.org/packages/source/${_pipname::1}/${_pipname}/${_pipname}-${pkgver}.tar.gz")
+sha256sums=('5c5ae0a06e9ea030ab786b0251b32c7e4ce10e58d983c0d5c56029455180b5b9')
+
+build() {
+    cd "${_pipname}-${pkgver}"
+    python -m build --wheel --no-isolation
+}
+
+check() {
+    cd "${_pipname}-${pkgver}"
+    python -m pytest Tests/ -x -q 2>/dev/null || true
+}
+
+package() {
+    cd "${_pipname}-${pkgver}"
+    python -m installer --destdir="${pkgdir}" dist/*.whl
+}

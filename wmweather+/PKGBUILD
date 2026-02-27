@@ -7,11 +7,11 @@ pkgrel=1
 pkgdesc="National Weather Service METAR bulletins, forecasts, and weather maps for WindowMaker dock"
 arch=('x86_64')
 url="https://sourceforge.net/projects/wmweatherplus"
-license=('GPL')
+license=('GPL-2.0-or-later')
 groups=('x11')
 depends=('pcre2' 'libxpm' 'curl' 'libdockapp' 'windowmaker')
 source=("https://downloads.sourceforge.net/wmweatherplus/$pkgname-$pkgver.tar.gz")
-sha256sums=('SKIP')
+sha256sums=('c0ca451aa8cd9f4fb7701e393b7288b56fb8cb358737481a9472949909194b6d')
 
 prepare() {
   cd "$srcdir/$pkgname-$pkgver"

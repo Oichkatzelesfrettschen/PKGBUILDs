@@ -1,0 +1,19 @@
+pkgbase = python-backports-zstd
+	pkgdesc = Backport of PEP-784 “adding Zstandard to the standard library”
+	pkgver = 1.2.0
+	pkgrel = 1
+	url = https://github.com/rogdham/backports.zstd
+	arch = x86_64
+	arch = armv7h
+	arch = aarch64
+	arch = i686
+	license = PSF-2.0
+	makedepends = python-build
+	makedepends = python-installer
+	makedepends = python-setuptools
+	makedepends = python-wheel
+	depends = python
+	source = backports_zstd-1.2.0.tar.gz::https://files.pythonhosted.org/packages/source/b/backports-zstd/backports_zstd-1.2.0.tar.gz
+	sha256sums = 6c3fc19342db750b52fde793e4440a93575761b1493bb4a1d3b26033d2bd3452
+
+pkgname = python-backports-zstd

@@ -16,12 +16,11 @@ pkgrel=1
 pkgdesc="C library for bare metal systems (${_target})."
 arch=(any)
 url="https://sourceware.org/newlib/"
-license=('BSD')
+license=('BSD-3-Clause')
 groups=(devel)
 depends=("${_target}-binutils")
 makedepends=("${_target}-gcc-bootstrap>=4.3.0")
 options=('!makeflags' '!strip' 'staticlibs' '!libtool')
-PKGEXT="pkg.tar.zst"
 source=("ftp://sourceware.org/pub/newlib/newlib-${pkgver}${_suffix}.tar.gz")
 sha512sums=('d391ea3ac68ddb722909ef790f81ba4d6c35d9b2e0fcdb029f91a6c47db9ee94a686a2bdff211fb84025e1a317e257acfa59abda3fd2bc6609966798e1c604dc')
 

@@ -1,0 +1,19 @@
+pkgbase = mozwire-git
+	pkgdesc = A cross-platform client for MozillaVPN
+	pkgver = 0.8.1.r9.gb680ad2
+	pkgrel = 1
+	url = https://github.com/NilsIrl/MozWire
+	arch = x86_64
+	license = GPL3
+	makedepends = git
+	makedepends = cargo
+	makedepends = clang
+	makedepends = lld
+	makedepends = llvm
+	depends = gcc-libs
+	provides = mozwire
+	conflicts = mozwire
+	source = mozwire::git+https://github.com/NilsIrl/MozWire.git
+	sha512sums = SKIP
+
+pkgname = mozwire-git

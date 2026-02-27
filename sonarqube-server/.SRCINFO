@@ -1,0 +1,20 @@
+pkgbase = sonarqube-server
+	pkgdesc = SonarQube Server - Code Quality Analysis (Podman rootless)
+	pkgver = 10.6
+	pkgrel = 3
+	url = https://www.sonarsource.com/products/sonarqube/
+	arch = x86_64
+	license = LicenseRef-SONARQUBE
+	depends = podman
+	optdepends = sonar-scanner: Client-side code analyzer
+	provides = sonarqube
+	conflicts = sonarqube
+	backup = etc/sonarqube/sonarqube-docker.conf
+	source = sonarqube-docker.conf
+	source = sonarqube-server.service
+	source = sonarqube-setup.sh
+	sha256sums = 7f2cbd96859159a517b8204eeabf2df32dcc8320e63be37501fbf9cd6b0457ef
+	sha256sums = f21ab6bc4cf9996dc417979bfcdf644eb8d4930305c3d22a6c5fcdfdd2680ea2
+	sha256sums = ed08aafb4f9453ba2a7c73f850f0e47f2e6f4650ec74f1dc5f6495184e5b782d
+
+pkgname = sonarqube-server

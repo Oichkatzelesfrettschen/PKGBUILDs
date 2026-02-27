@@ -6,7 +6,7 @@ pkgrel=1
 pkgdesc="Ready-to-use cross-compilation toolchain provided by bootlin.com"
 arch=("x86_64")
 url="https://toolchains.bootlin.com/"
-license=("GPL")
+license=("GPL-2.0-or-later")
 source=("https://toolchains.bootlin.com/downloads/releases/toolchains/powerpc64-power8/tarballs/powerpc64-power8--musl--bleeding-edge-2024.02-1.tar.bz2"
         "profile.sh-powerpc64-power8-musl-bleeding-edge-toolchain")
 install="hooks.install-powerpc64-power8-musl-bleeding-edge-toolchain"

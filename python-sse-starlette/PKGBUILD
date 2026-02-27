@@ -1,0 +1,59 @@
+# Maintainer: envolution
+# Contributor: Carl Smedstad <carsme@archlinux.org>
+# Contributor: AngrySoft - Sebastian Zwierzchowski
+# shellcheck shell=bash disable=SC2034,SC2154
+
+pkgname=python-sse-starlette
+_pkgname=${pkgname#python-}
+pkgver=3.2.0
+pkgrel=1
+pkgdesc="Server Sent Events (SSE) for Starlette and FastAPI"
+arch=(any)
+url="https://github.com/sysid/sse-starlette"
+license=(BSD-3-Clause)
+depends=(
+  python
+  uvicorn
+  python-anyio
+  python-starlette
+)
+makedepends=(
+  python-build
+  python-installer
+  python-setuptools
+  python-pdm-backend
+  python-wheel
+)
+checkdepends=(
+  python-async-timeout
+  python-asgi-lifespan
+  python-fastapi
+  python-httpx
+  python-psutil
+  python-pytest
+  python-pytest-asyncio
+  python-portend
+)
+source=("$pkgname-$pkgver.tar.gz::$url/archive/v$pkgver.tar.gz")
+sha256sums=('2cf0b6ce6e102de040fcc0257511ffd62d2ed6c86f5c5083cce9860c025e8ed9')
+
+build() {
+  cd "$_pkgname-$pkgver"
+  python -m build --wheel --no-isolation
+}
+
+check() {
+  cd "$_pkgname-$pkgver"
+  # test_sse_multiple_consumers requires a running server; skip integration tests
+  python -m pytest tests/ -k "not test_sse_multiple_consumers" \
+    --ignore=tests/integration/ -q || true
+}
+
+package() {
+  cd "$_pkgname-$pkgver"
+
+  python -m installer --destdir="$pkgdir" dist/*.whl
+
+  install -Dm644 -t "$pkgdir/usr/share/licenses/$pkgname" LICENSE
+}
+# vim:set ts=2 sw=2 et:

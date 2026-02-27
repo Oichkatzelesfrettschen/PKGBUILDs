@@ -4,9 +4,10 @@ pkgrel=1
 pkgdesc="A port of gcc to the PSP (bootstrap) (psp)"
 arch=('x86_64')
 url="https://github.com/pspdev/gcc"
-license=('GPL' 'LGPL' 'FDL' 'custom')
+license=('GPL-3.0-or-later' 'LGPL-2.1-or-later' 'GFDL-1.3-or-later' 'LicenseRef-custom')
 depends=('mpfr')
 makedepends=('psp-binutils' 'git')
+provides=('psp-gcc')
 conflicts=('psp-gcc')
 options=('!buildflags' '!strip' 'staticlibs')
 

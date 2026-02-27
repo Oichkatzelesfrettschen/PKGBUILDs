@@ -1,4 +1,4 @@
-# Maintainer: User <user@local>
+# Maintainer: eirikr <eirikr@localhost>
 # Facebook Infer - Static Analysis via Separation Logic
 
 pkgname=infer-static
@@ -15,7 +15,7 @@ conflicts=('infer')
 
 # Download official Infer release
 source=("https://github.com/facebook/infer/releases/download/v${pkgver}/infer-linux64-v${pkgver}.tar.xz")
-sha256sums=('SKIP')
+sha256sums=('5f5d453814422e93e2a70998d8946b09a2721628ff427f67ff0123dea87461d4')
 
 prepare() {
     true

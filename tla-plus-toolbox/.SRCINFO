@@ -1,0 +1,18 @@
+pkgbase = tla-plus-toolbox
+	pkgdesc = Integrated Development Environment for the TLA+ tools
+	pkgver = 1.7.4
+	pkgrel = 2
+	url = https://lamport.azurewebsites.net/tla/toolbox.html
+	arch = x86_64
+	license = MIT
+	makedepends = unzip
+	depends = gtk3
+	depends = webkit2gtk
+	depends = java-runtime
+	optdepends = texlive-core: for PDF generation (tla2tex)
+	source = https://github.com/tlaplus/tlaplus/releases/download/v1.7.4/TLAToolbox-1.7.4-linux.gtk.x86_64.zip
+	source = tla-plus-toolbox.desktop
+	sha256sums = 7982b671726f2c841f90afa89eba26c2135f026cd64b20995c2b04391c648da5
+	sha256sums = 468d74744d9b610df835d747a3932a189ac721a2479c8913fada0f334f256c2c
+
+pkgname = tla-plus-toolbox

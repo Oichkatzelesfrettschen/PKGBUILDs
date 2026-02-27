@@ -7,7 +7,8 @@ pkg/
 
 # Makepkg
 *.src.tar.*
-.SRCINFO
+# NOTE: .SRCINFO should be tracked (required for AUR submission)
+# It was previously excluded here -- do not add it back
 
 # Downloaded sources
 *.tar.gz
@@ -26,4 +27,12 @@ pkg/
 
 # Database files
 *.db
+
+# Stale MCP debug logs (not build artifacts)
+logs/
+
+# AUR clone working directories created by submit-to-aur.sh
+posix-compat-patches/aur-repos/
+
+# Package-specific
 picom-custom-git/src-reference

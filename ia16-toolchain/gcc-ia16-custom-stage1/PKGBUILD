@@ -1,0 +1,66 @@
+# Maintainer: Oichkatzelesfrettschen
+# PKGBUILD for gcc-ia16-custom-stage1-git (bootstrap compiler without libc)
+
+pkgname=gcc-ia16-custom-stage1-git
+pkgver=r1.main
+pkgrel=1
+pkgdesc="IA-16 GCC Stage 1 (bootstrap compiler without libc)"
+arch=('x86_64')
+url="https://github.com/Oichkatzelesfrettschen/gcc-ia16-8088-custom"
+license=('GPL-3.0-or-later')
+depends=('binutils-ia16-custom-git' 'gmp' 'mpfr' 'libmpc' 'zlib')
+makedepends=('git' 'texinfo' 'flex' 'bison' 'libisl')
+provides=('gcc-ia16-stage1')
+conflicts=('gcc-ia16-stage1')
+options=('!strip' '!buildflags')
+source=("git+https://github.com/Oichkatzelesfrettschen/gcc-ia16-8088-custom.git#branch=main")
+sha256sums=('SKIP')
+
+_target=ia16-elf
+
+pkgver() {
+    cd "${srcdir}/gcc-ia16-8088-custom"
+    printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+build() {
+    cd "${srcdir}/gcc-ia16-8088-custom"
+
+    # Clean any previous build
+    rm -rf build-stage1
+    mkdir -p build-stage1
+    cd build-stage1
+
+    # Stage 1: Build without headers/libc
+    ../configure \
+        --target=${_target} \
+        --prefix=/opt/ia16 \
+        --without-headers \
+        --with-newlib \
+        --enable-languages=c \
+        --disable-libssp \
+        --disable-libquadmath \
+        --disable-libgomp \
+        --disable-libatomic \
+        --disable-threads \
+        --disable-shared \
+        --disable-nls \
+        --disable-werror
+
+    make -j$(nproc) all-gcc all-target-libgcc
+}
+
+package() {
+    cd "${srcdir}/gcc-ia16-8088-custom/build-stage1"
+    make DESTDIR="${pkgdir}" install-gcc install-target-libgcc
+
+    # Remove info pages
+    rm -rf "${pkgdir}/opt/ia16/share/info"
+    rm -rf "${pkgdir}/opt/ia16/share/man"
+
+    # Create symlinks
+    install -d "${pkgdir}/usr/local/bin"
+    for tool in "${pkgdir}/opt/ia16/bin/${_target}-"*; do
+        ln -sf "/opt/ia16/bin/$(basename "$tool")" "${pkgdir}/usr/local/bin/"
+    done
+}

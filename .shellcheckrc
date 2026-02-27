@@ -1,0 +1,11 @@
+# .shellcheckrc -- shellcheck configuration for this repository
+#
+# WHY: PKGBUILDs are bash scripts sourced by makepkg with implicit variables
+#      (pkgver, srcdir, pkgdir, etc.) that shellcheck cannot see. These
+#      exclusions prevent false positives while keeping meaningful checks active.
+#
+# SC2034: variable appears unused (makepkg reads pkgname, pkgver, etc.)
+# SC2154: variable referenced but not assigned (same reason as SC2034)
+# SC2164: use 'cd ... || exit' (PKGBUILDs use 'cd ... || exit' already in most
+#         cases; allow the shorter form in package functions)
+disable=SC2034,SC2154,SC2164

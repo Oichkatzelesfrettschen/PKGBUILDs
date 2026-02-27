@@ -6,7 +6,7 @@ pkgver=15.2.0
 pkgrel=1
 pkgdesc="The GNU Compiler Collection bootstrap for the ${_target} target."
 arch=(i686 x86_64)
-license=('GPL' 'LGPL')
+license=('GPL-3.0-or-later' 'LGPL-2.1-or-later')
 url="http://gcc.gnu.org"
 depends=("${_target}-binutils>=2.40" 'libisl' 'libmpc' 'elfutils' 'zlib')
 options=('staticlibs' '!buildflags' '!libtool' '!emptydirs' 'zipman' 'docs' '!strip')

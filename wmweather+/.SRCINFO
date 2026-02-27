@@ -1,0 +1,17 @@
+pkgbase = wmweather+
+	pkgdesc = National Weather Service METAR bulletins, forecasts, and weather maps for WindowMaker dock
+	pkgver = 2.18
+	pkgrel = 1
+	url = https://sourceforge.net/projects/wmweatherplus
+	arch = x86_64
+	groups = x11
+	license = GPL
+	depends = pcre2
+	depends = libxpm
+	depends = curl
+	depends = libdockapp
+	depends = windowmaker
+	source = https://downloads.sourceforge.net/wmweatherplus/wmweather+-2.18.tar.gz
+	sha256sums = c0ca451aa8cd9f4fb7701e393b7288b56fb8cb358737481a9472949909194b6d
+
+pkgname = wmweather+

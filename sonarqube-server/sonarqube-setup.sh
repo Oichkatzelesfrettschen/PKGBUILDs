@@ -1,10 +1,10 @@
-#!/bin/bash
+#!/bin/sh
 set -eu
 
 # SonarQube Server Setup Script
-# Initializes Docker container, persistent volumes, and systemd service
+# Initializes Podman container, persistent volumes, and systemd service
 
-SONARQUBE_DATA_DIR="${HOME}/.local/share/sonarqube"
+SONARQUBE_DATA_DIR="/var/lib/sonarqube"
 SONARQUBE_CONFIG_DIR="${HOME}/.config/sonarqube"
 SONARQUBE_PORT=9000
 
@@ -14,9 +14,9 @@ echo "=========================================="
 echo
 
 # Check Podman availability
-if ! command -v podman &> /dev/null; then
+if ! command -v podman > /dev/null 2>&1; then
     echo "ERROR: Podman is not installed or not in PATH"
-    echo "Install with: yay -S podman"
+    echo "Install with: sudo pacman -S podman"
     exit 1
 fi
 
@@ -28,7 +28,7 @@ mkdir -p "${SONARQUBE_CONFIG_DIR}"
 if [ ! -f "${SONARQUBE_CONFIG_DIR}/sonarqube.env" ]; then
     cat > "${SONARQUBE_CONFIG_DIR}/sonarqube.env" << 'EOF'
 # SonarQube Server Environment Configuration
-SONARQUBE_IMAGE=docker.io/library/sonarqube:latest
+SONARQUBE_IMAGE=sonarqube:latest
 SONARQUBE_CONTAINER_NAME=sonarqube
 SONARQUBE_PORT=9000
 SONARQUBE_MEMORY_LIMIT=2g
@@ -46,12 +46,12 @@ mkdir -p "${SONARQUBE_DATA_DIR}/logs"
 chmod 755 "${SONARQUBE_DATA_DIR}"
 echo "  Created: ${SONARQUBE_DATA_DIR}"
 
-# Pull container image
+# Pull Podman image
 echo
-echo "Pulling SonarQube container image (this may take 1-2 minutes)..."
-podman pull docker.io/library/sonarqube:latest
+echo "Pulling SonarQube image via Podman (this may take 1-2 minutes)..."
+podman pull sonarqube:latest
 
-# Start container for initial setup (rootless via podman)
+# Start container for initial setup
 echo
 echo "Starting SonarQube container for initialization..."
 podman run -d \
@@ -59,7 +59,7 @@ podman run -d \
   --rm \
   --memory 2g \
   --cpus 2 \
-  -p ${SONARQUBE_PORT}:9000 \
+  -p "${SONARQUBE_PORT}:9000" \
   -p 9092:9092 \
   -v "${SONARQUBE_DATA_DIR}/postgresql:/var/lib/postgresql" \
   -v "${SONARQUBE_DATA_DIR}/sonarqube:/opt/sonarqube/data" \
@@ -67,7 +67,7 @@ podman run -d \
   -v "${SONARQUBE_DATA_DIR}/logs:/opt/sonarqube/logs" \
   -e SONAR_ES_BOOTSTRAP_CHECKS_DISABLED=true \
   -e SONAR_TELEMETRY_ENABLE=false \
-  docker.io/library/sonarqube:latest
+  sonarqube:latest
 
 echo "  Container started. Waiting for health check..."
 echo
@@ -75,19 +75,19 @@ echo
 # Wait for SonarQube to be ready
 TIMEOUT=120
 ELAPSED=0
-while [ $ELAPSED -lt $TIMEOUT ]; do
-    if curl -s http://localhost:${SONARQUBE_PORT}/api/system/health | grep -q '"status":"UP"'; then
-        echo "✓ SonarQube is ready"
+while [ "${ELAPSED}" -lt "${TIMEOUT}" ]; do
+    if curl -s "http://localhost:${SONARQUBE_PORT}/api/system/health" | grep -q '"status":"UP"'; then
+        echo "SonarQube is ready"
         break
     fi
-    echo "  Waiting for SonarQube to start... ($ELAPSED/$TIMEOUT seconds)"
+    echo "  Waiting for SonarQube to start... (${ELAPSED}/${TIMEOUT} seconds)"
     sleep 5
     ELAPSED=$((ELAPSED + 5))
 done
 
-if [ $ELAPSED -ge $TIMEOUT ]; then
+if [ "${ELAPSED}" -ge "${TIMEOUT}" ]; then
     echo "WARNING: SonarQube did not respond within timeout"
-    echo "Check logs with: docker logs sonarqube"
+    echo "Check logs with: podman logs sonarqube"
 fi
 
 # Enable systemd user service
@@ -103,17 +103,16 @@ echo "=========================================="
 echo
 echo "NEXT STEPS:"
 echo "1. Open browser: http://localhost:${SONARQUBE_PORT}"
-echo "2. Login with: admin / admin"
-echo "3. Change password on first login"
-echo "4. Generate authentication token:"
-echo "   - Administration → Security → Users"
+echo "2. Login with: admin / admin (change immediately)"
+echo "3. Generate authentication token:"
+echo "   - Administration -> Security -> Users"
 echo "   - Generate token for sonar-scanner"
 echo
-echo "5. Configure sonar-scanner:"
+echo "4. Configure sonar-scanner:"
 echo "   export SONAR_HOST_URL=http://localhost:${SONARQUBE_PORT}"
-echo "   export SONAR_LOGIN=<token>"
+echo "   export SONAR_TOKEN=<token>"
 echo
-echo "6. Analyze project:"
+echo "5. Analyze project:"
 echo "   cd /path/to/project"
 echo "   sonar-scanner"
 echo
@@ -121,7 +120,7 @@ echo "MANAGE SERVICE:"
 echo "  Start:   systemctl --user start sonarqube-server"
 echo "  Stop:    systemctl --user stop sonarqube-server"
 echo "  Status:  systemctl --user status sonarqube-server"
-echo "  Logs:    systemctl --user logs sonarqube-server"
+echo "  Logs:    podman logs sonarqube"
 echo
 echo "DATA LOCATION: ${SONARQUBE_DATA_DIR}"
 echo "CONFIG: ${SONARQUBE_CONFIG_DIR}"

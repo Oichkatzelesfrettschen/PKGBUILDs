@@ -1,0 +1,15 @@
+pkgbase = mathcomp
+	pkgdesc = The entire mathematical components library for Coq.
+	pkgver = 2.5.0
+	pkgrel = 1
+	url = https://math-comp.github.io/math-comp/
+	arch = i686
+	arch = x86_64
+	license = GPL
+	depends = rocq
+	conflicts = ssreflect
+	source = mathcomp-2.5.0.tar.gz::https://github.com/math-comp/math-comp/tarball/mathcomp-2.5.0
+	sha256sums = 3db2f4b1b7f9f5a12d3d0c4ba4e325a26a77712074200319660c0e67e25679f1
+	sha512sums = 8d21c6a9086ec42c282316b08c3e9d3a169d1786201e709207fd88a96bae162efb262cba73ca086145daf1e2b37b7061df601c5c3dc7d39a600c0d9d34dd8cb2
+
+pkgname = mathcomp

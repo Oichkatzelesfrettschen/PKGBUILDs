@@ -1,0 +1,21 @@
+pkgbase = libmateweather
+	pkgdesc = Provides access to weather information from the Internet.
+	pkgver = 1.28.0
+	pkgrel = 4
+	url = https://mate-desktop.org
+	arch = x86_64
+	license = LGPL
+	makedepends = git
+	makedepends = glib2-devel
+	makedepends = gtk-doc
+	depends = gtk3
+	depends = libsoup3
+	depends = gettext
+	conflicts = libmateweather-gtk3
+	replaces = libmateweather-gtk3
+	source = git+https://github.com/mate-desktop/libmateweather#tag=v1.28.0
+	source = 0001-fix-radar-deprecate-weathercom.patch
+	sha256sums = 5914bbaf84fcb578933cf48772c9cf0d0009ff75bb3c38448036ba591548b021
+	sha256sums = SKIP
+
+pkgname = libmateweather

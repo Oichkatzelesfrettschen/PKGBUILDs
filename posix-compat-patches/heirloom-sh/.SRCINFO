@@ -1,0 +1,20 @@
+pkgbase = heirloom-sh
+	pkgdesc = A portable variant of the traditional Unix shell, derived from OpenSolaris code.
+	pkgver = 050706
+	pkgrel = 5
+	url = http://heirloom.sourceforge.net/sh.html
+	arch = i686
+	arch = x86_64
+	license = BSD
+	license = CDDL
+	conflicts = heirloom-sh-cvs
+	source = http://sourceforge.net/projects/heirloom/files/heirloom-sh/050706/heirloom-sh-050706.tar.bz2
+	source = 000-config.diff
+	source = 001-fix-gcc14-signal-handlers.patch
+	source = 002-fix-gcc14-test-c.patch
+	sha256sums = 25fb8409e1eb75bb5da21ca32baf2d5eebcb8b84a1288d66e65763a125809e1d
+	sha256sums = f0452b9fb1c58a6f0fba6d49bcd7598f875c94f64ddd8b60bb8ab12bbbaf7c9b
+	sha256sums = 7e586a915f5d753e77d6a35c5b0e1e0b20f0ef0873320373f0eef44f68027afe
+	sha256sums = 6fdab9db5cdbc99ff003c36e86ca3b5f1a31c5df3b5e3086c6a0db951e47f0a6
+
+pkgname = heirloom-sh

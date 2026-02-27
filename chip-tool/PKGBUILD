@@ -1,0 +1,38 @@
+pkgname=chip-tool
+pkgver=1.4.2.0
+pkgrel=2
+pkgdesc="Matter CLI tool (chip-tool) from Project CHIP"
+arch=('x86_64' 'aarch64')
+url="https://github.com/project-chip/connectedhomeip"
+license=('Apache-2.0')
+depends=('dbus' 'openssl' 'avahi' 'zlib')
+makedepends=('git' 'glib2-devel' 'gcc' 'make' 'pkgconf' 'python' 'python-virtualenv' 'ninja' 'gn')
+source=("connectedhomeip::git+https://github.com/project-chip/connectedhomeip.git#tag=v${pkgver}")
+sha256sums=('SKIP')
+
+prepare() {
+  cd "$srcdir/connectedhomeip"
+
+  # Initialize git submodules for linux platform (shallow clone)
+  ./scripts/checkout_submodules.py --shallow --platform linux
+}
+
+build() {
+  cd "$srcdir/connectedhomeip"
+
+  # prepare env (sets up python venv and tools)
+  source scripts/bootstrap.sh
+
+  # build only chip-tool
+  mkdir -p out/host
+  ./scripts/examples/gn_build_example.sh examples/chip-tool out/host
+}
+
+package() {
+  cd "$srcdir/connectedhomeip"
+  install -d "${pkgdir}/usr/bin"
+  install -m755 out/host/chip-tool "${pkgdir}/usr/bin/chip-tool"
+
+  install -Dm644 LICENSE "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
+  install -Dm644 README.md "${pkgdir}/usr/share/doc/${pkgname}/README.md"
+}

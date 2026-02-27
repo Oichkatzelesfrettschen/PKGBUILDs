@@ -1,0 +1,23 @@
+pkgbase = binutils-ia16-custom-git
+	pkgdesc = IA-16 binutils with NEC V20/V30 extended instruction support
+	pkgver = r110781.f66be209
+	pkgrel = 1
+	url = https://github.com/Oichkatzelesfrettschen/binutils-ia16-custom
+	arch = x86_64
+	license = GPL3
+	makedepends = git
+	makedepends = texinfo
+	makedepends = flex
+	makedepends = bison
+	depends = zlib
+	depends = libelf
+	provides = binutils-ia16
+	provides = binutils-ia16-elf
+	conflicts = binutils-ia16
+	conflicts = binutils-ia16-elf
+	options = !strip
+	options = !buildflags
+	source = git+https://github.com/Oichkatzelesfrettschen/binutils-ia16-custom.git#branch=binutils-ia16-tkchia
+	sha256sums = SKIP
+
+pkgname = binutils-ia16-custom-git

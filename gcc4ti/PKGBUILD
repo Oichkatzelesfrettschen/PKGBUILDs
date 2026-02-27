@@ -7,9 +7,9 @@ url="https://debrouxl.github.io/gcc4ti/"
 depends=('bash')
 makedepends=('git')
 arch=('x86_64')
-license=('GPL')
+license=('GPL-2.0-or-later')
 source=('git+https://github.com/debrouxl/gcc4ti.git')
-md5sums=('SKIP')
+sha256sums=('SKIP')
 
 #The build function updates the source code
 #The function does *not* build the package
