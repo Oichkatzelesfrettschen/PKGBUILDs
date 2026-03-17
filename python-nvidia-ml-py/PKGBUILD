@@ -1,0 +1,22 @@
+# NOTE: This package already exists in AUR (Maintainer: Butui Hu, lilac-automated).
+#       Install via: paru -S python-nvidia-ml-py
+#       This local copy was created before discovering the AUR package; kept for reference.
+# Original-Maintainer: Butui Hu <hot123tea123@gmail.com>
+
+pkgname=python-nvidia-ml-py
+_name=nvidia-ml-py
+_pkgname=nvidia_ml_py
+pkgver=13.590.48
+pkgrel=1
+pkgdesc='Python Bindings for the NVIDIA Management Library'
+arch=(any)
+url='https://pypi.org/project/nvidia-ml-py/'
+license=('BSD-3-Clause')
+depends=(python)
+_whl="nvidia_ml_py-${pkgver}-py3-none-any.whl"
+source=("https://files.pythonhosted.org/packages/py3/n/nvidia_ml_py/${_whl}")
+sha256sums=('fd43d30ee9cd0b7940f5f9f9220b68d42722975e3992b6c21d14144c48760e43')
+
+package() {
+    python3 -m installer --destdir="$pkgdir" "${srcdir}/${_whl}"
+}

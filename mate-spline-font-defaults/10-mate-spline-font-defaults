@@ -1,0 +1,19 @@
+[org/mate/desktop/interface]
+font-name='Spline Sans 11'
+document-font-name='Spline Sans 11'
+monospace-font-name='Spline Sans Mono 11'
+
+[org/mate/marco/general]
+titlebar-uses-system-font=false
+titlebar-font='Spline Sans Bold 11'
+
+[org/mate/caja/desktop]
+font='Spline Sans Bold 11'
+
+[org/mate/pluma]
+use-default-font=false
+editor-font='Spline Sans Mono 11'
+
+[org/mate/terminal/profiles/default]
+use-system-font=false
+font='Spline Sans Mono 11'

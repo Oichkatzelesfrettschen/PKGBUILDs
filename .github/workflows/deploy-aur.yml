@@ -1,0 +1,133 @@
+name: Deploy to AUR
+
+# Triggers on push to main when any PKGBUILD changes.
+# Only packages listed in AUR_PACKAGES are deployed; others are GitHub-only.
+# Requires secret: AUR_SSH_PRIVATE_KEY (paste ~/.ssh/aur_key contents)
+#
+# To add a new package to auto-deploy:
+#   1. Add its directory name to the AUR_PACKAGES list below.
+#   2. Ensure the package is registered on AUR with your account as maintainer.
+#   3. The package directory must contain PKGBUILD and .SRCINFO.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '**/PKGBUILD'
+      - '**/.SRCINFO'
+  workflow_dispatch:
+    inputs:
+      package:
+        description: 'Package directory name to force-deploy (leave blank for changed-only)'
+        required: false
+        default: ''
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux:latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        # Only packages we own on AUR. Others in the repo are reference-only.
+        package:
+          - deepstream-sdk
+          - litert-lm
+          - mate-spline-font-defaults
+          - nvidia-opticalflow-headers
+          - ollama-gemini-shim
+          - optix-dev-headers
+          - python-nvidia-dali-cuda130
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Install tools
+        run: pacman -Syu --noconfirm git openssh base-devel
+
+      - name: Detect if this package changed
+        id: changed
+        run: |
+          if [ -n "${{ github.event.inputs.package }}" ]; then
+            if [ "${{ github.event.inputs.package }}" = "${{ matrix.package }}" ]; then
+              echo "deploy=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "deploy=false" >> "$GITHUB_OUTPUT"
+            fi
+          else
+            if git diff --name-only HEAD~1 HEAD | grep -q "^${{ matrix.package }}/"; then
+              echo "deploy=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "deploy=false" >> "$GITHUB_OUTPUT"
+            fi
+          fi
+
+      - name: Regenerate .SRCINFO
+        if: steps.changed.outputs.deploy == 'true'
+        run: |
+          cd "${{ matrix.package }}"
+          # Build user required for makepkg (it refuses to run as root)
+          useradd -m builder
+          chown -R builder:builder .
+          sudo -u builder makepkg --printsrcinfo > .SRCINFO
+          cd -
+
+      - name: Configure Git identity
+        if: steps.changed.outputs.deploy == 'true'
+        run: |
+          git config --global user.name "eirikr"
+          git config --global user.email "151315375+Oichkatzelesfrettschen@users.noreply.github.com"
+
+      - name: Install SSH key and add AUR host key
+        if: steps.changed.outputs.deploy == 'true'
+        env:
+          AUR_SSH_PRIVATE_KEY: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$AUR_SSH_PRIVATE_KEY" > ~/.ssh/aur_key
+          chmod 600 ~/.ssh/aur_key
+          # Add AUR host key (ed25519) -- do not rely on keyscan at runtime
+          echo "aur.archlinux.org ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEuBKrPzbawxA/k2g6NcyV5jmqwJ2s+zpgZGZ7tpLIcN" >> ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
+
+      - name: Push to AUR
+        if: steps.changed.outputs.deploy == 'true'
+        env:
+          GIT_SSH_COMMAND: "ssh -i ~/.ssh/aur_key -o IdentitiesOnly=yes"
+        run: |
+          PKG="${{ matrix.package }}"
+          PKGNAME=$(grep '^pkgbase\s*=\|^pkgname\s*=' "$PKG/.SRCINFO" | head -1 | awk '{print $3}')
+
+          AUR_URL="ssh://aur@aur.archlinux.org/${PKGNAME}.git"
+
+          WORK=$(mktemp -d)
+          # Clone or init the AUR repo
+          git clone "$AUR_URL" "$WORK" 2>/dev/null || {
+            git init "$WORK"
+            git -C "$WORK" remote add origin "$AUR_URL"
+          }
+
+          # Copy PKGBUILD and .SRCINFO
+          cp "$PKG/PKGBUILD" "$WORK/PKGBUILD"
+          cp "$PKG/.SRCINFO" "$WORK/.SRCINFO"
+
+          # Copy .install file if present
+          for f in "$PKG"/*.install; do
+            [ -f "$f" ] && cp "$f" "$WORK/"
+          done
+
+          # Commit and push if there are changes
+          git -C "$WORK" add -A
+          if git -C "$WORK" diff --cached --quiet; then
+            echo "==> $PKGNAME: no changes, skipping push"
+          else
+            VER=$(grep '^pkgver' "$WORK/.SRCINFO" | head -1 | awk '{print $3}')
+            REL=$(grep '^pkgrel' "$WORK/.SRCINFO" | head -1 | awk '{print $3}')
+            git -C "$WORK" commit -m "Update to ${VER}-${REL}"
+            git -C "$WORK" push origin master
+            echo "==> $PKGNAME: pushed ${VER}-${REL} to AUR"
+          fi

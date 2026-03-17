@@ -1,0 +1,73 @@
+# Maintainer: eirikr
+# WHY: The Gemini CLI Gemma Model Router (v0.32.1+) needs a local HTTP server
+#      on localhost:9379 that speaks the Gemini REST API format.  LiteRT-LM's
+#      'lit' binary (v0.8.1) has no HTTP server mode, so this shim bridges
+#      Ollama's /api/chat to the required Gemini generateContent endpoint.
+#      Model in Ollama: gemma3:1b  (pull with: ollama pull gemma3:1b)
+
+pkgname=ollama-gemini-shim
+pkgver=1.0.0
+pkgrel=1
+pkgdesc="Gemini REST API shim for Ollama -- enables Gemini CLI Gemma Model Router on :9379"
+arch=('any')
+url="https://github.com/google-ai-edge/LiteRT-LM"
+license=('MIT')
+# fastapi, uvicorn, httpx are installed via pip on this system (Python 3.14),
+# so they are not listed here to avoid unsatisfiable pacman dependencies.
+# Ensure they are importable: pip install fastapi uvicorn httpx
+depends=('python' 'ollama')
+backup=()
+source=("shim.py")
+sha256sums=('946aacc80d1ea27275ae0add75a28211b7cc4c0161a768cb22fcf5f3438ab2f8')
+
+package() {
+    install -Dm755 "${srcdir}/shim.py" \
+        "${pkgdir}/usr/lib/ollama-gemini-shim/shim.py"
+
+    install -Dm644 /dev/stdin \
+        "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE" <<'EOF'
+MIT License
+
+Copyright (c) 2026 eirikr
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+EOF
+
+    install -Dm644 /dev/stdin \
+        "${pkgdir}/usr/lib/systemd/user/ollama-gemini-shim.service" <<'EOF'
+[Unit]
+Description=Ollama-to-Gemini API shim (Gemini CLI Gemma Model Router)
+Documentation=https://github.com/google-ai-edge/LiteRT-LM
+After=network.target
+
+[Service]
+Type=simple
+# Gemini CLI sends requests using the URL slug from classifier.model in settings.json.
+# The default slug is "gemma3-1b-gpu-custom" (the only officially tested value).
+# OLLAMA_MODEL overrides the URL slug -> Ollama model translation so the shim
+# always forwards to the correct locally-pulled model regardless of the slug.
+Environment=OLLAMA_MODEL=gemma3:1b
+ExecStart=/usr/bin/python3 /usr/lib/ollama-gemini-shim/shim.py
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target
+EOF
+}

@@ -1,0 +1,231 @@
+--- a/lib/mate-menu.py
++++ b/lib/mate-menu.py
+@@ -59,6 +59,59 @@
+ 
+ xdg.Config.setWindowManager('MATE')
+ 
++def _read_os_release():
++    values = {}
++    try:
++        with open("/etc/os-release", "r", encoding="utf-8") as handle:
++            for line in handle:
++                line = line.strip()
++                if not line or line.startswith("#") or "=" not in line:
++                    continue
++                key, value = line.split("=", 1)
++                values[key] = value.strip().strip('"').strip("'")
++    except OSError:
++        pass
++    return values
++
++def _candidate_icon_paths(token):
++    if not token:
++        return []
++
++    paths = []
++    for directory in ("/usr/share/icons", "/usr/share/pixmaps"):
++        for extension in (".svg", ".png", ".xpm"):
++            candidate = os.path.join(directory, token + extension)
++            if os.path.exists(candidate):
++                paths.append(candidate)
++    return paths
++
++def resolve_panel_icon():
++    icon_theme = Gtk.IconTheme.get_default()
++    os_release = _read_os_release()
++
++    candidates = []
++    logo = os_release.get("LOGO", "")
++    distro_id = os_release.get("ID", "")
++    distro_like = os_release.get("ID_LIKE", "").split()
++
++    if logo:
++        candidates.append(logo)
++    if distro_id:
++        candidates.append("distributor-logo-" + distro_id)
++    for token in distro_like:
++        candidates.append("distributor-logo-" + token)
++
++    for token in (logo, distro_id):
++        candidates.extend(_candidate_icon_paths(token))
++
++    candidates.extend(["distributor-logo", "start-here", "start-here-symbolic"])
++    for candidate in list(dict.fromkeys(filter(None, candidates))):
++        if os.path.isabs(candidate) and os.path.exists(candidate):
++            return candidate
++        if icon_theme.has_icon(candidate):
++            return candidate
++    return "start-here"
++
+ from mate_menu.execute import *
+ 
+ class MainWindow( object ):
+@@ -437,7 +490,7 @@
+         self.data_path = os.path.join('/','usr','share','mate-menu')
+         self.applet = applet
+         self.settings = Gio.Settings.new("org.mate.mate-menu")
+-        self.icon = "start-here"
++        self.icon = resolve_panel_icon()
+ 
+         self.loadSettings()
+ 
+@@ -465,7 +518,10 @@
+         self.applyTheme()
+         self.mainwin.loadTheme()
+ 
+-        Gtk.Window.set_default_icon_name( self.icon )
++        if os.path.isabs(self.icon) and os.path.exists(self.icon):
++            Gtk.Window.set_default_icon_from_file(self.icon)
++        else:
++            Gtk.Window.set_default_icon_name( self.icon )
+ 
+         try:
+             self.keybinder = keybinding.GlobalKeyBinding()
+@@ -517,14 +573,26 @@
+         return True
+ 
+     def do_load_icon(self, icon_name):
++        icon_size = max(self.applet.get_size() - 8, 16)
++        if os.path.isabs(icon_name) and os.path.exists(icon_name):
++            try:
++                pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(icon_name, icon_size, icon_size, True)
++                self.button_icon.set_from_pixbuf(pixbuf)
++                return
++            except Exception:
++                pass
++
+         icon_theme = Gtk.IconTheme.get_default()
+-        icon_size = self.applet.get_size() - 8
+         scale_factor = self.button_icon.get_scale_factor()
+-        surface = icon_theme.load_surface(icon_name, icon_size, scale_factor, None, Gtk.IconLookupFlags.FORCE_SIZE)
++        try:
++            surface = icon_theme.load_surface(icon_name, icon_size, scale_factor, None, Gtk.IconLookupFlags.FORCE_SIZE)
++        except Exception:
++            surface = None
+         if surface is not None:
+             self.button_icon.set_from_surface(surface)
+-        else:
+-            self.button_icon.set_from_icon_name(icon_name, Gtk.IconSize.MENU)
++            return
++
++        self.button_icon.set_from_icon_name(icon_name, Gtk.IconSize.MENU)
+ 
+     def createPanelButton( self ):
+         self.button_icon = Gtk.Image()
+@@ -573,6 +641,7 @@
+         self.hotkeyText =  self.settings.get_string( "hot-key" )
+ 
+     def changeTheme(self, *args):
++        self.icon = resolve_panel_icon()
+         self.reloadSettings()
+         self.applyTheme()
+         self.mainwin.loadTheme()
+@@ -630,6 +699,7 @@
+         self.keybinder.rebind(self.hotkeyText)
+ 
+     def reloadSettings( self, *args ):
++        self.icon = resolve_panel_icon()
+         self.loadSettings()
+         self.updateButton()
+ 
+@@ -638,8 +708,15 @@
+         about.set_program_name("Advanced MATE Menu")
+         about.set_version(__VERSION__)
+         about.set_comments( _("An Advanced Menu for the MATE Desktop") )
+-        icon_theme = Gtk.IconTheme.get_default ()
+-        pixbuf = icon_theme.load_icon ( self.icon, 256, 0 )
++        pixbuf = None
++        if os.path.isabs(self.icon) and os.path.exists(self.icon):
++            try:
++                pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(self.icon, 256, 256, True)
++            except Exception:
++                pixbuf = None
++        else:
++            icon_theme = Gtk.IconTheme.get_default ()
++            pixbuf = icon_theme.load_icon ( self.icon, 256, 0 )
+         if pixbuf:
+             about.set_logo ( pixbuf )
+         else:
+--- a/mate_menu/pointerMonitor.py
++++ b/mate_menu/pointerMonitor.py
+@@ -38,6 +38,7 @@
+         self.display = Display()
+         self.root = self.display.screen().root
+         self.windows = []
++        self.running = False
+ 
+     # Receives GDK windows
+     def addWindowToMonitor(self, window):
+@@ -58,6 +59,33 @@
+     def activate(self):
+         GLib.idle_add(self.run)
+ 
++    def _window_contains_pointer(self, window, pointer_x, pointer_y):
++        if window is None:
++            return False
++
++        try:
++            origin = window.get_origin()
++            if isinstance(origin, tuple):
++                if len(origin) == 3:
++                    _, window_x, window_y = origin
++                else:
++                    window_x, window_y = origin
++            else:
++                window_x = origin.x
++                window_y = origin.y
++
++            width = window.get_width()
++            height = window.get_height()
++        except Exception:
++            return False
++
++        return (
++            pointer_x >= window_x and
++            pointer_y >= window_y and
++            pointer_x <= (window_x + width) and
++            pointer_y <= (window_y + height)
++        )
++
+     def run(self):
+         self.running = True
+         while self.running:
+@@ -65,23 +93,26 @@
+             try:
+                 if event.type == X.ButtonPress:
+                     # Check if pointer is inside monitored windows
+-                    for w in self.windows:
+-                        if (Gtk.MAJOR_VERSION, Gtk.MINOR_VERSION) >= (3, 20):
+-                            pdevice = Gdk.Display.get_default().get_default_seat().get_pointer()
+-                        else:
+-                            pdevice = Gdk.Display.get_default().get_device_manager().get_client_pointer()
+-                        p = self.get_window().get_device_position(pdevice)
+-                        g = self.get_size()
+-                        if p.x >= 0 and p.y >= 0 and p.x <= g.width and p.y <= g.height:
++                    inside = False
++                    for window in self.windows:
++                        if self._window_contains_pointer(window, event.root_x, event.root_y):
++                            inside = True
+                             break
+-                    else:
++
++                    if not inside:
+                         # Is outside, so activate
+                         GLib.idle_add(self.idle)
+-                    self.display.allow_events(X.ReplayPointer, event.time)
+-                else:
+-                    self.display.allow_events(X.ReplayPointer, X.CurrentTime)
+             except Exception as e:
+                 print("Unexpected error: " + str(e))
++            finally:
++                try:
++                    if event.type == X.ButtonPress:
++                        self.display.allow_events(X.ReplayPointer, event.time)
++                    else:
++                        self.display.allow_events(X.ReplayPointer, X.CurrentTime)
++                    self.display.flush()
++                except Exception as e:
++                    print("Pointer replay error: " + str(e))
+ 
+     def stop(self):
+         self.running = False

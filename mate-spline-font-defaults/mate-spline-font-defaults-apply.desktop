@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=MATE Spline Font Defaults
+Comment=Apply Spline font defaults once per package version
+Exec=/usr/lib/mate-spline-font-defaults/apply-once.sh
+OnlyShowIn=MATE;
+NoDisplay=true
+Terminal=false
+X-MATE-Autostart-enabled=true
