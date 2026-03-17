@@ -1,0 +1,18 @@
+Subject: Source URL returns 404; working alternative using official PyPI wheels
+
+The developer.nvidia.com CDN source URL for TensorRT-10.15.1.29 currently returns HTTP 404:
+  https://developer.nvidia.com/downloads/compute/machine-learning/tensorrt/10.15.1.29/tars/TensorRT-10.15.1.29.Linux.x86_64-gnu.cuda-13.1.tar.gz
+
+NVIDIA publishes the same TensorRT release as official Python wheels on pypi.nvidia.com.
+An alternative PKGBUILD that installs from wheels (tensorrt + python-tensorrt subpackages)
+is available as a diff attached below (against this PKGBUILD's pkgrel=1).
+
+Strategy in the alternative:
+- C++ libs:    extracted from the official PyPI wheel (same content as the tarball)
+- C++ headers: fetched from the corresponding GitHub release tag tarball (29 MB, public URL)
+- python-tensorrt: installs the cp313 wheel to Python 3.13 site-packages
+
+CUDA 13.1 / Arch-specific fix included: python-tensorrt must install to python3.13
+(not python3.14) since the .so bindings are cp313-only.
+
+Tested on Arch + CachyOS with cuda 13.1.1, python-pytorch-opt-cuda 2.10.0.
