@@ -1,8 +1,0 @@
-src/
-pkg/
-mbedtls
-mbedtls-framework
-ot-br-posix
-cpp-httplib
-openthread
-*.log

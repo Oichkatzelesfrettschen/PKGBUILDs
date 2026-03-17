@@ -37,9 +37,4 @@ package() {
     for _so in libdali.so libdali_core.so libdali_kernels.so libdali_operators.so; do
         ln -sr "${pkgdir}${_sitepkgs313}/nvidia/dali/${_so}" "${pkgdir}/usr/lib/${_so}" 2>/dev/null || true
     done
-
-    # Install LICENSE from wheel dist-info (Apache-2.0; bundled in the wheel)
-    install -Dm644 \
-        "${pkgdir}${_sitepkgs313}/nvidia_dali_cuda130-${pkgver}.dist-info/LICENSE" \
-        "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
 }

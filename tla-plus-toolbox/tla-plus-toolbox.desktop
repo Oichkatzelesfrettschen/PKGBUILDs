@@ -1,8 +1,0 @@
-[Desktop Entry]
-Name=TLA+ Toolbox
-Comment=The TLA+ Toolbox IDE
-Exec=tla-plus-toolbox
-Icon=text-x-generic
-Terminal=false
-Type=Application
-Categories=Development;IDE;

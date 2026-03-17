@@ -1,3 +1,0 @@
-#!/bin/sh
-
-export PATH="$PATH:/opt/powerpc64-power8-musl-bleeding-edge/bin"

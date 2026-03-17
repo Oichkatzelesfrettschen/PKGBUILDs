@@ -16,6 +16,7 @@ pkg/
 *.tar.xz
 *.tar.zst
 *.zip
+*.whl
 
 # Editor
 *.swp
@@ -31,8 +32,5 @@ pkg/
 # Stale MCP debug logs (not build artifacts)
 logs/
 
-# AUR clone working directories created by submit-to-aur.sh
-posix-compat-patches/aur-repos/
-
-# Package-specific
-picom-custom-git/src-reference
+# Local-only packages (not published to AUR; kept only on workstation)
+local_only/

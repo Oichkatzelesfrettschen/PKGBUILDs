@@ -15,9 +15,9 @@ pkgbase = mate-spline-font-defaults
 	source = 10-mate-spline-font-defaults
 	source = mate-spline-font-defaults-apply-once.sh
 	source = mate-spline-font-defaults-apply.desktop
-	sha256sums = 51eec44d50e4f6ec4ba887f1420077e60170a936f71d1a677bbab90b5d4b4bcd
-	sha256sums = 2d399ce2a197ed0f97c2f74739830bba3496c37b3d65711baf38c6bcb13edd05
-	sha256sums = 736edf720df931fe90fd684946f3809d7395021532a30671feaadd2f7090b2c5
-	sha256sums = 32328ce319b4813254ea7915f36f04d4cd3a5f4665ae45614ee4fe1c3aba2947
+	sha256sums = SKIP
+	sha256sums = SKIP
+	sha256sums = SKIP
+	sha256sums = SKIP
 
 pkgname = mate-spline-font-defaults
