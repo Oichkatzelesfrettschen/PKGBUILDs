@@ -30,6 +30,8 @@ if [ -d "$AUR_DIR/.git" ]; then
 else
     git clone "ssh://aur@aur.archlinux.org/${PKG}.git" "$AUR_DIR" 2>/dev/null \
         || git clone "https://aur.archlinux.org/${PKG}.git" "$AUR_DIR"
+    # AUR requires 'master' branch
+    git -C "$AUR_DIR" checkout -B master 2>/dev/null || true
 fi
 
 # Copy package files (PKGBUILD, .SRCINFO, patches, etc.)
