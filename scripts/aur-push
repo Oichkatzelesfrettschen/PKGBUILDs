@@ -1,0 +1,64 @@
+#!/bin/sh
+# Push a package from this monorepo to its AUR git repo.
+# Usage: scripts/aur-push <pkgname>
+#
+# Workflow:
+#   1. Edit PKGBUILD in ~/Github/pkgbuilds/<pkgname>/
+#   2. Commit to this monorepo
+#   3. Run: scripts/aur-push <pkgname>
+#
+# This clones (or updates) the AUR repo into /tmp, copies files over,
+# regenerates .SRCINFO, commits, and pushes.
+
+set -eu
+
+die() { printf 'error: %s\n' "$1" >&2; exit 1; }
+
+PKG="${1:?Usage: aur-push <pkgname>}"
+MONO_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+PKG_DIR="$MONO_DIR/$PKG"
+AUR_DIR="/tmp/aur-$PKG"
+
+[ -f "$PKG_DIR/PKGBUILD" ] || die "$PKG_DIR/PKGBUILD not found"
+
+# Clone or update AUR repo
+if [ -d "$AUR_DIR/.git" ]; then
+    git -C "$AUR_DIR" fetch origin
+    git -C "$AUR_DIR" reset --hard origin/master 2>/dev/null \
+        || git -C "$AUR_DIR" reset --hard origin/main 2>/dev/null \
+        || true
+else
+    git clone "ssh://aur@aur.archlinux.org/${PKG}.git" "$AUR_DIR" 2>/dev/null \
+        || git clone "https://aur.archlinux.org/${PKG}.git" "$AUR_DIR"
+fi
+
+# Copy package files (PKGBUILD, .SRCINFO, patches, etc.)
+for f in "$PKG_DIR"/*; do
+    [ -e "$f" ] || continue
+    bn="$(basename "$f")"
+    case "$bn" in
+        .git|.git.bak) continue ;;
+    esac
+    cp -a "$f" "$AUR_DIR/"
+done
+
+# Regenerate .SRCINFO
+cd "$AUR_DIR"
+makepkg --printsrcinfo > .SRCINFO
+
+# Stage, diff, commit, push
+git add -A
+if git diff --cached --quiet; then
+    printf '%s: nothing to push (AUR is up to date)\n' "$PKG"
+    exit 0
+fi
+
+printf '\n=== Changes for %s ===\n' "$PKG"
+git diff --cached --stat
+printf '\n'
+
+git commit -m "Update $PKG to $(grep -m1 'pkgver' PKGBUILD | cut -d= -f2)"
+git push
+
+printf '\n%s pushed to AUR successfully.\n' "$PKG"
+printf 'https://aur.archlinux.org/packages/%s\n' "$PKG"

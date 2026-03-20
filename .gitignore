@@ -1,36 +1,9 @@
-# Build artifacts
-src/
-pkg/
-*.pkg.tar.*
-*.log
-*.log.*
-
-# Makepkg
-*.src.tar.*
-# NOTE: .SRCINFO should be tracked (required for AUR submission)
-# It was previously excluded here -- do not add it back
-
-# Downloaded sources
+# Large binaries
 *.tar.gz
-*.tar.bz2
-*.tar.xz
 *.tar.zst
-*.zip
 *.whl
+*.pkg.tar.*
+*.src.tar.*
 
-# Editor
-*.swp
-*.swo
-*~
-
-# macOS
-.DS_Store
-
-# Database files
-*.db
-
-# Stale MCP debug logs (not build artifacts)
-logs/
-
-# Local-only packages (not published to AUR; kept only on workstation)
-local_only/
+# Embedded AUR git repos
+**/.git.bak
