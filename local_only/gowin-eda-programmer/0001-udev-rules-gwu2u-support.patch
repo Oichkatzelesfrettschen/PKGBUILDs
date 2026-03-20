@@ -1,0 +1,26 @@
+--- a/Programmer/bin/50-programmer_usb.rules
++++ b/Programmer/bin/50-programmer_usb.rules
+@@ -1,7 +1,16 @@
+-ACTION=="add", ATTR{idVendor}=="33aa",ATTR{idProduct}=="0120", MODE:="666"
+-
+-# Remove ftdi_sio driver for USB devices with a certain vendor and product ID
+-ATTRS{idVendor}=="0403",ATTR{idProduct}=="6014", MODE:="666",PROGRAM="/bin/sh -c 'echo -n $id:1.1 > /sys/bus/usb/drivers/ftdi_sio/unbind'"
+-ATTRS{idVendor}=="0403",ATTR{idProduct}=="6014", MODE:="666",PROGRAM="/bin/sh -c 'echo -n $id:1.0 > /sys/bus/usb/drivers/ftdi_sio/unbind'"
+-ATTRS{idVendor}=="0403",ATTR{idProduct}=="6014", MODE:="666", RUN+="/bin/bash -c 'nohup udevadm trigger --attr-match=idVendor=0403 --attr-match=idProduct=6014;modprobe -r ftdi_sio;'"
+-
++# Gowin EDA Programmer - USB device permissions
++#
++# GWU2X (33aa:0120): FTDI-based USB-JTAG programmer
++ATTRS{idVendor}=="33aa", ATTRS{idProduct}=="0120", MODE="666", GROUP="plugdev", TAG+="uaccess"
++# GWU2U (33aa:0020): libusb-based USB-JTAG programmer (CDC class, EP 0x02/0x82/0x81)
++# Added: upstream 50-programmer_usb.rules only lists 0120; 0020 uses a different USB
++# protocol (not FTDI) and needs MODE=666 so openFPGALoader/jtagserver can claim it
++# without root. TAG uaccess also grants access to logged-in users on seat-aware desktops.
++ATTRS{idVendor}=="33aa", ATTRS{idProduct}=="0020", MODE="666", GROUP="plugdev", TAG+="uaccess"
++# FTDI FT232H (0403:6014): generic FTDI JTAG adapter sometimes used with Gowin boards
++# WHY ATTRS not ATTR: upstream uses ATTR (non-inherited match) which can miss devices
++# where the attribute is on the parent; ATTRS searches up the device chain (correct).
++ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6014", MODE="666", GROUP="plugdev", TAG+="uaccess", \
++  PROGRAM="/bin/sh -c 'echo -n $id:1.1 > /sys/bus/usb/drivers/ftdi_sio/unbind'"
++ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6014", MODE="666", GROUP="plugdev", TAG+="uaccess", \
++  PROGRAM="/bin/sh -c 'echo -n $id:1.0 > /sys/bus/usb/drivers/ftdi_sio/unbind'"

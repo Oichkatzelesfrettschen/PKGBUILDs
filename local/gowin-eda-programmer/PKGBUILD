@@ -1,0 +1,94 @@
+# Maintainer: eirikr
+# Based on AUR gowin-eda package, programmer-only extraction
+pkgname=gowin-eda-programmer
+pkgver=1.9.12.02
+pkgrel=3
+pkgdesc="Gowin FPGA Programmer (standalone, no IDE)"
+arch=('x86_64')
+url="https://www.gowinsemi.com"
+license=('custom:gowin')
+depends=('libusb' 'libftdi')
+options=('emptydirs' '!strip')
+install=gowin-eda-programmer.install
+source=(
+  "http://cdn.gowinsemi.com.cn/Gowin_V${pkgver}_linux.tar.gz"
+  "0001-udev-rules-gwu2u-support.patch"
+  "0002-uname-p-wrapper.patch"
+  "0003-jtagserver-wrapper.patch"
+  "programmer.sh"
+  "programmer_cli.sh"
+)
+sha256sums=('1b6472eb2974eaed05b86f8209c2f746149b0349a8693bdfc4c927fa5ea5889c'
+            'SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP')
+
+_install() {
+  find "${@: 2}" -type f -exec install -Dm"$1" {} "${pkgdir}/opt/${pkgname}/{}" \;
+}
+
+prepare() {
+  cd "${srcdir}"
+  # Patch udev rules to include GWU2U and fix ATTR->ATTRS
+  patch -p1 < "${srcdir}/0001-udev-rules-gwu2u-support.patch"
+}
+
+package() {
+  cd "${srcdir}/Programmer"
+
+  # Install programmer files
+  _install 644 bin/PyQt5
+  _install 644 bin/data
+  _install 644 bin/Crypto
+  _install 644 bin/tools
+  _install 644 bin/ -maxdepth 1
+
+  # Make binaries executable
+  chmod 755 "${pkgdir}/opt/${pkgname}/bin/programmer"
+  chmod 755 "${pkgdir}/opt/${pkgname}/bin/programmer_cli"
+  chmod 755 "${pkgdir}/opt/${pkgname}/bin/jtagserver"
+  find "${pkgdir}/opt/${pkgname}/bin" -name "*.so*" -exec chmod 755 {} \;
+
+  # Install patched udev rules
+  install -Dm644 bin/50-programmer_usb.rules \
+    "${pkgdir}/usr/lib/udev/rules.d/70-gowin-programmer.rules"
+
+  # Install launcher scripts
+  install -Dm755 "${srcdir}/programmer.sh" "${pkgdir}/usr/bin/gowin-programmer"
+  install -Dm755 "${srcdir}/programmer_cli.sh" "${pkgdir}/usr/bin/gowin-programmer-cli"
+
+  # Install fake uname wrapper (jtagserver calls "uname -p" which returns
+  # "unknown" on modern Linux kernels, breaking WINUSB/GWU2U arch detection)
+  install -dm755 "${pkgdir}/opt/${pkgname}/fake-bin"
+  cat > "${pkgdir}/opt/${pkgname}/fake-bin/uname" << 'UEOF'
+#!/bin/sh
+if [ "$1" = "-p" ]; then
+    echo "x86_64"
+else
+    exec /usr/bin/uname "$@"
+fi
+UEOF
+  chmod 755 "${pkgdir}/opt/${pkgname}/fake-bin/uname"
+
+  # Install jtagserver wrapper (sets CWD and PATH for fake-bin)
+  cat > "${pkgdir}/opt/${pkgname}/bin/jtagserver_wrapper.sh" << 'WEOF'
+#!/bin/sh
+cd /opt/gowin-eda-programmer/bin
+export PATH=/opt/gowin-eda-programmer/fake-bin:$PATH
+exec /opt/gowin-eda-programmer/bin/jtagserver "$@"
+WEOF
+  chmod 755 "${pkgdir}/opt/${pkgname}/bin/jtagserver_wrapper.sh"
+
+  # Install libusb to jtagserver's RPATH ($ORIGIN) so embedded Python
+  # ctypes can find it via dlopen (jtagserver's Nuitka binary has
+  # RPATH=$ORIGIN and libusbbase.py uses ctypes.cdll.LoadLibrary)
+  install -Dm755 /usr/lib/libusb-1.0.so.0 \
+    "${pkgdir}/opt/${pkgname}/bin/libusb-1.0.so.0"
+  ln -s libusb-1.0.so.0 "${pkgdir}/opt/${pkgname}/bin/libusb-1.0.so"
+
+  # Symlink python3 to /usr/local/bin (jtagserver hardcodes this path)
+  install -dm755 "${pkgdir}/usr/local/bin"
+  ln -s /usr/bin/python3 "${pkgdir}/usr/local/bin/python3"
+}

@@ -1,0 +1,16 @@
+--- a/Programmer/bin/jtagserver.orig
++++ b/Programmer/bin/jtagserver.patched
+@@ -0,0 +1,12 @@
++# WHY: jtagserver (the binary inside gowin-eda-programmer) spawns a subprocess
++# that hard-codes /usr/local/bin/python3 as the Python interpreter path.
++# On Arch Linux, Python 3 lives at /usr/bin/python3; /usr/local/bin/ is empty
++# by default, so jtagserver fails to start the subprocess it needs for USB
++# communication with the GWU2U programmer (CDC-class device, 33aa:0020).
++#
++# FIX: The PKGBUILD creates /usr/local/bin/python3 -> /usr/bin/python3 so the
++# embedded path resolves. Arch policy discourages files under /usr/local, but
++# this is a local-use PKGBUILD specifically to work around this upstream defect.
++# Upstreamable fix would be a patch to the jtagserver binary or a wrapper script
++# that sets PATH before exec'ing jtagserver -- but jtagserver is a closed binary.
++#
++# NOTE: This file is a documentation patch only; the symlink is created in package().

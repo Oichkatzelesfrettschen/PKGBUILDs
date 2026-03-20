@@ -1,0 +1,106 @@
+# Maintainer: eirikr (local fork of AUR gowin-eda by insmtr <insmtr@insmtr.cn>)
+# WHY: Upstream AUR gowin-eda does not install udev rules, does not support the
+#      GWU2U (33aa:0020) libusb programmer, and jtagserver fails on Arch because
+#      it hard-codes /usr/local/bin/python3 which does not exist by default.
+# WHAT: Programmer-only package with three patches applied:
+#   0001-udev-rules-gwu2u-support.patch  -- adds 33aa:0020 to bundled udev rules
+#                                           and installs them to /usr/lib/udev/rules.d/
+#   0002-python3-local-bin-symlink.patch  -- documentation patch explaining the
+#                                           /usr/local/bin/python3 fix applied in
+#                                           package() (binary cannot be patched)
+# HOW to rebuild after upstream tarball changes:
+#   1. Update pkgver and sha256sums (first entry is the tarball).
+#   2. paru -U or makepkg -si from this directory.
+#   3. Run: sudo udevadm control --reload-rules
+
+pkgname=gowin-eda-programmer
+pkgver=1.9.12.02
+pkgrel=2
+pkgdesc="Gowin EDA Programmer - USB JTAG programming tool for Gowin FPGAs (GWU2X/GWU2U)"
+arch=('x86_64')
+url="https://www.gowinsemi.com.cn/software/index"
+license=('custom:proprietary')
+depends=()
+provides=("gowin-programmer")
+conflicts=()
+install=gowin-eda-programmer.install
+options=('emptydirs' '!strip')
+
+source=(
+  "http://cdn.gowinsemi.com.cn/Gowin_V${pkgver}_linux.tar.gz"
+  "programmer.sh"
+  "programmer_cli.sh"
+  "0001-udev-rules-gwu2u-support.patch"
+  "0002-python3-local-bin-symlink.patch"
+)
+sha256sums=(
+  '1b6472eb2974eaed05b86f8209c2f746149b0349a8693bdfc4c927fa5ea5889c'
+  '9a87376bf3b204e7c83cfd7e4f242ee66b7f08d0662a897937ded74884c9348d'
+  '54900d9c54d1862950e21275f3602c880e7b82c902da55f725165bf3cd022342'
+  'SKIP'
+  'SKIP'
+)
+
+prepare() {
+  cd "${srcdir}"
+
+  # Apply patch 0001: add GWU2U (33aa:0020) to bundled udev rules and modernise
+  # ATTR -> ATTRS (searches parent devices too, which is correct for USB).
+  patch -p1 < "${srcdir}/0001-udev-rules-gwu2u-support.patch"
+
+  # Patch 0002 is documentation-only (jtagserver is a closed binary; we cannot
+  # patch its hard-coded /usr/local/bin/python3 path). The actual fix is the
+  # symlink created in package() below.
+}
+
+_install() {
+  # _install MODE FIND-ARGS...  (same pattern as upstream AUR PKGBUILD)
+  # Each file found is installed to ${pkgdir}/opt/${pkgname}/<same-relative-path>.
+  # The second {} in the -exec is replaced by find with the source path, which
+  # makes install -D create the full destination directory tree automatically.
+  find "${@: 2}" -type f -exec install -Dm"$1" {} "${pkgdir}/opt/${pkgname}/{}" \;
+}
+
+package() {
+  cd "${srcdir}/Programmer"
+
+  # --- Programmer binaries and data ---
+  _install 644 bin/PyQt5
+  _install 644 bin/data
+  _install 644 bin/Crypto -path '*/__pycache__' -prune -o
+  _install 644 bin/tools
+  _install 644 bin/ -maxdepth 1
+
+  # Mark executables
+  chmod 755 "${pkgdir}/opt/${pkgname}/bin/programmer"
+  chmod 755 "${pkgdir}/opt/${pkgname}/bin/programmer_cli"
+  chmod 755 "${pkgdir}/opt/${pkgname}/bin/jtagserver"
+  chmod 755 "${pkgdir}/opt/${pkgname}/bin/jtagserver_lpt"
+  chmod 755 "${pkgdir}/opt/${pkgname}/bin/JTAGLoading"
+
+  # Empty output/lang dirs required at runtime
+  install -dm755 "${pkgdir}/opt/${pkgname}/bin/data/output"
+  install -dm755 "${pkgdir}/opt/${pkgname}/bin/data/lang"
+
+  # --- Wrapper scripts in /usr/bin ---
+  install -dm755 "${pkgdir}/usr/bin"
+  install -Dm755 "${srcdir}/programmer.sh"     "${pkgdir}/usr/bin/programmer"
+  install -Dm755 "${srcdir}/programmer_cli.sh" "${pkgdir}/usr/bin/programmer_cli"
+
+  # --- Patch 0001: install patched udev rules ---
+  # WHY /usr/lib/udev/rules.d/ not /etc/udev/rules.d/:
+  #   Arch policy puts package-provided rules in /usr/lib; /etc is for admin overrides.
+  #   The rules file is named 70- so it runs after default 60-persistent-input.rules
+  #   but before user overrides at 99-.
+  install -Dm644 bin/50-programmer_usb.rules \
+    "${pkgdir}/usr/lib/udev/rules.d/70-gowin-programmer.rules"
+
+  # --- Patch 0002: python3 symlink for jtagserver ---
+  # WHY: jtagserver hard-codes /usr/local/bin/python3; Arch has python3 only at
+  #      /usr/bin/python3. Without this symlink jtagserver subprocess fails with
+  #      "cannot open" and the GWU2U cable is never detected.
+  # NOTE: /usr/local is non-standard for package files on Arch, but this closed
+  #       binary leaves us no other option short of a binary patch.
+  install -dm755 "${pkgdir}/usr/local/bin"
+  ln -s /usr/bin/python3 "${pkgdir}/usr/local/bin/python3"
+}

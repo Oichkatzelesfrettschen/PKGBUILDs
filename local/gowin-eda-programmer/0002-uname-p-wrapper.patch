@@ -1,0 +1,10 @@
+This is a documentation-only patch. The actual fix is implemented directly
+in the PKGBUILD package() function by creating fake-bin/uname wrapper.
+
+Problem: jtagserver runs "uname -p" which returns "unknown" on modern
+Linux kernels (CachyOS, Arch, etc.) instead of "x86_64". This breaks
+the WINUSB/GWU2U cable type's architecture detection.
+
+Fix: A wrapper script at /opt/gowin-eda-programmer/fake-bin/uname
+intercepts "uname -p" and returns "x86_64", delegating all other
+flags to the real /usr/bin/uname.

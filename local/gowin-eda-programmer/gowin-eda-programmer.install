@@ -1,0 +1,31 @@
+post_install() {
+    echo "Reloading udev rules..."
+    udevadm control --reload-rules 2>/dev/null
+    udevadm trigger --subsystem-match=usb --attr-match=idVendor=33aa 2>/dev/null
+
+    if ! getent group plugdev >/dev/null 2>&1; then
+        echo "Note: 'plugdev' group does not exist. Consider creating it:"
+        echo "  sudo groupadd plugdev && sudo usermod -aG plugdev \$USER"
+    elif ! id -nG | grep -qw plugdev; then
+        echo "Note: your user is not in the 'plugdev' group. Add with:"
+        echo "  sudo usermod -aG plugdev \$USER"
+    fi
+
+    echo ""
+    echo "Gowin FPGA Programmer installed."
+    echo "  GUI:  gowin-programmer"
+    echo "  CLI:  gowin-programmer-cli"
+    echo ""
+    echo "KNOWN ISSUE: jtagserver does not support GWU2U (WINUSB) cable on Linux."
+    echo "  The embedded Python 3.4 cannot load libusb-1.0.so."
+    echo "  Use openFPGALoader with --cable gwu2x for GWU2X adapters instead."
+    echo "  GWU2U support requires protocol reverse engineering (in progress)."
+}
+
+post_upgrade() {
+    post_install
+}
+
+post_remove() {
+    udevadm control --reload-rules 2>/dev/null
+}

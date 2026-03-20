@@ -1,0 +1,29 @@
+post_install() {
+  post_upgrade
+}
+
+post_upgrade() {
+  # Reload udev rules so the new rules take effect without reboot.
+  if command -v udevadm > /dev/null 2>&1; then
+    udevadm control --reload-rules
+    udevadm trigger --subsystem-match=usb --attr-match=idVendor=33aa
+    echo "  -> udev rules reloaded (Gowin GWU2X 33aa:0120, GWU2U 33aa:0020)"
+  fi
+
+  # Check that the user is in the plugdev group.
+  if ! groups | grep -qw plugdev; then
+    echo "  -> WARNING: current user is not in the 'plugdev' group."
+    echo "     Run: sudo usermod -aG plugdev \$USER   then log out and back in."
+  fi
+
+  echo "  -> Gowin EDA Programmer installed."
+  echo "     jtagserver listens on TCP 36547; use programmer_cli to communicate."
+  echo "     If jtagserver fails to find the cable, verify /usr/local/bin/python3"
+  echo "     symlink exists: ls -la /usr/local/bin/python3"
+}
+
+post_remove() {
+  if command -v udevadm > /dev/null 2>&1; then
+    udevadm control --reload-rules
+  fi
+}

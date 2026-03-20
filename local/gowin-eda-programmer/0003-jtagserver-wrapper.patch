@@ -1,0 +1,10 @@
+This is a documentation-only patch. The actual fix is implemented directly
+in the PKGBUILD package() function by creating jtagserver_wrapper.sh.
+
+Problem: jtagserver must be run from /opt/gowin-eda-programmer/bin/ as CWD
+because it reads relative paths like data/spi/spi.ini and data/config/gvc.ini.
+Additionally, the fake uname wrapper must be in PATH.
+
+Fix: A wrapper script at /opt/gowin-eda-programmer/bin/jtagserver_wrapper.sh
+sets the CWD to the bin/ directory and prepends fake-bin/ to PATH before
+exec'ing jtagserver.
