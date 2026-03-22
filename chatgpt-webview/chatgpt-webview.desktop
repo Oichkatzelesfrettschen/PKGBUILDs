@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=ChatGPT
+Comment=Minimal WebKitGTK browser for ChatGPT
+Exec=chatgpt-webview
+Icon=chatgpt-webview
+Terminal=false
+Type=Application
+Categories=Network;Chat;
+Keywords=chatgpt;openai;ai;chat;
+StartupWMClass=chatgpt-webview

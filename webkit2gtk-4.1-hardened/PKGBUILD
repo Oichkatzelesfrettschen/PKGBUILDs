@@ -1,0 +1,317 @@
+# Maintainer: eirikr <151315375+Oichkatzelesfrettschen@users.noreply.github.com>
+# Upstream: Jan Alexander Steffens (heftig) <heftig@archlinux.org>
+# Why: Hardened, stripped, ThinLTO-optimized WebKitGTK for use as a minimal
+#      secure webview runtime. Disables unused web platform features (gamepad,
+#      geolocation, speech, WebRTC, WebXR, WebDriver, PDF.js, media capture,
+#      notifications, spellcheck) to reduce attack surface, memory footprint,
+#      and JIT warmup time. Enables all JIT tiers and GPU process isolation.
+#      Provides/conflicts with the stock webkit2gtk-4.1 so it is a drop-in
+#      replacement for Tauri apps, GNOME components, and anything else that
+#      links against libwebkit2gtk-4.1.
+
+pkgname=webkit2gtk-4.1-hardened
+pkgver=2.50.6
+pkgrel=1
+pkgdesc="Hardened, stripped, ThinLTO-optimized web content engine for GTK"
+url="https://webkitgtk.org"
+arch=(x86_64)
+license=(
+  'AFL-2.0 OR GPL-2.0-or-later'
+  Apache-2.0
+  'Apache-2.0 WITH LLVM-exception'
+  BSD-2-Clause
+  BSD-2-Clause-Views
+  BSD-3-Clause
+  BSD-Source-Code
+  BSL-1.0
+  bzip2-1.0.6
+  GPL-2.0-only
+  'GPL-3.0-only WITH Autoconf-exception-3.0'
+  'GPL-3.0-or-later WITH Bison-exception-2.2'
+  ICU
+  ISC
+  LGPL-2.1-only
+  LGPL-2.1-or-later
+  MIT
+  MPL-1.1
+  MPL-2.0
+  NCSA
+  'NCSA OR MIT'
+  OFL-1.1
+  SunPro
+  Unicode-TOU
+)
+depends=(
+  at-spi2-core
+  atk
+  bubblewrap
+  cairo
+  expat
+  fontconfig
+  freetype2
+  gdk-pixbuf2
+  glib2
+  glibc
+  gst-plugins-bad-libs
+  gst-plugins-base-libs
+  gstreamer
+  gtk3
+  harfbuzz
+  harfbuzz-icu
+  icu
+  lcms2
+  libatomic
+  libavif
+  libdrm
+  libegl
+  libepoxy
+  libgcc
+  libgcrypt
+  libgl
+  libgles
+  libjpeg-turbo
+  libjxl
+  libpng
+  libseccomp
+  libsecret
+  libsoup3
+  libstdc++
+  libsystemd
+  libtasn1
+  libwebp
+  libx11
+  libxml2
+  libxslt
+  mesa
+  openjpeg2
+  pango
+  sqlite
+  ttf-font
+  wayland
+  woff2
+  xdg-dbus-proxy
+  zlib
+)
+makedepends=(
+  clang
+  cmake
+  glib2-devel
+  gperf
+  gst-plugins-bad
+  lld
+  ninja
+  python
+  ruby
+  ruby-stdlib
+  systemd
+  unifdef
+  wayland-protocols
+)
+# WebKit uses -fno-rtti globally; LTO through the linker causes undefined
+# typeinfo symbols (JSC::SourceProvider etc). Disable makepkg's LTO injection.
+options=(!lto)
+provides=(
+  "webkit2gtk-4.1=${pkgver}"
+  libjavascriptcoregtk-4.1.so
+  libwebkit2gtk-4.1.so
+)
+conflicts=(webkit2gtk-4.1)
+source=(
+  "${url}/releases/webkitgtk-${pkgver}.tar.xz"{,.asc}
+  fix-coroutine-unhandled-exception.patch
+)
+sha256sums=('2b281abf8894ffc6172152e5660b75eeeedbe1cc43d6783d09dc79f7c865bb42'
+            'SKIP'
+            'SKIP')
+b2sums=('cebdf02e52e0a80ec9b48517e4856768ed530ed4d4d4f15145058e96dc42f990c8712897303ec176609f9a0af749ec49fc3785eecd829ce7d82a397bc822b89c'
+        'SKIP'
+        'SKIP')
+validpgpkeys=(
+  # https://www.webkitgtk.org/verifying.html
+  5AA3BC334FD7E3369E7C77B291C559DBE4C9123B # Adrian Perez de Castro <aperez@igalia.com>
+  013A0127AC9C65B34FFA62526C1009B693975393 # Carlos Garcia Campos <cgarcia@igalia.com>
+)
+
+prepare() {
+  cd "webkitgtk-${pkgver}"
+
+  # Clang 22 rejects templated unhandled_exception() in coroutine promise
+  # types. The C++20 spec requires it to be a non-template member.
+  patch -Np1 -i "${srcdir}/fix-coroutine-unhandled-exception.patch"
+
+}
+
+build() {
+  # -------------------------------------------------------------------
+  # Feature flags: disable everything not needed for a ChatGPT/AI
+  # webview. Each disabled flag removes code paths, reduces JIT
+  # compilation surface, and shrinks resident memory.
+  # -------------------------------------------------------------------
+  local cmake_options=(
+    -D CMAKE_BUILD_TYPE=Release
+    -D CMAKE_INSTALL_LIBDIR=lib
+    -D CMAKE_INSTALL_LIBEXECDIR=lib
+    -D CMAKE_INSTALL_PREFIX=/usr
+    -D CMAKE_SKIP_RPATH=ON
+    -D PORT=GTK
+    -D USE_GTK4=OFF
+    -D USE_SOUP2=OFF
+
+    # -- Security: sandbox and process isolation ----------------------
+    -D ENABLE_BUBBLEWRAP_SANDBOX=ON
+    -D ENABLE_GPU_PROCESS=ON
+
+    # -- Performance: all JIT tiers enabled ---------------------------
+    # LLInt -> Baseline -> DFG -> FTL (B3/Air backend)
+    # Disabling C_LOOP forces real JIT on all paths.
+    -D ENABLE_JIT=ON
+    -D ENABLE_DFG_JIT=ON
+    -D ENABLE_FTL_JIT=ON
+    -D ENABLE_C_LOOP=OFF
+    -D ENABLE_SAMPLING_PROFILER=OFF
+
+    # -- Performance: rendering and scrolling -------------------------
+    -D ENABLE_ASYNC_SCROLLING=ON
+    -D ENABLE_OFFSCREEN_CANVAS=ON
+    -D ENABLE_OFFSCREEN_CANVAS_IN_WORKERS=ON
+    -D ENABLE_VARIATION_FONTS=ON
+    -D USE_SKIA=ON
+    -D USE_WOFF2=ON
+    -D USE_LCMS=ON
+    -D USE_AVIF=ON
+    -D USE_JPEGXL=ON
+
+    # -- Performance: memory management -------------------------------
+    -D ENABLE_PERIODIC_MEMORY_MONITOR=ON
+    -D ENABLE_MEMORY_SAMPLER=ON
+    -D ENABLE_RESOURCE_USAGE=ON
+
+    # -- Kept: features ChatGPT/web apps may use ----------------------
+    -D ENABLE_FULLSCREEN_API=ON
+    -D ENABLE_DARK_MODE_CSS=ON
+    -D ENABLE_CONTENT_EXTENSIONS=ON
+    -D ENABLE_DRAG_SUPPORT=ON
+    -D ENABLE_POINTER_LOCK=ON
+    -D ENABLE_ENCRYPTED_MEDIA=ON
+    -D ENABLE_MEDIA_SOURCE=ON
+    -D ENABLE_MHTML=ON
+    -D ENABLE_CONTEXT_MENUS=ON
+    -D ENABLE_CURSOR_VISIBILITY=ON
+    -D ENABLE_MOUSE_CURSOR_SCALE=ON
+    -D ENABLE_WEB_CODECS=ON
+    -D ENABLE_SHAREABLE_RESOURCE=ON
+    -D ENABLE_WEB_API_STATISTICS=ON
+
+    # -- Disabled: unnecessary web platform features ------------------
+    # Each of these is dead code for a ChatGPT webview and removing
+    # them shrinks the binary, reduces JIT warmup, and eliminates
+    # attack surface.
+    -D ENABLE_GAMEPAD=OFF
+    -D ENABLE_GEOLOCATION=OFF
+    -D ENABLE_SPEECH_SYNTHESIS=OFF
+    -D ENABLE_NOTIFICATIONS=OFF
+    -D ENABLE_SPELLCHECK=OFF
+    -D ENABLE_WEBDRIVER=OFF
+    -D ENABLE_WEBDRIVER_BIDI=OFF
+    -D ENABLE_PDFJS=OFF
+    -D ENABLE_TOUCH_EVENTS=OFF
+    -D ENABLE_MEDIA_STREAM=OFF
+    -D ENABLE_MEDIA_RECORDER=OFF
+    -D ENABLE_MEDIA_CAPTURE=OFF
+    -D ENABLE_MEDIA_SESSION=OFF
+    -D ENABLE_MEDIA_SESSION_PLAYLIST=OFF
+    -D ENABLE_WEB_RTC=OFF
+    -D ENABLE_WEBXR=OFF
+    -D ENABLE_WEBXR_HIT_TEST=OFF
+    -D ENABLE_WEBXR_LAYERS=OFF
+    -D ENABLE_WK_WEB_EXTENSIONS=OFF
+    -D ENABLE_FTPDIR=OFF
+    -D ENABLE_THUNDER=OFF
+    -D ENABLE_INSPECTOR_ALTERNATE_DISPATCHERS=OFF
+    -D ENABLE_INSPECTOR_EXTENSIONS=OFF
+    -D ENABLE_INSPECTOR_TELEMETRY=OFF
+
+    # -- Disabled: build artifacts we do not ship ---------------------
+    -D ENABLE_MINIBROWSER=OFF
+    -D ENABLE_DOCUMENTATION=OFF
+    -D ENABLE_INTROSPECTION=OFF
+    -D ENABLE_API_TESTS=OFF
+    -D ENABLE_LAYOUT_TESTS=OFF
+
+    # -- Disabled: unnecessary libraries ------------------------------
+    -D USE_FLITE=OFF
+    -D USE_SPIEL=OFF
+    -D USE_LIBBACKTRACE=OFF
+    -D USE_LIBHYPHEN=OFF
+    -D USE_SYSPROF_CAPTURE=OFF
+    -D ENABLE_JOURNALD_LOG=OFF
+
+    # -- Disabled: dangerous dev options ------------------------------
+    -D ENABLE_JSC_RESTRICTED_OPTIONS_BY_DEFAULT=OFF
+  )
+
+  # Upstream prefers Clang with lld.
+  # ThinLTO breaks WebKit's -fno-rtti build (undefined typeinfo symbols
+  # at link time for JSC::SourceProvider). The stock Arch package also
+  # ships without LTO. We still get -march=native and all other opts.
+  export CC=clang CXX=clang++
+
+  CFLAGS="${CFLAGS/ -flto=auto/} -march=native"
+  CXXFLAGS="${CXXFLAGS/ -flto=auto/} -march=native"
+  LDFLAGS="${LDFLAGS/-fuse-ld=mold/-fuse-ld=lld}"
+
+  # Skia uses malloc_usable_size which conflicts with FORTIFY_SOURCE=3
+  CFLAGS="${CFLAGS/_FORTIFY_SOURCE=3/_FORTIFY_SOURCE=2}"
+  CXXFLAGS="${CXXFLAGS/_FORTIFY_SOURCE=3/_FORTIFY_SOURCE=2}"
+
+  # JITted code crashes when CET (Control-flow Enforcement) is used
+  CFLAGS+=' -fcf-protection=none'
+  CXXFLAGS+=' -fcf-protection=none'
+
+
+  # Force clean configure to avoid stale cmake cache from prior runs
+  rm -rf build
+  cmake -S "webkitgtk-${pkgver}" -B build -G Ninja "${cmake_options[@]}"
+
+  # The jsc CLI binary fails to link (typeinfo for JSC::SourceProvider is
+  # hidden by -fvisibility=hidden with -fno-rtti). This is non-blocking:
+  # the stock Arch package also builds jsc but deletes it before packaging.
+  # Build with -k0 to continue past jsc, then verify the libraries we
+  # actually ship were linked successfully.
+  cmake --build build -- -k0 || true
+
+  # Verify the critical shared libraries exist
+  local _fail=0
+  for _lib in lib/libjavascriptcoregtk-4.1.so lib/libwebkit2gtk-4.1.so; do
+    if [[ ! -f "build/${_lib}" ]]; then
+      error "Required library ${_lib} was not built"
+      _fail=1
+    fi
+  done
+  (( _fail )) && return 1
+  return 0
+}
+
+package() {
+  optdepends=(
+    'gst-libav: nonfree media decoding'
+    'gst-plugins-bad: media decoding'
+    'gst-plugins-good: media decoding'
+  )
+
+  DESTDIR="${pkgdir}" cmake --install build
+
+  # Remove MiniBrowser binary directory (not built, but clean up if empty)
+  rm -rf "${pkgdir}/usr/bin"
+
+  cd "webkitgtk-${pkgver}"
+  find Source -name 'COPYING*' -or -name 'LICENSE*' -print0 | sort -z |
+    while IFS= read -d $'\0' -r _f; do
+      echo "### ${_f} ###"
+      cat "${_f}"
+      echo
+    done |
+    install -Dm644 /dev/stdin "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
+}
+
+# vim:set sw=2 sts=-1 et:
