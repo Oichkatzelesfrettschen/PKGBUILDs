@@ -213,16 +213,43 @@ create_webview(void)
         NULL
     );
 
-    /* Use WebKit's default UA (Safari-like). Faking Firefox/Chrome UAs
-     * causes Cloudflare to detect the UA/JS environment mismatch and
-     * block us harder. The TLS fingerprint fix in webkitgtk-gororoba
-     * is the proper solution. */
+    /* WebKit2GTK's default navigator properties say "Apple Computer, Inc."
+     * vendor with "Linux x86_64" platform and a Safari UA. Safari doesn't
+     * exist on Linux, so Cloudflare Turnstile flags this as a fake browser.
+     *
+     * Inject a script at document-start that overrides navigator properties
+     * to be consistent: if we claim Safari UA, the vendor and platform must
+     * match. Since we can't change the UA easily (TLS fingerprint mismatch),
+     * we override vendor to be generic and keep the rest consistent. */
+    WebKitUserContentManager *ucm = webkit_user_content_manager_new();
+    WebKitUserScript *nav_fix = webkit_user_script_new(
+        "Object.defineProperty(navigator, 'vendor', {"
+        "  get: () => ''"
+        "});"
+        "Object.defineProperty(navigator, 'platform', {"
+        "  get: () => 'Linux x86_64'"
+        "});"
+        /* Ensure Turnstile doesn't see automation signals */
+        "Object.defineProperty(navigator, 'webdriver', {"
+        "  get: () => false"
+        "});"
+        /* Match reported hardware to actual system */
+        "Object.defineProperty(navigator, 'hardwareConcurrency', {"
+        "  get: () => 12"
+        "});",
+        WEBKIT_USER_CONTENT_INJECT_ALL_FRAMES,
+        WEBKIT_USER_SCRIPT_INJECT_AT_DOCUMENT_START,
+        NULL, NULL);
+    webkit_user_content_manager_add_script(ucm, nav_fix);
+    webkit_user_script_unref(nav_fix);
 
     WebKitWebView *wv = WEBKIT_WEB_VIEW(
         g_object_new(WEBKIT_TYPE_WEB_VIEW,
             "web-context", web_context,
             "settings", settings,
+            "user-content-manager", ucm,
             NULL));
+    g_object_unref(ucm);
 
     g_signal_connect(wv, "run-file-chooser",
                      G_CALLBACK(on_run_file_chooser), NULL);
