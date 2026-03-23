@@ -312,6 +312,14 @@ main(int argc, char *argv[])
 {
     gtk_init(&argc, &argv);
 
+    /* TLS fingerprint: GnuTLS default cipher order (AES-256 first) differs
+     * from Firefox (AES-128 first). Cloudflare's JA3 fingerprinting detects
+     * this and blocks non-browser clients. Override GnuTLS system priority
+     * to match Firefox 128's cipher suite order. */
+    if (!getenv("GNUTLS_SYSTEM_PRIORITY_FILE"))
+        setenv("GNUTLS_SYSTEM_PRIORITY_FILE",
+               "/usr/share/chatgpt-webview/gnutls-priority.conf", 0);
+
     /* WebKit's GPU process uses DMA-BUF for zero-copy buffer sharing.
      * On NVIDIA X11, DMA-BUF requires the nvidia-drm kernel module with
      * modeset enabled, and even then the DRM render node may not support

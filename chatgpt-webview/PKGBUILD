@@ -1,15 +1,15 @@
 # Maintainer: eirikr <151315375+Oichkatzelesfrettschen@users.noreply.github.com>
 # Why: Firefox leaks gigabytes of RAM on long ChatGPT sessions. This is a
-#      minimal, auditable, multi-tab WebKitGTK wrapper (~200 lines of C) that
+#      minimal, auditable, multi-tab WebKitGTK wrapper (~250 lines of C) that
 #      runs ChatGPT in a dedicated process with persistent cookies, per-tab
-#      process isolation, and no browser bloat. Pairs with webkit2gtk-4.1-hardened
-#      for a stripped attack surface. Keyboard shortcuts: Ctrl+T new tab,
-#      Ctrl+W close tab, Ctrl+L reload, Ctrl+Tab/Ctrl+Shift+Tab cycle,
-#      Ctrl+Q quit.
+#      process isolation, memory pressure management, and TLS fingerprint
+#      normalization for Cloudflare compatibility. Pairs with
+#      webkit2gtk-4.1-hardened for a stripped attack surface.
+#      Shortcuts: Ctrl+T/W/L/Tab/Q.
 
 pkgname=chatgpt-webview
 pkgver=0.1.0
-pkgrel=1
+pkgrel=2
 pkgdesc="Minimal multi-tab WebKitGTK browser for ChatGPT with persistent sessions"
 url="https://github.com/Oichkatzelesfrettschen/pkgbuilds"
 arch=(x86_64)
@@ -19,12 +19,15 @@ depends=(
   gtk3
   glib2
   glibc
+  gnutls
 )
 source=(
   chatgpt-webview.c
   chatgpt-webview.desktop
+  gnutls-priority.conf
 )
 sha256sums=('SKIP'
+            'SKIP'
             'SKIP')
 
 build() {
@@ -44,7 +47,10 @@ package() {
   install -Dm644 "${srcdir}/chatgpt-webview.desktop" \
     "${pkgdir}/usr/share/applications/chatgpt-webview.desktop"
 
-  # MIT license (this project)
+  # GnuTLS priority config: match Firefox 128 cipher order for Cloudflare
+  install -Dm644 "${srcdir}/gnutls-priority.conf" \
+    "${pkgdir}/usr/share/chatgpt-webview/gnutls-priority.conf"
+
   install -d "${pkgdir}/usr/share/licenses/${pkgname}"
   cat > "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE" << 'LICEOF'
 MIT License
