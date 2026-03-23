@@ -183,7 +183,7 @@ create_webview(void)
 
         /* Rendering: GPU-accelerated for smooth streaming responses */
         "hardware-acceleration-policy",
-            WEBKIT_HARDWARE_ACCELERATION_POLICY_ALWAYS,
+            WEBKIT_HARDWARE_ACCELERATION_POLICY_ON_DEMAND,
         "enable-webgl", TRUE,
         "enable-2d-canvas-acceleration", TRUE,
         "enable-smooth-scrolling", TRUE,
@@ -208,7 +208,7 @@ create_webview(void)
         "enable-spatial-navigation", FALSE,
         "enable-frame-flattening", FALSE,
         "enable-site-specific-quirks", FALSE,
-        "enable-write-console-messages-to-stdout", FALSE,
+        "enable-write-console-messages-to-stdout", TRUE,
 
         NULL
     );
@@ -306,6 +306,15 @@ int
 main(int argc, char *argv[])
 {
     gtk_init(&argc, &argv);
+
+    /* WebKit's GPU process needs EGL. On X11 with NVIDIA, the default EGL
+     * platform detection can fail ("No provider of eglGetCurrentContext").
+     * Force the X11 EGL platform explicitly. On Wayland this is a no-op
+     * because WebKit detects it correctly. If compositing still fails,
+     * the user can set WEBKIT_DISABLE_COMPOSITING_MODE=1 as a fallback,
+     * but that breaks input event hit-testing. */
+    if (!getenv("WEBKIT_DISABLE_DMABUF_RENDERER"))
+        setenv("WEBKIT_DISABLE_DMABUF_RENDERER", "1", 0);
 
     /* Persistent data in XDG data dir */
     char *data_dir = g_build_filename(
