@@ -213,12 +213,10 @@ create_webview(void)
         NULL
     );
 
-    /* Use a Firefox UA to avoid Cloudflare/OpenAI bot detection.
-     * WebKit's default UA ("Safari/605.1.15") triggers "unusual activity"
-     * blocks because the TLS/JS fingerprint doesn't match real Safari. */
-    webkit_settings_set_user_agent(settings,
-        "Mozilla/5.0 (X11; Linux x86_64; rv:128.0) "
-        "Gecko/20100101 Firefox/128.0");
+    /* Use WebKit's default UA (Safari-like). Faking Firefox/Chrome UAs
+     * causes Cloudflare to detect the UA/JS environment mismatch and
+     * block us harder. The TLS fingerprint fix in webkitgtk-gororoba
+     * is the proper solution. */
 
     WebKitWebView *wv = WEBKIT_WEB_VIEW(
         g_object_new(WEBKIT_TYPE_WEB_VIEW,
