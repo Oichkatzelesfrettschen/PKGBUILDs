@@ -313,12 +313,28 @@ main(int argc, char *argv[])
     gtk_init(&argc, &argv);
 
     /* TLS fingerprint: GnuTLS default cipher order (AES-256 first) differs
-     * from Firefox (AES-128 first). Cloudflare's JA3 fingerprinting detects
-     * this and blocks non-browser clients. Override GnuTLS system priority
-     * to match Firefox 128's cipher suite order. */
-    if (!getenv("GNUTLS_SYSTEM_PRIORITY_FILE"))
-        setenv("GNUTLS_SYSTEM_PRIORITY_FILE",
-               "/usr/share/chatgpt-webview/gnutls-priority.conf", 0);
+     * from Firefox (AES-128 first). Cloudflare's JA3/JA4 fingerprinting
+     * detects this and blocks non-browser clients.
+     *
+     * G_TLS_GNUTLS_PRIORITY is read by glib-networking's GnuTLS backend
+     * (gtlsclientconnection-gnutls.c) and overrides the default priority
+     * for all TLS connections. WebKit used to set this itself but stopped
+     * (WebKit Bug 158785). We restore it with Firefox 128's cipher order.
+     *
+     * Known limitation: GnuTLS orders ciphers KX-first (all ECDHE-ECDSA
+     * then all ECDHE-RSA) while Firefox interleaves them. JA4 sorts
+     * cipher suites before hashing, so this should not affect JA4. */
+    if (!getenv("G_TLS_GNUTLS_PRIORITY"))
+        setenv("G_TLS_GNUTLS_PRIORITY",
+               "NONE:+VERS-TLS1.3:+VERS-TLS1.2"
+               ":+AES-128-GCM:+CHACHA20-POLY1305:+AES-256-GCM"
+               ":+AES-256-CBC:+AES-128-CBC"
+               ":+AEAD:+SHA256:+SHA384:+SHA1"
+               ":+ECDHE-ECDSA:+ECDHE-RSA:+RSA"
+               ":+SIGN-ALL"
+               ":+GROUP-X25519:+GROUP-SECP256R1:+GROUP-SECP384R1"
+               ":+GROUP-SECP521R1"
+               ":+COMP-NULL:+CTYPE-X509", 0);
 
     /* WebKit's GPU process uses DMA-BUF for zero-copy buffer sharing.
      * On NVIDIA X11, DMA-BUF requires the nvidia-drm kernel module with
