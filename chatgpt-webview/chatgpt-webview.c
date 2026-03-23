@@ -208,10 +208,17 @@ create_webview(void)
         "enable-spatial-navigation", FALSE,
         "enable-frame-flattening", FALSE,
         "enable-site-specific-quirks", FALSE,
-        "enable-write-console-messages-to-stdout", TRUE,
+        "enable-write-console-messages-to-stdout", FALSE,
 
         NULL
     );
+
+    /* Use a Firefox UA to avoid Cloudflare/OpenAI bot detection.
+     * WebKit's default UA ("Safari/605.1.15") triggers "unusual activity"
+     * blocks because the TLS/JS fingerprint doesn't match real Safari. */
+    webkit_settings_set_user_agent(settings,
+        "Mozilla/5.0 (X11; Linux x86_64; rv:128.0) "
+        "Gecko/20100101 Firefox/128.0");
 
     WebKitWebView *wv = WEBKIT_WEB_VIEW(
         g_object_new(WEBKIT_TYPE_WEB_VIEW,
@@ -307,14 +314,17 @@ main(int argc, char *argv[])
 {
     gtk_init(&argc, &argv);
 
-    /* WebKit's GPU process needs EGL. On X11 with NVIDIA, the default EGL
-     * platform detection can fail ("No provider of eglGetCurrentContext").
-     * Force the X11 EGL platform explicitly. On Wayland this is a no-op
-     * because WebKit detects it correctly. If compositing still fails,
-     * the user can set WEBKIT_DISABLE_COMPOSITING_MODE=1 as a fallback,
-     * but that breaks input event hit-testing. */
-    if (!getenv("WEBKIT_DISABLE_DMABUF_RENDERER"))
-        setenv("WEBKIT_DISABLE_DMABUF_RENDERER", "1", 0);
+    /* WebKit's GPU process uses DMA-BUF for zero-copy buffer sharing.
+     * On NVIDIA X11, DMA-BUF requires the nvidia-drm kernel module with
+     * modeset enabled, and even then the DRM render node may not support
+     * the formats WebKit expects. Disable DMA-BUF renderer on X11 to
+     * fall back to SHM-based compositing which is universally supported.
+     * On Wayland, DMA-BUF works correctly with NVIDIA 545+. */
+    {
+        const char *wayland = getenv("WAYLAND_DISPLAY");
+        if (!wayland && !getenv("WEBKIT_DISABLE_DMABUF_RENDERER"))
+            setenv("WEBKIT_DISABLE_DMABUF_RENDERER", "1", 0);
+    }
 
     /* Persistent data in XDG data dir */
     char *data_dir = g_build_filename(
