@@ -1,0 +1,32 @@
+# Maintainer: eirikr <151315375+Oichkatzelesfrettschen@users.noreply.github.com>
+
+pkgname=synthesis-menta-suite
+pkgver=2.2.0
+pkgrel=1
+pkgdesc="Meta package for the full SynthesisMenta theme stack"
+arch=('any')
+url="https://github.com/Oichkatzelesfrettschen/Synthesis-Dark-Theme"
+license=('GPL-3.0-or-later')
+depends=(
+  'synthesis-menta-gtk-theme'
+  'synthesis-menta-gnome-shell-theme'
+  'synthesis-menta-cinnamon-theme'
+  'synthesis-menta-xfwm4-theme'
+  'synthesis-menta-unity-theme'
+  'synthesis-menta-marco-theme'
+  'synthesis-menta-icons'
+  'synthesis-menta-cursors'
+  'synthesis-menta-wallpapers'
+  'synthesis-menta-tilix'
+  'synthesis-menta-pluma'
+  'synthesis-menta-mate-terminal'
+  'synthesis-menta-kde-colors'
+  'synthesis-menta-kde-aurorae'
+  'synthesis-menta-kde-plasma'
+  'synthesis-menta-kde-sddm'
+  'synthesis-menta-kvantum'
+)
+
+package() {
+  install -dm755 "${pkgdir}/usr/share/licenses/${pkgname}"
+}

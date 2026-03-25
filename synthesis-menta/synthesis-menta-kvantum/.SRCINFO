@@ -1,0 +1,13 @@
+pkgbase = synthesis-menta-kvantum
+	pkgdesc = SynthesisMenta Kvantum themes for Kvantum-backed Qt applications
+	pkgver = 2.2.0
+	pkgrel = 1
+	url = https://github.com/Oichkatzelesfrettschen/Synthesis-Dark-Theme
+	arch = any
+	license = GPL-3.0-or-later
+	makedepends = git
+	depends = kvantum
+	source = Synthesis-Dark-Theme::git+https://github.com/Oichkatzelesfrettschen/Synthesis-Dark-Theme.git#commit=a0b5e966
+	sha256sums = SKIP
+
+pkgname = synthesis-menta-kvantum

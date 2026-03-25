@@ -1,0 +1,25 @@
+# Maintainer: eirikr <151315375+Oichkatzelesfrettschen@users.noreply.github.com>
+
+pkgname=synthesis-menta-marco-theme
+pkgver=2.2.0
+pkgrel=1
+pkgdesc="SynthesisMenta Marco/Metacity window decorations"
+arch=('any')
+url="https://github.com/Oichkatzelesfrettschen/Synthesis-Dark-Theme"
+license=('GPL-3.0-or-later')
+depends=('marco' 'synthesis-menta-gtk-theme')
+makedepends=('git' 'python-pillow')
+_theme_commit=a0b5e966
+source=("Synthesis-Dark-Theme::git+${url}.git#commit=${_theme_commit}")
+sha256sums=('SKIP')
+
+build() {
+  cd "${srcdir}/Synthesis-Dark-Theme"
+  make clean
+  make marco
+}
+
+package() {
+  cd "${srcdir}/Synthesis-Dark-Theme"
+  make DESTDIR="${pkgdir}" PREFIX=/usr install-marco-theme
+}

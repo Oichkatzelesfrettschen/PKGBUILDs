@@ -1,0 +1,24 @@
+# Maintainer: eirikr <151315375+Oichkatzelesfrettschen@users.noreply.github.com>
+
+pkgname=synthesis-menta-cursors
+pkgver=2.2.0
+pkgrel=1
+pkgdesc="SynthesisMenta cursor theme"
+arch=('any')
+url="https://github.com/Oichkatzelesfrettschen/Synthesis-Dark-Theme"
+license=('GPL-3.0-or-later')
+makedepends=('git' 'inkscape' 'xcursorgen')
+_theme_commit=a0b5e966
+source=("Synthesis-Dark-Theme::git+${url}.git#commit=${_theme_commit}")
+sha256sums=('SKIP')
+
+build() {
+  cd "${srcdir}/Synthesis-Dark-Theme"
+  make clean
+  make cursors
+}
+
+package() {
+  cd "${srcdir}/Synthesis-Dark-Theme"
+  make DESTDIR="${pkgdir}" PREFIX=/usr install-cursors
+}

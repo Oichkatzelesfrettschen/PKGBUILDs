@@ -1,0 +1,26 @@
+pkgbase = synthesis-menta-suite
+	pkgdesc = Meta package for the full SynthesisMenta theme stack
+	pkgver = 2.2.0
+	pkgrel = 1
+	url = https://github.com/Oichkatzelesfrettschen/Synthesis-Dark-Theme
+	arch = any
+	license = GPL-3.0-or-later
+	depends = synthesis-menta-gtk-theme
+	depends = synthesis-menta-gnome-shell-theme
+	depends = synthesis-menta-cinnamon-theme
+	depends = synthesis-menta-xfwm4-theme
+	depends = synthesis-menta-unity-theme
+	depends = synthesis-menta-marco-theme
+	depends = synthesis-menta-icons
+	depends = synthesis-menta-cursors
+	depends = synthesis-menta-wallpapers
+	depends = synthesis-menta-tilix
+	depends = synthesis-menta-pluma
+	depends = synthesis-menta-mate-terminal
+	depends = synthesis-menta-kde-colors
+	depends = synthesis-menta-kde-aurorae
+	depends = synthesis-menta-kde-plasma
+	depends = synthesis-menta-kde-sddm
+	depends = synthesis-menta-kvantum
+
+pkgname = synthesis-menta-suite

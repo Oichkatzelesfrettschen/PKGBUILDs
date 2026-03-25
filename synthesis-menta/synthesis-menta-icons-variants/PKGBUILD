@@ -1,0 +1,36 @@
+# Maintainer: eirikr <151315375+Oichkatzelesfrettschen@users.noreply.github.com>
+
+pkgname=synthesis-menta-icons-variants
+pkgver=2.2.0
+pkgrel=1
+pkgdesc="SynthesisMenta generated icon theme variants"
+arch=('any')
+url="https://github.com/Oichkatzelesfrettschen/Synthesis-Dark-Theme"
+license=('GPL-3.0-or-later')
+depends=('hicolor-icon-theme' 'synthesis-menta-icons')
+makedepends=('git' 'python-pillow')
+_theme_commit=a0b5e966
+_tela_commit=bdb616e4cb0cf61fc6bd52a42af9c07261015b21
+source=(
+  "Synthesis-Dark-Theme::git+${url}.git#commit=${_theme_commit}"
+  "tela-circle::git+https://github.com/vinceliuice/Tela-circle-icon-theme.git#commit=${_tela_commit}"
+)
+sha256sums=('SKIP' 'SKIP')
+
+prepare() {
+  cd "${srcdir}/Synthesis-Dark-Theme"
+  rm -rf upstream/tela-circle
+  ln -s "${srcdir}/tela-circle" upstream/tela-circle
+}
+
+build() {
+  cd "${srcdir}/Synthesis-Dark-Theme"
+  make clean
+  make icons
+  make icon-variants
+}
+
+package() {
+  cd "${srcdir}/Synthesis-Dark-Theme"
+  make DESTDIR="${pkgdir}" PREFIX=/usr install-icon-variants
+}

@@ -1,0 +1,19 @@
+# Maintainer: eirikr <151315375+Oichkatzelesfrettschen@users.noreply.github.com>
+
+pkgname=synthesis-menta-pluma
+pkgver=2.2.0
+pkgrel=1
+pkgdesc="SynthesisMenta Pluma and gtksourceview styles"
+arch=('any')
+url="https://github.com/Oichkatzelesfrettschen/Synthesis-Dark-Theme"
+license=('GPL-3.0-or-later')
+depends=('pluma')
+makedepends=('git')
+_theme_commit=a0b5e966
+source=("Synthesis-Dark-Theme::git+${url}.git#commit=${_theme_commit}")
+sha256sums=('SKIP')
+
+package() {
+  cd "${srcdir}/Synthesis-Dark-Theme"
+  make DESTDIR="${pkgdir}" PREFIX=/usr install-pluma
+}

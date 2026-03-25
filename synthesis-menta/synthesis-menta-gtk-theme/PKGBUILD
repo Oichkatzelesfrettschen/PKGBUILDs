@@ -1,0 +1,26 @@
+# Maintainer: eirikr <151315375+Oichkatzelesfrettschen@users.noreply.github.com>
+
+pkgname=synthesis-menta-gtk-theme
+pkgver=2.2.0
+pkgrel=1
+pkgdesc="SynthesisMenta GTK2/3/4 shared theme files and assets"
+arch=('any')
+url="https://github.com/Oichkatzelesfrettschen/Synthesis-Dark-Theme"
+license=('GPL-3.0-or-later')
+depends=('gtk3' 'gtk4' 'gtk-engine-murrine')
+optdepends=('libadwaita' 'gnome-themes-extra')
+makedepends=('git' 'inkscape' 'optipng' 'python-pillow' 'sassc')
+_theme_commit=a0b5e966
+source=("Synthesis-Dark-Theme::git+${url}.git#commit=${_theme_commit}")
+sha256sums=('SKIP')
+
+build() {
+  cd "${srcdir}/Synthesis-Dark-Theme"
+  make clean
+  make build
+}
+
+package() {
+  cd "${srcdir}/Synthesis-Dark-Theme"
+  make DESTDIR="${pkgdir}" PREFIX=/usr install-gtk-theme
+}

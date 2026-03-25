@@ -1,0 +1,21 @@
+pkgbase = synthesis-menta-gtk-theme
+	pkgdesc = SynthesisMenta GTK2/3/4 shared theme files and assets
+	pkgver = 2.2.0
+	pkgrel = 1
+	url = https://github.com/Oichkatzelesfrettschen/Synthesis-Dark-Theme
+	arch = any
+	license = GPL-3.0-or-later
+	makedepends = git
+	makedepends = inkscape
+	makedepends = optipng
+	makedepends = python-pillow
+	makedepends = sassc
+	depends = gtk3
+	depends = gtk4
+	depends = gtk-engine-murrine
+	optdepends = libadwaita
+	optdepends = gnome-themes-extra
+	source = Synthesis-Dark-Theme::git+https://github.com/Oichkatzelesfrettschen/Synthesis-Dark-Theme.git#commit=a0b5e966
+	sha256sums = SKIP
+
+pkgname = synthesis-menta-gtk-theme
