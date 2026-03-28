@@ -1,0 +1,69 @@
+# Maintainer: Oichkatzelesfrettschen <151315375+Oichkatzelesfrettschen@users.noreply.github.com>
+# BOUT++: Plasma edge turbulence simulation framework
+# Used for ELM simulation, tokamak edge physics, disruption studies
+
+pkgname=bout-next
+pkgver=5.1.1
+pkgrel=1
+pkgdesc="BOUT++ plasma fluid simulation framework for tokamak edge turbulence"
+arch=('x86_64')
+url="https://boutproject.github.io/"
+license=('LGPL-3.0-or-later')
+depends=(
+    'openmpi'
+    'fftw'
+    'hdf5-openmpi'
+    'netcdf-openmpi'
+    'sundials'
+    'petsc'
+    'lapack'
+)
+makedepends=(
+    'cmake'
+    'gcc-fortran'
+    'python'
+    'python-numpy'
+)
+optdepends=(
+    'python-boutdata: Python analysis tools for BOUT++ output'
+    'python-xbout: xarray-based BOUT++ data loading'
+    'paraview: 3D visualization of simulation output'
+)
+source=("https://github.com/boutproject/BOUT-dev/archive/refs/tags/v${pkgver}.tar.gz")
+sha256sums=('SKIP')
+
+build() {
+    cd "${srcdir}/BOUT-dev-${pkgver}"
+
+    cmake -B build \
+        -DCMAKE_INSTALL_PREFIX=/opt/bout++ \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DBOUT_ENABLE_METRIC_3D=ON \
+        -DBOUT_USE_PETSC=ON \
+        -DBOUT_USE_SUNDIALS=ON \
+        -DBOUT_USE_FFTW=ON \
+        -DBOUT_USE_NETCDF=ON \
+        -DBOUT_ENABLE_CUDA=OFF \
+        -DBOUT_ENABLE_OPENMP=ON
+
+    cmake --build build -j6
+}
+
+check() {
+    cd "${srcdir}/BOUT-dev-${pkgver}"
+    cmake --build build --target check-unit-tests || true
+}
+
+package() {
+    cd "${srcdir}/BOUT-dev-${pkgver}"
+    DESTDIR="${pkgdir}" cmake --install build
+
+    # Environment setup
+    install -Dm644 /dev/stdin "${pkgdir}/etc/profile.d/bout++.sh" << 'ENVEOF'
+export BOUT_TOP=/opt/bout++
+export PATH="${BOUT_TOP}/bin:${PATH}"
+export LD_LIBRARY_PATH="${BOUT_TOP}/lib:${LD_LIBRARY_PATH}"
+ENVEOF
+
+    install -Dm644 LICENSE "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
+}

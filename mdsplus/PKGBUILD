@@ -1,0 +1,50 @@
+# Maintainer: Oichkatzelesfrettschen <151315375+Oichkatzelesfrettschen@users.noreply.github.com>
+# MDSplus: Data access framework for fusion energy research
+# Used by DIII-D, NSTX-U, Alcator C-Mod, ITER
+
+pkgname=mdsplus
+pkgver=7.139.2
+pkgrel=1
+pkgdesc="Data system for fusion energy research (DIII-D, ITER compatible)"
+arch=('x86_64')
+url="https://www.mdsplus.org/"
+license=('MIT')
+depends=('libxml2' 'readline' 'libxmu' 'motif')
+makedepends=('cmake' 'gcc' 'make' 'java-environment>=11')
+optdepends=(
+    'python: Python MDSplus bindings'
+    'java-runtime>=11: Java MDSplus bindings'
+    'openmpi: Parallel MDSplus operations'
+)
+source=("https://github.com/MDSplus/mdsplus/archive/refs/tags/${pkgname}_${pkgver//./_}.tar.gz")
+sha256sums=('SKIP')
+
+build() {
+    cd "${srcdir}/mdsplus-${pkgname}_${pkgver//./_}"
+
+    # Bootstrap build system
+    ./bootstrap
+
+    # Configure with standard prefix
+    ./configure \
+        --prefix=/opt/mdsplus \
+        --enable-java=no \
+        --enable-idl=no
+
+    make -j6
+}
+
+package() {
+    cd "${srcdir}/mdsplus-${pkgname}_${pkgver//./_}"
+    make DESTDIR="${pkgdir}" install
+
+    # Install environment setup script
+    install -Dm644 /dev/stdin "${pkgdir}/etc/profile.d/mdsplus.sh" << 'ENVEOF'
+export MDSPLUS_DIR=/opt/mdsplus
+export PATH="${MDSPLUS_DIR}/bin:${PATH}"
+export LD_LIBRARY_PATH="${MDSPLUS_DIR}/lib:${LD_LIBRARY_PATH}"
+ENVEOF
+
+    # Install license
+    install -Dm644 LICENSE "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
+}
