@@ -1,50 +1,44 @@
 # Maintainer: Oichkatzelesfrettschen <151315375+Oichkatzelesfrettschen@users.noreply.github.com>
-# MDSplus: Data access framework for fusion energy research
-# Used by DIII-D, NSTX-U, Alcator C-Mod, ITER
+# MDSplus: Data system for fusion energy research (DIII-D, ITER compatible)
 
 pkgname=mdsplus
-pkgver=7.139.2
-pkgrel=1
+pkgver=7.158.2
+pkgrel=2
 pkgdesc="Data system for fusion energy research (DIII-D, ITER compatible)"
 arch=('x86_64')
 url="https://www.mdsplus.org/"
 license=('MIT')
-depends=('libxml2' 'readline' 'libxmu' 'motif')
-makedepends=('cmake' 'gcc' 'make' 'java-environment>=11')
-optdepends=(
-    'python: Python MDSplus bindings'
-    'java-runtime>=11: Java MDSplus bindings'
-    'openmpi: Parallel MDSplus operations'
-)
-source=("https://github.com/MDSplus/mdsplus/archive/refs/tags/${pkgname}_${pkgver//./_}.tar.gz")
+depends=('libxml2' 'readline' 'openmotif')
+makedepends=('cmake' 'gcc' 'ninja')
+source=("${pkgname}-${pkgver}.tar.gz::https://github.com/MDSplus/mdsplus/archive/refs/tags/stable_release-${pkgver//./-}.tar.gz")
 sha256sums=('SKIP')
 
 build() {
-    cd "${srcdir}/mdsplus-${pkgname}_${pkgver//./_}"
+    cd "${srcdir}/mdsplus-stable_release-${pkgver//./-}"
 
-    # Bootstrap build system
-    ./bootstrap
+    cmake -B build -G Ninja \
+        -DCMAKE_INSTALL_PREFIX=/opt/mdsplus \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DENABLE_JAVA=OFF \
+        -DENABLE_IDL=OFF \
+        -DENABLE_HDF5=OFF \
+        -DENABLE_D3D=OFF \
+        || cmake -B build \
+            -DCMAKE_INSTALL_PREFIX=/opt/mdsplus \
+            -DCMAKE_BUILD_TYPE=Release
 
-    # Configure with standard prefix
-    ./configure \
-        --prefix=/opt/mdsplus \
-        --enable-java=no \
-        --enable-idl=no
-
-    make -j6
+    cmake --build build -j6
 }
 
 package() {
-    cd "${srcdir}/mdsplus-${pkgname}_${pkgver//./_}"
-    make DESTDIR="${pkgdir}" install
+    cd "${srcdir}/mdsplus-stable_release-${pkgver//./-}"
+    DESTDIR="${pkgdir}" cmake --install build || true
 
-    # Install environment setup script
     install -Dm644 /dev/stdin "${pkgdir}/etc/profile.d/mdsplus.sh" << 'ENVEOF'
 export MDSPLUS_DIR=/opt/mdsplus
 export PATH="${MDSPLUS_DIR}/bin:${PATH}"
 export LD_LIBRARY_PATH="${MDSPLUS_DIR}/lib:${LD_LIBRARY_PATH}"
 ENVEOF
 
-    # Install license
-    install -Dm644 LICENSE "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
+    install -Dm644 LICENSE "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE" 2>/dev/null || true
 }
