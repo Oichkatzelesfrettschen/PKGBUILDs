@@ -1,3 +1,5 @@
+# To auto-download: python download_uprof.py --version 5.2.606
+# Or: python download_uprof.py --check-artifacts (finds previous downloads)
 # Maintainer: Oichkatzelesfrettschen
 # AMD uProf 5.2.606 - Performance analysis tool
 # Downloaded from https://www.amd.com/en/developer/uprof.html (EULA required)
