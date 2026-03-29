@@ -1,26 +1,20 @@
 # Maintainer: Oichkatzelesfrettschen
-# AMD uProf - Performance analysis tool
-# REQUIRES MANUAL DOWNLOAD: AMD gates this behind EULA acceptance.
-# 1. Visit https://www.amd.com/en/developer/uprof.html
-# 2. Accept EULA and download AMDuProf_Linux_x64_${pkgver}.tar.bz2
-# 3. Place the tarball in this directory
-# 4. Run: makepkg -si
+# AMD uProf 5.2.606 - Performance analysis tool
+# Downloaded from https://www.amd.com/en/developer/uprof.html (EULA required)
 
 pkgname=amduprof
-pkgver=5.0.1479
-pkgrel=2
+pkgver=5.2.606
+pkgrel=1
 pkgdesc="AMD uProf performance analysis tool for CPU and GPU profiling"
 arch=('x86_64')
 url="https://www.amd.com/en/developer/uprof.html"
 license=('custom:AMD')
-depends=('glib2' 'freetype2' 'fontconfig' 'numactl' 'dbus' 'ncurses5-compat-libs'
+depends=('glib2' 'freetype2' 'fontconfig' 'numactl' 'dbus'
          'libglvnd' 'libxkbcommon' 'libarchive' 'elfutils')
-optdepends=('dkms: kernel module support'
-            'env-modules: module file support')
+optdepends=('dkms: kernel module support')
 options=('staticlibs' '!strip')
 source=("local://AMDuProf_Linux_x64_${pkgver}.tar.bz2")
-sha256sums=('065d24d9b84d2ef94ae8a360bf55c74a0f3fe9250b01cc7fb2642495028130d5')
-# SHA256 from Nix package: Gab-Menezes/nix-amd-uprof
+sha256sums=('SKIP')
 
 _prefix=/opt/${pkgname}
 
@@ -28,17 +22,17 @@ package() {
     install -d "${pkgdir}${_prefix}"
     cp -dr "${srcdir}/AMDuProf_Linux_x64_${pkgver}/"* "${pkgdir}${_prefix}/"
 
-    # Symlink binaries to /usr/bin
+    # Symlink key binaries to /usr/bin
     install -d "${pkgdir}/usr/bin"
-    for bin in AMDuProf AMDuProfCLI AMDuProfPcm AMDPowerProfiler; do
+    for bin in AMDuProf AMDuProfCLI AMDuProfSys AMDPowerProfilerDriver.sh; do
         if [ -f "${pkgdir}${_prefix}/bin/${bin}" ]; then
-            ln -s "${_prefix}/bin/${bin}" "${pkgdir}/usr/bin/${bin,,}"
+            ln -s "${_prefix}/bin/${bin}" "${pkgdir}/usr/bin/$(echo ${bin} | tr '[:upper:]' '[:lower:]' | sed 's/\.sh$//')"
         fi
     done
 
     # License
     install -d "${pkgdir}/usr/share/licenses/${pkgname}"
-    if [ -f "${pkgdir}${_prefix}/LICENSE" ]; then
-        ln -s "${_prefix}/LICENSE" "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
-    fi
+    find "${pkgdir}${_prefix}" -iname "*license*" -o -iname "*eula*" | head -1 | while read f; do
+        ln -s "${f#${pkgdir}}" "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
+    done
 }
