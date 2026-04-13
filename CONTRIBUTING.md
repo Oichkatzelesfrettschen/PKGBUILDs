@@ -7,9 +7,19 @@
 
 2. Write the `PKGBUILD` following these standards:
 
-   - **Maintainer**: `# Maintainer: eirikr <eirikr@localhost>` for new packages.
-     For packages sourced from AUR, keep the original maintainer and add
-     `# Contributor: eirikr <eirikr@localhost>`.
+   - **Maintainer**: Use the GitHub noreply address for any package published
+     or intended for AUR:
+     ```
+     # Maintainer: eirikr <151315375+Oichkatzelesfrettschen@users.noreply.github.com>
+     ```
+     Use `eirikr <eirikr@localhost>` only for `local/` packages that will never
+     leave this monorepo (it never appears in a public AUR entry).
+     For packages sourced from AUR with a different upstream maintainer, keep
+     their line and add:
+     ```
+     # Contributor: eirikr <151315375+Oichkatzelesfrettschen@users.noreply.github.com>
+     ```
+     Never use a personal email address (e.g. `@gmail.com`) in any PKGBUILD.
    - **License**: Use SPDX identifiers (Arch RFC 0016). See `docs/decisions/002`.
    - **Checksums**: sha256sums for all non-VCS sources; SKIP only for VCS and
      `.sig` files. Run `updpkgsums` before committing. See `docs/decisions/002`.
@@ -75,10 +85,18 @@ Python PKGBUILD with modern build system, check(), and proper makedepends.
 
 ## Submitting to AUR
 
-Use the automation script:
-```sh
-sh scripts/submit-to-aur.sh <package-dir> --dry-run  # preview
-sh scripts/submit-to-aur.sh <package-dir>             # submit
-```
+**Automated (preferred):** Push a commit to `main`; GitHub Actions
+(`deploy-aur.yml`) deploys any listed package whose `PKGBUILD` or `.SRCINFO`
+changed.
 
-This requires an SSH key registered at https://aur.archlinux.org/account/
+**Manual:** Use `scripts/aur-push` for a one-shot push:
+```sh
+scripts/aur-push <pkgname>
+```
+This clones the AUR repo to `/tmp/aur-<pkgname>`, copies all package files,
+regenerates `.SRCINFO`, commits, and pushes.
+
+**Prerequisites:**
+- SSH key registered at https://aur.archlinux.org/account/ (for manual pushes)
+- `AUR_SSH_PRIVATE_KEY` secret set in the GitHub repo (for CI pushes)
+- Package registered on AUR with your account as maintainer before first push

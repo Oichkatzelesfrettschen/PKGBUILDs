@@ -1,3 +1,5 @@
+# Maintainer: eirikr <151315375+Oichkatzelesfrettschen@users.noreply.github.com>
+# Note: GitHub-tracked only; not published to AUR (repackages official Arch archive binaries).
 pkgname=gcc13-sidecar-bin
 pkgver=13.3.0
 pkgrel=1

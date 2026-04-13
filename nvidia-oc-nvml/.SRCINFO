@@ -11,8 +11,8 @@ pkgbase = nvidia-oc-nvml
 	source = nvidia-oc-nvml
 	source = nvidia-oc-nvml.conf
 	source = nvidia-oc-nvml.service
-	sha256sums = SKIP
-	sha256sums = SKIP
-	sha256sums = SKIP
+	sha256sums = bff127fcd7945334fcdbd53136483c0b6cea94b3a1439ece1720963af6fdcb34
+	sha256sums = cc2f47ecae5530736158a7cfe993be0784a2a045680af2b1966952fd150d483f
+	sha256sums = 48a39fc91c2d3805989d04c105da0913416bdea797e72ada0ad98b308d238b07
 
 pkgname = nvidia-oc-nvml

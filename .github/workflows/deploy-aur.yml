@@ -34,8 +34,11 @@ jobs:
         # Only packages we own on AUR. Others in the repo are reference-only.
         package:
           - deepstream-sdk
+          - epsonscan2-bin
+          - greenboost-dkms
           - litert-lm
           - mate-spline-font-defaults
+          - nvidia-oc-nvml
           - nvidia-opticalflow-headers
           - ollama-gemini-shim
           - optix-dev-headers
@@ -112,13 +115,17 @@ jobs:
             git -C "$WORK" remote add origin "$AUR_URL"
           }
 
-          # Copy PKGBUILD and .SRCINFO
-          cp "$PKG/PKGBUILD" "$WORK/PKGBUILD"
-          cp "$PKG/.SRCINFO" "$WORK/.SRCINFO"
-
-          # Copy .install file if present
-          for f in "$PKG"/*.install; do
-            [ -f "$f" ] && cp "$f" "$WORK/"
+          # Copy all package source files: PKGBUILD, .SRCINFO, patches, local
+          # source files (scripts, configs, dkms.conf, .install, etc.).
+          # Excludes build artifact dirs (pkg/, src/) and git metadata.
+          # WHY: packages like greenboost-dkms and nvidia-oc-nvml ship local
+          # source files alongside PKGBUILD; AUR users clone the AUR repo and
+          # need those files present for makepkg to find them.
+          find "$PKG" -maxdepth 1 \( \
+              -name 'pkg' -o -name 'src' -o \
+              -name '.git' -o -name '.git.bak' \
+            \) -prune -o -type f -print | while read -r f; do
+            cp "$f" "$WORK/$(basename "$f")"
           done
 
           # Commit and push if there are changes
