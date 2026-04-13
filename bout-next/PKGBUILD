@@ -1,9 +1,10 @@
 # Maintainer: Oichkatzelesfrettschen <151315375+Oichkatzelesfrettschen@users.noreply.github.com>
 # BOUT++: Plasma edge turbulence simulation framework
 # Used for ELM simulation, tokamak edge physics, disruption studies
+# Requires PETSc installed at /opt/petsc (not pacman-managed)
 
 pkgname=bout-next
-pkgver=5.1.1
+pkgver=5.2.0
 pkgrel=1
 pkgdesc="BOUT++ plasma fluid simulation framework for tokamak edge turbulence"
 arch=('x86_64')
@@ -12,50 +13,64 @@ license=('LGPL-3.0-or-later')
 depends=(
     'openmpi'
     'fftw'
-    'hdf5-openmpi'
-    'netcdf-openmpi'
+    'fftw-openmpi'
+    'hdf5'
+    'netcdf'
+    'netcdf-cxx'
     'sundials'
-    'petsc'
-    'lapack'
+    'blas'
 )
 makedepends=(
     'cmake'
     'gcc-fortran'
     'python'
     'python-numpy'
+    'git'
 )
 optdepends=(
     'python-boutdata: Python analysis tools for BOUT++ output'
     'python-xbout: xarray-based BOUT++ data loading'
     'paraview: 3D visualization of simulation output'
 )
-source=("https://github.com/boutproject/BOUT-dev/archive/refs/tags/v${pkgver}.tar.gz")
+source=("${pkgname}::git+https://github.com/boutproject/BOUT-dev.git#tag=v${pkgver}")
 sha256sums=('SKIP')
 
+prepare() {
+    cd "${srcdir}/${pkgname}"
+    git submodule update --init --recursive
+}
+
 build() {
-    cd "${srcdir}/BOUT-dev-${pkgver}"
+    cd "${srcdir}/${pkgname}"
+
+    export PETSC_DIR=/opt/petsc
+    export PETSC_ARCH=""
 
     cmake -B build \
         -DCMAKE_INSTALL_PREFIX=/opt/bout++ \
         -DCMAKE_BUILD_TYPE=Release \
-        -DBOUT_ENABLE_METRIC_3D=ON \
+        -DCMAKE_CXX_STANDARD=17 \
+        -DPETSC_DIR=/opt/petsc \
+        -DPETSC_ARCH="" \
+        -DBOUT_ENABLE_METRIC_3D=OFF \
         -DBOUT_USE_PETSC=ON \
         -DBOUT_USE_SUNDIALS=ON \
         -DBOUT_USE_FFTW=ON \
         -DBOUT_USE_NETCDF=ON \
         -DBOUT_ENABLE_CUDA=OFF \
-        -DBOUT_ENABLE_OPENMP=ON
+        -DBOUT_ENABLE_OPENMP=ON \
+        -DBOUT_UPDATE_GIT_SUBMODULE=OFF
 
-    cmake --build build -j6
+    cmake --build build -j$(nproc)
 }
 
 check() {
-    cd "${srcdir}/BOUT-dev-${pkgver}"
+    cd "${srcdir}/${pkgname}"
     cmake --build build --target check-unit-tests || true
 }
 
 package() {
-    cd "${srcdir}/BOUT-dev-${pkgver}"
+    cd "${srcdir}/${pkgname}"
     DESTDIR="${pkgdir}" cmake --install build
 
     # Environment setup

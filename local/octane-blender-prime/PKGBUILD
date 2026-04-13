@@ -1,0 +1,31 @@
+_filename=octane_blender_2025.5-30.11.0-stable
+pkgname=octane-blender-prime
+pkgver=2025.5_30.11.0
+pkgrel=1
+pkgdesc="The free tier OctaneRender integrated Blender"
+arch=('x86_64')
+license=('proprietary')
+options=('!strip')
+depends=('octane-server-prime>=2025.5_30.11.0')
+url="https://home.otoy.com/render/octane-render/demo/"
+source=('https://render.otoy.com/plugindownloads/2b/d7/b3/3e/octane_blender_2025.5-30.11.0-stable.run')
+noextract=('octane_blender_2025.5-30.11.0-stable.run')
+sha256sums=('2d3145d7461a543aef2e126416e127f484cc4629b7231bf2ad391a3870c7a7ed')
+
+prepare() {
+  chmod +x "${_filename}.run"
+  ./"${_filename}.run" -e
+}
+
+package() {
+  mkdir -p "${pkgdir}/usr/local" "${pkgdir}/usr/bin"
+  cp -rf ./OctaneForBlender/usr/local/OctaneBlender "${pkgdir}/usr/local/"
+
+  cat > "${pkgdir}/usr/bin/OctaneBlender" <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+unset OCIO
+exec /usr/local/OctaneBlender/blender "$@"
+EOF
+  chmod 755 "${pkgdir}/usr/bin/OctaneBlender"
+}

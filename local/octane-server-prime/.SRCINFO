@@ -1,0 +1,12 @@
+pkgbase = octane-server-prime
+	pkgdesc = The free tier OctaneRender server by OTOY
+	pkgver = 2025.5_30.11.0
+	pkgrel = 1
+	url = https://home.otoy.com/render/octane-render/demo/
+	arch = x86_64
+	license = proprietary
+	noextract = octane_server_prime_2025.5-30.11.0-stable.run
+	source = https://render.otoy.com/plugindownloads/ae/e5/77/a5/octane_server_prime_2025.5-30.11.0-stable.run
+	sha256sums = b4179a738b9febd8f713005de23c97baa2c3488bc210b703dcb6654d4be478fc
+
+pkgname = octane-server-prime

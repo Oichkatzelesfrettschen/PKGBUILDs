@@ -1,0 +1,450 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+
+if [[ -d "/usr/share/cachyos-limine-themes/themes" ]] && [[ "${script_dir}" == "/usr/bin" ]]; then
+  pkg_root="/usr/share/cachyos-limine-themes"
+  theme_dir="${pkg_root}/themes"
+  wallpaper_dir="${pkg_root}/wallpapers"
+  font_dir="/usr/share/spline-cp437-limine-font/fonts"
+else
+  pkg_root="${script_dir}"
+  theme_dir="${pkg_root}"
+  wallpaper_dir="${pkg_root}/wallpapers"
+  font_dir="/usr/share/spline-cp437-limine-font/fonts"
+fi
+
+boot_dir="/boot"
+config_path=""
+theme_name=""
+state_dir_name="cachyos-official"
+state_file_name=".state.env"
+font_file_name="spline-cp437-8x16.bin"
+
+usage() {
+  cat <<'EOF'
+Usage:
+  cachyos-limine-theme list
+  cachyos-limine-theme show <theme>
+  cachyos-limine-theme render <theme>
+  cachyos-limine-theme status [--boot-dir /boot] [--config /boot/limine.conf]
+  cachyos-limine-theme verify [--boot-dir /boot] [--config /boot/limine.conf]
+  cachyos-limine-theme rollback [--boot-dir /boot] [--config /boot/limine.conf]
+
+Themes:
+  galaxy        CachyOS dark blue/teal waves (cachygalaxy99.jpg) [flagship]
+  north         Moonlit ocean with CachyOS logo (north.png)
+  depths        Deep teal gradient with CachyOS logo (Cachy depths 5K.png)
+EOF
+}
+
+theme_file_for() {
+  case "$1" in
+    galaxy)  printf '%s\n' "${theme_dir}/cachy-galaxy.conf" ;;
+    north)   printf '%s\n' "${theme_dir}/cachy-north.conf" ;;
+    depths)  printf '%s\n' "${theme_dir}/cachy-depths.conf" ;;
+    *) printf 'Unknown theme: %s\n' "$1" >&2; return 1 ;;
+  esac
+}
+
+wallpaper_file_for() {
+  case "$1" in
+    galaxy)  printf '%s\n' "${wallpaper_dir}/cachygalaxy99.jpg" ;;
+    north)   printf '%s\n' "${wallpaper_dir}/north.png" ;;
+    depths)  printf '%s\n' "${wallpaper_dir}/cachy-depths.png" ;;
+    *) printf 'Unknown theme: %s\n' "$1" >&2; return 1 ;;
+  esac
+}
+
+wallpaper_boot_name_for() {
+  case "$1" in
+    galaxy)  printf '%s\n' "cachygalaxy99.jpg" ;;
+    north)   printf '%s\n' "north.png" ;;
+    depths)  printf '%s\n' "cachy-depths.png" ;;
+    *) return 1 ;;
+  esac
+}
+
+font_file_for() {
+  local path="${font_dir}/${font_file_name}"
+  [[ -f "${path}" ]] || {
+    printf 'Required package-managed font asset not found: %s\n' "${path}" >&2
+    exit 1
+  }
+  printf '%s\n' "${path}"
+}
+
+require_root() {
+  if [[ ${EUID} -ne 0 ]]; then
+    printf 'This command must run as root to write into the boot partition.\n' >&2
+    exit 1
+  fi
+}
+
+target_dir() {
+  printf '%s\n' "${boot_dir}/limine/themes/${state_dir_name}"
+}
+
+target_config() {
+  printf '%s\n' "${config_path:-${boot_dir}/limine.conf}"
+}
+
+state_file() {
+  printf '%s\n' "$(target_dir)/${state_file_name}"
+}
+
+managed_markers() {
+  printf '# BEGIN CACHYOS-LIMINE-THEME\n# END CACHYOS-LIMINE-THEME\n'
+}
+
+render_managed_block() {
+  local theme_file="$1"
+  printf '# BEGIN CACHYOS-LIMINE-THEME\n'
+  printf '# Managed by cachyos-limine-theme\n'
+  printf '# Theme: %s\n' "${theme_name}"
+  cat "${theme_file}"
+  printf '\n'
+  printf 'term_font: boot():/limine/themes/%s/fonts/%s\n' "${state_dir_name}" "${font_file_name}"
+  printf 'term_font_size: 8x16\n'
+  printf '# END CACHYOS-LIMINE-THEME\n'
+}
+
+strip_managed_block() {
+  local input="$1" output="$2"
+  awk '
+    $0 == "# BEGIN CACHYOS-LIMINE-THEME" { skipping=1; next }
+    $0 == "# END CACHYOS-LIMINE-THEME"   { skipping=0; next }
+    !skipping { print }
+  ' "${input}" > "${output}"
+}
+
+write_state_file() {
+  local backup_path="$1" config_hash_before="$2" original_backup_path=""
+  if [[ -f "$(state_file)" ]]; then
+    # shellcheck disable=SC1090
+    source "$(state_file)"
+    original_backup_path="${ORIGINAL_BACKUP_PATH:-}"
+  fi
+  if [[ -z "${original_backup_path}" ]]; then
+    original_backup_path="${backup_path}"
+  fi
+  cat > "$(state_file)" <<EOF
+THEME_NAME=${theme_name}
+CONFIG_PATH=$(target_config)
+BACKUP_PATH=${backup_path}
+ORIGINAL_BACKUP_PATH=${original_backup_path}
+CONFIG_HASH_BEFORE=${config_hash_before}
+EOF
+}
+
+list_themes() {
+  printf 'galaxy\n'
+  printf 'north\n'
+  printf 'depths\n'
+}
+
+show_theme() {
+  local theme_file
+  theme_file="$(theme_file_for "$1")"
+  cat "${theme_file}"
+}
+
+render_theme() {
+  local theme_file
+  theme_file="$(theme_file_for "$1")"
+  render_managed_block "${theme_file}"
+}
+
+stage_theme() {
+  local theme_file wallpaper_src font_src dst_dir dst_wallpaper dst_font dst_snippet
+  theme_file="$(theme_file_for "${theme_name}")"
+  wallpaper_src="$(wallpaper_file_for "${theme_name}")"
+  font_src="$(font_file_for)"
+
+  [[ -f "${wallpaper_src}" ]] || {
+    printf 'Wallpaper not found: %s\n' "${wallpaper_src}" >&2
+    exit 1
+  }
+
+  dst_dir="$(target_dir)"
+  dst_wallpaper="${dst_dir}/$(wallpaper_boot_name_for "${theme_name}")"
+  dst_font="${dst_dir}/fonts/${font_file_name}"
+  dst_snippet="${dst_dir}/${theme_name}.conf"
+
+  require_root
+  install -d "${dst_dir}/fonts"
+  install -m644 "${wallpaper_src}" "${dst_wallpaper}"
+  install -m644 "${font_src}" "${dst_font}"
+  render_managed_block "${theme_file}" > "${dst_snippet}"
+
+  printf 'Staged theme %s\n' "${theme_name}"
+  printf 'Wallpaper staged at %s\n' "${dst_wallpaper}"
+  printf 'Font staged at %s\n' "${dst_font}"
+  printf 'Managed snippet staged at %s\n' "${dst_snippet}"
+}
+
+status_theme() {
+  local cfg dst_dir st wallpaper_name
+  cfg="$(target_config)"
+  dst_dir="$(target_dir)"
+  st="$(state_file)"
+
+  printf 'config_path=%s\n' "${cfg}"
+  printf 'theme_dir=%s\n' "${dst_dir}"
+  if [[ -f "${cfg}" ]]; then
+    printf 'config_exists=yes\n'
+  else
+    printf 'config_exists=no\n'
+  fi
+
+  # Check for any staged wallpaper
+  local wallpaper_staged=no
+  for ext in jpg jpeg png; do
+    if compgen -G "${dst_dir}/*.${ext}" > /dev/null 2>&1; then
+      wallpaper_staged=yes
+      break
+    fi
+  done
+  printf 'wallpaper_staged=%s\n' "${wallpaper_staged}"
+
+  if [[ -f "${dst_dir}/fonts/${font_file_name}" ]]; then
+    printf 'font_staged=yes\n'
+  else
+    printf 'font_staged=no\n'
+  fi
+  if [[ -f "${st}" ]]; then
+    printf 'state_file=%s\n' "${st}"
+    cat "${st}"
+  else
+    printf 'state_file=missing\n'
+  fi
+  if [[ -f "${cfg}" ]] && grep -qx '# BEGIN CACHYOS-LIMINE-THEME' "${cfg}"; then
+    printf 'theme_block_present=yes\n'
+  else
+    printf 'theme_block_present=no\n'
+  fi
+}
+
+verify_theme() {
+  local cfg dst_dir st theme_count entry_count path_count
+  cfg="$(target_config)"
+  dst_dir="$(target_dir)"
+  st="$(state_file)"
+
+  [[ -f "${cfg}" ]] || {
+    printf 'Target config not found: %s\n' "${cfg}" >&2
+    exit 1
+  }
+
+  # Check for any staged wallpaper (theme-agnostic)
+  local wallpaper_found=no
+  for ext in jpg jpeg png; do
+    if compgen -G "${dst_dir}/*.${ext}" > /dev/null 2>&1; then
+      wallpaper_found=yes
+      break
+    fi
+  done
+  [[ "${wallpaper_found}" == "yes" ]] || {
+    printf 'No staged wallpaper found in: %s\n' "${dst_dir}" >&2
+    exit 1
+  }
+
+  [[ -f "${dst_dir}/fonts/${font_file_name}" ]] || {
+    printf 'Staged font missing: %s\n' "${dst_dir}/fonts/${font_file_name}" >&2
+    exit 1
+  }
+
+  theme_count="$(rg -n '^(wallpaper|wallpaper_style|backdrop|interface_branding|interface_branding_colour|interface_help_hidden|term_background|term_foreground|term_background_bright|term_foreground_bright|term_palette|term_palette_bright|term_margin|term_margin_gradient|term_font|term_font_size|term_font_spacing|term_font_scale):' "${cfg}" | wc -l)"
+  entry_count="$(rg -n '^/' "${cfg}" | wc -l)"
+  path_count="$(python3 - <<PY
+from pathlib import Path
+import re
+cfg = Path("${cfg}")
+boot = Path("${boot_dir}")
+text = cfg.read_text()
+ok = 0
+for line in text.splitlines():
+    m = re.search(r"boot\\(\\):(/[^#\\s]+)", line)
+    if not m:
+        continue
+    full = boot / m.group(1).lstrip("/")
+    if full.exists():
+        ok += 1
+    else:
+        print(f"missing_path={m.group(1)}")
+        raise SystemExit(1)
+print(ok)
+PY
+)"
+
+  printf 'verify_config_path=%s\n' "${cfg}"
+  printf 'verify_theme_dir=%s\n' "${dst_dir}"
+  printf 'verify_theme_globals=%s\n' "${theme_count}"
+  printf 'verify_entry_count=%s\n' "${entry_count}"
+  printf 'verify_boot_paths_ok=%s\n' "${path_count}"
+  printf 'verify_state_file=%s\n' "$( [[ -f "${st}" ]] && printf yes || printf no )"
+  printf 'verify_result=ok\n'
+}
+
+apply_theme() {
+  local cfg backup_file tmp_clean tmp_candidate pre_hash
+  cfg="$(target_config)"
+  [[ -f "${cfg}" ]] || {
+    printf 'Target config not found: %s\n' "${cfg}" >&2
+    exit 1
+  }
+
+  require_root
+  stage_theme
+
+  pre_hash="$(sha256sum "${cfg}" | awk '{print $1}')"
+  backup_file="${cfg}.pre-cachyos-theme-$(date +%Y%m%d-%H%M%S)"
+  install -m644 "${cfg}" "${backup_file}"
+
+  tmp_clean="$(mktemp)"
+  tmp_candidate="$(mktemp)"
+  strip_managed_block "${cfg}" "${tmp_clean}"
+  {
+    render_managed_block "$(theme_file_for "${theme_name}")"
+    printf '\n'
+    cat "${tmp_clean}"
+  } > "${tmp_candidate}"
+
+  install -m644 "${tmp_candidate}" "${cfg}"
+  rm -f "${tmp_clean}" "${tmp_candidate}"
+  write_state_file "${backup_file}" "${pre_hash}"
+
+  printf 'Applied theme %s\n' "${theme_name}"
+  printf 'Config updated at %s\n' "${cfg}"
+  printf 'Backup saved at %s\n' "${backup_file}"
+  printf 'State recorded at %s\n' "$(state_file)"
+}
+
+rollback_theme() {
+  local cfg st backup_path rollback_mode
+  cfg="$(target_config)"
+  st="$(state_file)"
+  [[ -f "${st}" ]] || {
+    printf 'No state file found at %s\n' "${st}" >&2
+    exit 1
+  }
+
+  # shellcheck disable=SC1090
+  source "${st}"
+  rollback_mode="${1:-latest}"
+  if [[ "${rollback_mode}" == "original" ]]; then
+    backup_path="${ORIGINAL_BACKUP_PATH:-}"
+  else
+    backup_path="${BACKUP_PATH:-}"
+  fi
+  [[ -n "${backup_path}" ]] || {
+    printf 'State file does not contain a usable backup path\n' >&2
+    exit 1
+  }
+  [[ -f "${backup_path}" ]] || {
+    printf 'Backup file not found: %s\n' "${backup_path}" >&2
+    exit 1
+  }
+
+  require_root
+  install -m644 "${backup_path}" "${cfg}"
+  printf 'Restored %s from %s\n' "${cfg}" "${backup_path}"
+}
+
+cleanup_theme() {
+  local dst_dir
+  dst_dir="$(target_dir)"
+  require_root
+  if [[ -d "${dst_dir}" ]]; then
+    rm -rf "${dst_dir}"
+    printf 'Removed staged theme assets at %s\n' "${dst_dir}"
+  else
+    printf 'No staged theme assets found at %s\n' "${dst_dir}"
+  fi
+}
+
+parse_common_flags() {
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --boot-dir)
+        boot_dir="$2"
+        shift 2
+        ;;
+      --config)
+        config_path="$2"
+        shift 2
+        ;;
+      *)
+        printf 'Unknown option: %s\n' "$1" >&2
+        exit 1
+        ;;
+    esac
+  done
+}
+
+main() {
+  if [[ $# -lt 1 ]]; then
+    usage
+    exit 1
+  fi
+
+  local cmd="$1"
+  shift
+
+  case "${cmd}" in
+    list)
+      list_themes
+      ;;
+    show)
+      [[ $# -ge 1 ]] || { usage; exit 1; }
+      theme_name="$1"
+      show_theme "${theme_name}"
+      ;;
+    render)
+      [[ $# -ge 1 ]] || { usage; exit 1; }
+      theme_name="$1"
+      render_theme "${theme_name}"
+      ;;
+    status)
+      parse_common_flags "$@"
+      status_theme
+      ;;
+    verify)
+      parse_common_flags "$@"
+      verify_theme
+      ;;
+    stage)
+      [[ $# -ge 1 ]] || { usage; exit 1; }
+      theme_name="$1"
+      shift
+      parse_common_flags "$@"
+      stage_theme
+      ;;
+    apply)
+      [[ $# -ge 1 ]] || { usage; exit 1; }
+      theme_name="$1"
+      shift
+      parse_common_flags "$@"
+      apply_theme
+      ;;
+    rollback)
+      parse_common_flags "$@"
+      rollback_theme
+      ;;
+    _rollback_original)
+      parse_common_flags "$@"
+      rollback_theme original
+      ;;
+    _cleanup)
+      parse_common_flags "$@"
+      cleanup_theme
+      ;;
+    *)
+      usage
+      exit 1
+      ;;
+  esac
+}
+
+main "$@"

@@ -1,0 +1,22 @@
+# Maintainer: Eirikr <hilga007@gmail.com>
+pkgname=nvidia-oc-nvml
+pkgver=1.0.0
+pkgrel=1
+pkgdesc="NVIDIA GPU overclock via NVML API -- works with open and proprietary kernel modules, X11 and Wayland"
+arch=('any')
+url="https://github.com/Oichkatzelesfrettschen/nvidia-oc-nvml"
+license=('MIT')
+depends=('python' 'nvidia-utils')
+backup=('etc/nvidia-oc-nvml.conf')
+source=(
+    'nvidia-oc-nvml'
+    'nvidia-oc-nvml.conf'
+    'nvidia-oc-nvml.service'
+)
+sha256sums=('SKIP' 'SKIP' 'SKIP')
+
+package() {
+    install -Dm755 nvidia-oc-nvml "$pkgdir/usr/bin/nvidia-oc-nvml"
+    install -Dm644 nvidia-oc-nvml.conf "$pkgdir/etc/nvidia-oc-nvml.conf"
+    install -Dm644 nvidia-oc-nvml.service "$pkgdir/usr/lib/systemd/system/nvidia-oc-nvml.service"
+}

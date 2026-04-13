@@ -1,0 +1,121 @@
+#!/bin/sh
+# steelseries-grab-recovery -- Wait for USB settle, then refresh marco grabs.
+#
+# WHY:  SteelSeries devices (Rival 710, Apex Pro) do 3 rounds of USB
+#       re-enumeration during firmware init (~1s, ~2s, ~9s after Xorg start).
+#       If marco starts while devices are churning, its passive button grabs
+#       on frame windows become stale and titlebars stop responding to mouse
+#       interaction.
+#
+# WHAT: Runs at session login (via XDG autostart).  Waits for udev to settle,
+#       then tests whether marco grabs are functional.  If broken, runs
+#       marco --replace to re-register all grabs from scratch.
+#
+# HOW:  Installed to /etc/xdg/autostart/steelseries-grab-recovery.desktop.
+#
+# ROLLBACK: Remove the .desktop file or set Hidden=true.
+
+set -eu
+
+LOG_TAG="steelseries-grab-recovery"
+
+log() {
+    logger -t "$LOG_TAG" "$1"
+}
+
+# Guard: only run under X11 with marco
+if [ -z "${DISPLAY:-}" ]; then
+    log "No DISPLAY set, exiting"
+    exit 0
+fi
+
+if ! pgrep -x marco >/dev/null 2>&1; then
+    log "marco not running, exiting"
+    exit 0
+fi
+
+log "Starting: waiting for USB device settle"
+
+# Phase 1: Let the session finish initializing.
+sleep 3
+
+# Phase 2: Wait for all udev device events to drain.
+# This ensures SteelSeries re-enumeration cycles are complete.
+if command -v udevadm >/dev/null 2>&1; then
+    udevadm settle --timeout=30 2>/dev/null || true
+    log "udevadm settle complete"
+else
+    sleep 12
+    log "udevadm not found, used fixed delay"
+fi
+
+# Phase 3: Test whether marco's grabs are functional.
+test_grabs() {
+    # Find a managed window with frame extents
+    wid=$(xdotool search --onlyvisible --name "" 2>/dev/null | while read id; do
+        wtype=$(xprop -id "$id" _NET_WM_WINDOW_TYPE 2>/dev/null)
+        case "$wtype" in
+            *NORMAL*) echo "$id"; break ;;
+        esac
+    done)
+
+    if [ -z "$wid" ]; then
+        log "No normal windows found, assuming grabs OK"
+        return 0
+    fi
+
+    # Check frame extents -- zero top extent means marco is not decorating
+    extents=$(xprop -id "$wid" _NET_FRAME_EXTENTS 2>/dev/null)
+    top=$(echo "$extents" | sed -n 's/.*= *[0-9]*, *[0-9]*, *\([0-9]*\),.*/\1/p')
+
+    if [ -z "$top" ] || [ "$top" -eq 0 ]; then
+        log "Frame extents missing or zero for window $wid"
+        return 1
+    fi
+
+    # Check if marco is responsive (not in D state)
+    marco_pid=$(pgrep -x marco 2>/dev/null | head -1)
+    if [ -n "$marco_pid" ]; then
+        state=$(cut -d' ' -f3 "/proc/$marco_pid/stat" 2>/dev/null || echo "?")
+        if [ "$state" = "D" ]; then
+            log "marco in uninterruptible sleep"
+            return 1
+        fi
+    fi
+
+    # Check if Xorg log was modified after marco started (device churn)
+    marco_start=$(stat -c %Y "/proc/$marco_pid" 2>/dev/null || echo 0)
+    xorg_log_time=$(stat -c %Y /var/log/Xorg.0.log 2>/dev/null || echo 0)
+    if [ "$marco_start" -gt 0 ] && [ "$xorg_log_time" -ge "$marco_start" ]; then
+        log "Xorg log modified after marco start -- possible device churn"
+        return 1
+    fi
+
+    return 0
+}
+
+# Phase 4: Act on test result
+if ! test_grabs; then
+    log "Grab test FAILED -- refreshing marco"
+
+    compositing=$(dconf read /org/mate/marco/general/compositing-manager 2>/dev/null || echo "false")
+    if [ "$compositing" = "true" ]; then
+        marco_args=""
+    else
+        marco_args="--no-composite"
+    fi
+
+    marco --replace $marco_args &
+    sleep 2
+
+    if pgrep -x marco >/dev/null 2>&1; then
+        log "marco refreshed successfully"
+    else
+        log "ERROR: marco failed to restart"
+        exit 1
+    fi
+else
+    log "Grab test PASSED -- no action needed"
+fi
+
+exit 0

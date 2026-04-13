@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+theme_helper="${THEME_HELPER:-/usr/bin/cachyos-limine-theme}"
+theme_name="${THEME_NAME:-galaxy}"
+boot_dir="${BOOT_DIR:-/boot}"
+config_path="${CONFIG_PATH:-${boot_dir}/limine.conf}"
+
+run_helper() {
+  if [[ -f "${theme_helper}" ]]; then
+    bash "${theme_helper}" "$@" --boot-dir "${boot_dir}" --config "${config_path}"
+  else
+    printf 'cachyos-limine-themes: helper not found at %s\n' "${theme_helper}" >&2
+    return 1
+  fi
+}
+
+post_install() {
+  printf 'Applying CachyOS Limine theme...\n'
+  run_helper apply "${theme_name}" || {
+    printf 'cachyos-limine-themes: automatic apply failed during install\n' >&2
+    return 1
+  }
+  printf 'Verifying CachyOS Limine theme...\n'
+  run_helper verify || {
+    printf 'cachyos-limine-themes: verification failed during install\n' >&2
+    return 1
+  }
+  printf 'CachyOS Limine theme applied successfully.\n'
+}
+
+post_upgrade() {
+  printf 'Updating CachyOS Limine theme...\n'
+  run_helper apply "${theme_name}" || {
+    printf 'cachyos-limine-themes: automatic apply failed during upgrade\n' >&2
+    return 1
+  }
+  printf 'Verifying CachyOS Limine theme...\n'
+  run_helper verify || {
+    printf 'cachyos-limine-themes: verification failed during upgrade\n' >&2
+    return 1
+  }
+  printf 'CachyOS Limine theme updated successfully.\n'
+}
+
+pre_remove() {
+  printf 'Rolling back CachyOS Limine theme...\n'
+  if run_helper _rollback_original; then
+    run_helper _cleanup || true
+    printf 'CachyOS Limine theme rolled back successfully.\n'
+  else
+    printf 'cachyos-limine-themes: rollback was not completed automatically\n' >&2
+  fi
+}

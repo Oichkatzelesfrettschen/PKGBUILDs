@@ -1,0 +1,26 @@
+pkgbase = gcc13-sidecar-bin
+	pkgdesc = Secondary GCC 13 sidecar repackaged from Arch archive binaries
+	pkgver = 13.3.0
+	pkgrel = 1
+	url = https://archive.archlinux.org/
+	arch = x86_64
+	license = GPL-3.0-or-later
+	license = LGPL-3.0-or-later
+	license = FDL-1.3-or-later
+	depends = glibc
+	depends = binutils
+	depends = libmpc
+	depends = zstd
+	depends = libisl
+	options = !strip
+	options = !debug
+	source = https://archive.archlinux.org/packages/g/gcc13/gcc13-13.3.0-1-x86_64.pkg.tar.zst
+	source = https://archive.archlinux.org/packages/g/gcc13-libs/gcc13-libs-13.3.0-1-x86_64.pkg.tar.zst
+	source = gcc13-sidecar.sh
+	source = README.md
+	sha256sums = 1156e1ab093ba66675da04992493727b824287254ce404455c2a9419f95c1e38
+	sha256sums = 1353c18b98d3cdc7d80194160a88a0451ee8ad07cfc33b210784ee376688014e
+	sha256sums = a4c52e5235fa8dfff9d2ba3a25be2dda55633c8d1bdc329d9f4397b01fb994c9
+	sha256sums = 868891d6fa8c11e3f0653690329e326376292e5ab322802a03f68cf8a194c423
+
+pkgname = gcc13-sidecar-bin

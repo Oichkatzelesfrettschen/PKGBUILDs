@@ -1,0 +1,69 @@
+# Maintainer: eirikr <eirikr@localhost>
+#
+# WHY:  Limine visuals should stay within the official CachyOS look while
+#       remaining safe for a terminal-style boot UI. This package ships
+#       multiple themes with TrueColor wallpapers from the official CachyOS
+#       wallpapers repo, a scaled bitmap font for 4K readability, and owns
+#       the live theme lifecycle through pacman install, upgrade, and
+#       uninstall scriptlets.
+#
+# WHAT: Installs:
+#       - /usr/share/cachyos-limine-themes/themes/*.conf
+#       - /usr/share/cachyos-limine-themes/wallpapers/*
+#       - /usr/bin/cachyos-limine-theme
+#       - /usr/share/doc/cachyos-limine-themes/README.md
+
+pkgname=cachyos-limine-themes
+pkgver=1.0.0
+pkgrel=1
+pkgdesc="CachyOS Limine themes with TrueColor wallpapers, scaled fonts, and package-managed lifecycle"
+arch=('any')
+url="https://github.com/eirikr/pkgbuilds"
+license=('0BSD')
+depends=('bash' 'limine' 'spline-cp437-limine-font')
+install="${pkgname}.install"
+
+_wallpaper_base="https://raw.githubusercontent.com/cachyos/cachyos-wallpapers/develop/usr/share/wallpapers/cachyos-wallpapers"
+
+source=(
+  'README.md'
+  'cachy-galaxy.conf'
+  'cachy-north.conf'
+  'cachy-depths.conf'
+  'cachyos-limine-theme'
+  'cachyos-limine-themes.install'
+  "${_wallpaper_base}/cachygalaxy99.jpg"
+  "${_wallpaper_base}/north.png"
+  "${_wallpaper_base}/Cachy%20depths%205K.png"
+)
+sha256sums=('SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP'
+            '4ae7cf87b2455119a1bab1c783f41a3070d60fb5e8b3e8b30f3e73a40711cc91'
+            '39ad64ee789afda263bbf0ff185245d6a2a981f68d18e5557462c51154c23059'
+            '5e3948201366a3dcde9afae2606375e5d57530dabbbbcfd72eef31b4610411dc')
+
+package() {
+  install -Dm644 "${srcdir}/README.md" \
+    "${pkgdir}/usr/share/doc/${pkgname}/README.md"
+
+  install -Dm644 "${srcdir}/cachy-galaxy.conf" \
+    "${pkgdir}/usr/share/${pkgname}/themes/cachy-galaxy.conf"
+  install -Dm644 "${srcdir}/cachy-north.conf" \
+    "${pkgdir}/usr/share/${pkgname}/themes/cachy-north.conf"
+  install -Dm644 "${srcdir}/cachy-depths.conf" \
+    "${pkgdir}/usr/share/${pkgname}/themes/cachy-depths.conf"
+
+  install -Dm644 "${srcdir}/cachygalaxy99.jpg" \
+    "${pkgdir}/usr/share/${pkgname}/wallpapers/cachygalaxy99.jpg"
+  install -Dm644 "${srcdir}/north.png" \
+    "${pkgdir}/usr/share/${pkgname}/wallpapers/north.png"
+  install -Dm644 "${srcdir}/Cachy%20depths%205K.png" \
+    "${pkgdir}/usr/share/${pkgname}/wallpapers/cachy-depths.png"
+
+  install -Dm755 "${srcdir}/cachyos-limine-theme" \
+    "${pkgdir}/usr/bin/cachyos-limine-theme"
+}

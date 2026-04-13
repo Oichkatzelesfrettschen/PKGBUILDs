@@ -1,0 +1,63 @@
+# Maintainer: eirikr <eirikr@localhost>
+#
+# WHY:  Limine needs a raw CP437 bitmap font, while Spline Sans Mono is a TTF
+#       lacking many DOS-era terminal glyphs. This package builds a hybrid
+#       `8x16` font with Spline for ASCII and Terminus for the rest.
+#
+# WHAT: Installs:
+#       - report/build scripts under /usr/lib/spline-cp437-limine-font/
+#       - package docs under /usr/share/doc/spline-cp437-limine-font/
+#       - a Makefile for local report/build generation
+#       - packaged font artifacts and source reports under /usr/share/
+
+pkgname=spline-cp437-limine-font
+pkgver=0.4.0
+pkgrel=1
+pkgdesc="Hybrid Spline Sans Mono plus Terminus CP437 Limine font with packaged build artifacts"
+arch=('any')
+url="https://github.com/eirikr/pkgbuilds"
+license=('0BSD')
+depends=('python' 'python-fonttools' 'python-pillow' 'kbd' 'ttf-spline-sans-mono')
+install="${pkgname}.install"
+optdepends=(
+  'fontforge: alternate rasterization experiments'
+  'xorg-fonttosfnt: generate bitmap-only OTB previews from the merged BDF'
+  'freetype2-demos: inspect generated OTB and raster quality'
+)
+source=(
+  'README.md'
+  'Makefile'
+  'build-plan.md'
+  'spline-cp437-limine-font.install'
+)
+sha256sums=('SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP')
+
+package() {
+  install -Dm644 "${srcdir}/README.md" \
+    "${pkgdir}/usr/share/doc/${pkgname}/README.md"
+  install -Dm644 "${srcdir}/build-plan.md" \
+    "${pkgdir}/usr/share/doc/${pkgname}/build-plan.md"
+  install -Dm644 "${srcdir}/Makefile" \
+    "${pkgdir}/usr/share/${pkgname}/Makefile"
+  install -Dm755 "${startdir}/scripts/generate_cp437_report.py" \
+    "${pkgdir}/usr/lib/${pkgname}/generate_cp437_report.py"
+  install -Dm755 "${startdir}/scripts/build_limine_font.py" \
+    "${pkgdir}/usr/lib/${pkgname}/build_limine_font.py"
+  install -Dm644 "${startdir}/build/spline-cp437-8x16.bin" \
+    "${pkgdir}/usr/share/${pkgname}/fonts/spline-cp437-8x16.bin"
+  install -Dm644 "${startdir}/build/spline-cp437-8x16.bdf" \
+    "${pkgdir}/usr/share/${pkgname}/fonts/spline-cp437-8x16.bdf"
+  install -Dm644 "${startdir}/build/spline-cp437-8x16.otb" \
+    "${pkgdir}/usr/share/${pkgname}/fonts/spline-cp437-8x16.otb"
+  install -Dm644 "${startdir}/build/spline-cp437-sample.png" \
+    "${pkgdir}/usr/share/${pkgname}/fonts/spline-cp437-sample.png"
+  install -Dm644 "${startdir}/build/spline-cp437-build.json" \
+    "${pkgdir}/usr/share/${pkgname}/fonts/spline-cp437-build.json"
+  install -Dm644 "${startdir}/reports/cp437-source-report.json" \
+    "${pkgdir}/usr/share/${pkgname}/reports/cp437-source-report.json"
+  install -Dm644 "${startdir}/reports/cp437-source-report.md" \
+    "${pkgdir}/usr/share/${pkgname}/reports/cp437-source-report.md"
+}

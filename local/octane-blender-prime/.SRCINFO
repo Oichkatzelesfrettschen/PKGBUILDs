@@ -1,0 +1,14 @@
+pkgbase = octane-blender-prime
+	pkgdesc = The free tier OctaneRender integrated Blender
+	pkgver = 2025.5_30.11.0
+	pkgrel = 1
+	url = https://home.otoy.com/render/octane-render/demo/
+	arch = x86_64
+	license = proprietary
+	depends = octane-server-prime>=2025.5_30.11.0
+	noextract = octane_blender_2025.5-30.11.0-stable.run
+	options = !strip
+	source = https://render.otoy.com/plugindownloads/2b/d7/b3/3e/octane_blender_2025.5-30.11.0-stable.run
+	sha256sums = 2d3145d7461a543aef2e126416e127f484cc4629b7231bf2ad391a3870c7a7ed
+
+pkgname = octane-blender-prime

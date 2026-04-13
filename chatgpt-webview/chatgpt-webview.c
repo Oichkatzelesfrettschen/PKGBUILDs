@@ -364,15 +364,14 @@ main(int argc, char *argv[])
                ":+COMP-NULL:+CTYPE-X509", 0);
 
     /* WebKit's GPU process uses DMA-BUF for zero-copy buffer sharing.
-     * On NVIDIA X11, DMA-BUF requires the nvidia-drm kernel module with
-     * modeset enabled, and even then the DRM render node may not support
-     * the formats WebKit expects. Disable DMA-BUF renderer on X11 to
-     * fall back to SHM-based compositing which is universally supported.
+     * webkitgtk-gororoba fork includes EGL_EXT_platform_x11 support for NVIDIA X11.
+     * Stock WebKit on X11 may need DMA-BUF disabled; to re-enable the workaround:
+     * const char *wayland = getenv("WAYLAND_DISPLAY");
+     * if (!wayland && !getenv("WEBKIT_DISABLE_DMABUF_RENDERER"))
+     *     setenv("WEBKIT_DISABLE_DMABUF_RENDERER", "1", 0);
      * On Wayland, DMA-BUF works correctly with NVIDIA 545+. */
     {
-        const char *wayland = getenv("WAYLAND_DISPLAY");
-        if (!wayland && !getenv("WEBKIT_DISABLE_DMABUF_RENDERER"))
-            setenv("WEBKIT_DISABLE_DMABUF_RENDERER", "1", 0);
+        /* DMA-BUF enabled by default with fork; stock WebKit on X11 may need disable */
     }
 
     /* Persistent data in XDG data dir */

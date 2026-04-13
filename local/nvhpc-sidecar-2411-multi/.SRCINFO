@@ -1,0 +1,22 @@
+pkgbase = nvhpc-sidecar-2411-multi
+	pkgdesc = Side-by-side NVIDIA HPC SDK 24.11 multi-toolkit install for CUDA 11.8/12.6 PTXAS sweeps
+	pkgver = 24.11
+	pkgrel = 1
+	url = https://developer.nvidia.com/hpc-sdk
+	arch = x86_64
+	license = custom
+	makedepends = bash
+	depends = numactl
+	depends = gcc
+	optdepends = env-modules
+	options = !strip
+	source = https://developer.download.nvidia.com/hpc-sdk/24.11/nvhpc_2024_2411_Linux_x86_64_cuda_multi.tar.gz
+	source = nvhpc-sidecar.sh
+	source = nvhpc-sidecar-cuda11.8.sh
+	source = nvhpc-sidecar-cuda12.6.sh
+	sha256sums = 0c27d66ed0e2d3007d30ac904922a9abf96475197dc0f4dcc6316d235a1dc0c3
+	sha256sums = SKIP
+	sha256sums = SKIP
+	sha256sums = SKIP
+
+pkgname = nvhpc-sidecar-2411-multi

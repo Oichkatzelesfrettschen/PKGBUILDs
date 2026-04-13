@@ -1,0 +1,90 @@
+#!/bin/sh
+# steelseries-input-protect -- OOM-protect and RAM-pin Marco + Xorg.
+#
+# WHY:  Under heavy memory pressure (rocqworker, browsers, etc.), Marco and
+#       Xorg get swapped out.  This causes input event processing to lag behind
+#       by 60-80ms, which triggers libinput debounce timer expiry and phantom
+#       button events on SteelSeries devices.
+#
+# WHAT: Sets OOM score to -1000 for Marco and Xorg (immune to OOM killer).
+#       Calls mlockall via gdb on Marco to lock its pages in physical RAM.
+#
+# HOW:  Run at session startup via XDG autostart (after marco is running).
+#       Requires: sudo (via askpass), gdb.
+#
+# ROLLBACK: Remove /etc/xdg/autostart/steelseries-input-protect.desktop
+
+set -eu
+
+LOG_TAG="steelseries-input-protect"
+ASKPASS="/usr/bin/unified-askpass"
+
+log() {
+    logger -t "$LOG_TAG" "$1"
+}
+
+protect_pid() {
+    _name="$1"
+    _pid="$2"
+
+    # Set OOM score to -1000 (immune)
+    if SUDO_ASKPASS="$ASKPASS" sudo -A sh -c "echo -1000 > /proc/$_pid/oom_score_adj" 2>/dev/null; then
+        log "$_name (PID $_pid): OOM score set to -1000"
+    else
+        log "$_name (PID $_pid): WARNING: failed to set OOM score"
+    fi
+
+    # Lock all pages in RAM via mlockall(MCL_CURRENT=1 | MCL_FUTURE=2 = 3)
+    if command -v gdb >/dev/null 2>&1; then
+        if SUDO_ASKPASS="$ASKPASS" sudo -A gdb -batch -p "$_pid" \
+            -ex 'call (int)mlockall(3)' -ex detach -ex quit >/dev/null 2>&1; then
+            log "$_name (PID $_pid): mlockall(3) applied"
+        else
+            log "$_name (PID $_pid): WARNING: gdb mlockall failed"
+        fi
+    fi
+}
+
+# Wait for marco to be running (up to 30s)
+tries=0
+while ! pgrep -x marco >/dev/null 2>&1; do
+    tries=$((tries + 1))
+    if [ "$tries" -gt 30 ]; then
+        log "ERROR: marco not found after 30s, skipping marco protection"
+        break
+    fi
+    sleep 1
+done
+
+# Protect Marco
+MARCO_PID=$(pgrep -x marco 2>/dev/null | head -1)
+if [ -n "$MARCO_PID" ]; then
+    protect_pid "marco" "$MARCO_PID"
+fi
+
+# Protect Xorg
+XORG_PID=$(pgrep -x Xorg 2>/dev/null | head -1)
+if [ -z "$XORG_PID" ]; then
+    XORG_PID=$(pgrep -x X 2>/dev/null | head -1)
+fi
+if [ -n "$XORG_PID" ]; then
+    # Only set OOM score for Xorg, not mlockall (Xorg is too large to pin)
+    if SUDO_ASKPASS="$ASKPASS" sudo -A sh -c "echo -900 > /proc/$XORG_PID/oom_score_adj" 2>/dev/null; then
+        log "Xorg (PID $XORG_PID): OOM score set to -900"
+    else
+        log "Xorg (PID $XORG_PID): WARNING: failed to set OOM score"
+    fi
+fi
+
+# Report results
+for proc in marco Xorg X; do
+    pid=$(pgrep -x "$proc" 2>/dev/null | head -1)
+    if [ -n "$pid" ]; then
+        swap_kb=$(grep VmSwap "/proc/$pid/status" 2>/dev/null | awk '{print $2}')
+        lock_kb=$(grep VmLck "/proc/$pid/status" 2>/dev/null | awk '{print $2}')
+        oom=$(cat "/proc/$pid/oom_score_adj" 2>/dev/null)
+        log "$proc (PID $pid): VmSwap=${swap_kb:-?}kB VmLck=${lock_kb:-?}kB OOM=$oom"
+    fi
+done
+
+exit 0

@@ -1,0 +1,129 @@
+# Maintainer: eirikr <eirikr@localhost>
+#
+# WHY:  SteelSeries Rival 710 and Apex Pro have firmware quirks that cause
+#       phantom button events (BTN_FORWARD/BTN_BACK/BTN_TASK stuck pressed),
+#       stale window manager grabs after USB re-enumeration, and input freeze
+#       under system memory pressure.  This package provides a coordinated fix
+#       at every layer: libinput quirks, Xorg InputClass, udev rules, OOM
+#       protection, and a watchdog to auto-recover stuck buttons.
+#
+# WHAT: Installs:
+#       - /etc/libinput/local-overrides.quirks  (AttrEventCode strip + debounce)
+#       - /etc/X11/xorg.conf.d/45-steelseries.conf  (InputClass for pointer/kbd)
+#       - /etc/udev/rules.d/99-steelseries.rules  (hidraw/usb permissions)
+#       - /usr/lib/steelseries-config/steelseries-input-protect  (OOM protect)
+#       - /usr/lib/steelseries-config/steelseries-button-watchdog  (stuck btn fix)
+#       - /usr/lib/steelseries-config/steelseries-grab-recovery  (marco grabs)
+#       - systemd user units for watchdog timer and autostart .desktop files
+
+pkgname=steelseries-config
+pkgver=2.0.0
+pkgrel=1
+pkgdesc="SteelSeries Rival 710 / Apex Pro input fixes: phantom button filter, debounce quirks, OOM protection, and stuck-button watchdog"
+arch=('any')
+url="https://github.com/flozz/rivalcfg"
+license=('MIT')
+depends=('libinput' 'xorg-xinput' 'python' 'xdotool' 'xorg-xprop' 'gdb')
+optdepends=(
+    'rivalcfg: SteelSeries mouse configuration (DPI, RGB, OLED)'
+    'openrgb: RGB lighting control'
+)
+backup=(
+    'etc/libinput/local-overrides.quirks'
+    'etc/X11/xorg.conf.d/45-steelseries.conf'
+    'etc/udev/rules.d/99-steelseries.rules'
+)
+source=(
+    '30-vendor-steelseries.quirks'
+    '45-steelseries.conf'
+    '99-steelseries.rules'
+    'steelseries-input-protect'
+    'steelseries-button-watchdog'
+    'steelseries-grab-recovery'
+)
+sha256sums=('39015a853b23c14318b3bd4cb63cc94ca29fa31cd162c5e4695efc1c411524ed'
+            '01f455c101c3a222c34d97c1a4d4c5f4c02525c67e6c17fb8add083ca4748de9'
+            'f732d473185982e89a7c18cd0661ca536278ef06630ae09f974b1fdf253b86a9'
+            '48fc7de5ac1600a6f8eec3ebd4e2b88fc92c637cff55380af6ac7ea4fea66382'
+            'f7f585f8acbafea8bd4b5ca4fa51d1f4d6d3efe5ececab5378e725d1d0e2b440'
+            '63212d5b5c2abd3ff712766f2a9670e866fd5669fe92469eeaee02baff63dbb4')
+
+package() {
+    # libinput quirks (survives libinput package updates in /etc/)
+    install -Dm644 "${srcdir}/30-vendor-steelseries.quirks" \
+        "${pkgdir}/etc/libinput/local-overrides.quirks"
+
+    # Xorg InputClass
+    install -Dm644 "${srcdir}/45-steelseries.conf" \
+        "${pkgdir}/etc/X11/xorg.conf.d/45-steelseries.conf"
+
+    # udev rules
+    install -Dm644 "${srcdir}/99-steelseries.rules" \
+        "${pkgdir}/etc/udev/rules.d/99-steelseries.rules"
+
+    # Scripts
+    install -Dm755 "${srcdir}/steelseries-input-protect" \
+        "${pkgdir}/usr/lib/steelseries-config/steelseries-input-protect"
+    install -Dm755 "${srcdir}/steelseries-button-watchdog" \
+        "${pkgdir}/usr/lib/steelseries-config/steelseries-button-watchdog"
+    install -Dm755 "${srcdir}/steelseries-grab-recovery" \
+        "${pkgdir}/usr/lib/steelseries-config/steelseries-grab-recovery"
+
+    # systemd user units -- button watchdog timer (every 30s)
+    install -Dm644 /dev/stdin \
+        "${pkgdir}/usr/lib/systemd/user/steelseries-button-watchdog.service" <<'EOF'
+[Unit]
+Description=SteelSeries stuck button watchdog
+Documentation=man:xinput(1)
+
+[Service]
+Type=oneshot
+ExecStart=/usr/lib/steelseries-config/steelseries-button-watchdog
+Environment=DISPLAY=:0
+EOF
+
+    install -Dm644 /dev/stdin \
+        "${pkgdir}/usr/lib/systemd/user/steelseries-button-watchdog.timer" <<'EOF'
+[Unit]
+Description=SteelSeries stuck button watchdog timer
+Documentation=man:xinput(1)
+
+[Timer]
+OnBootSec=30s
+OnUnitActiveSec=30s
+AccuracySec=5s
+
+[Install]
+WantedBy=timers.target
+EOF
+
+    # XDG autostart -- input protect (OOM/swap pin for marco + Xorg)
+    install -Dm644 /dev/stdin \
+        "${pkgdir}/etc/xdg/autostart/steelseries-input-protect.desktop" <<'EOF'
+[Desktop Entry]
+Type=Application
+Name=SteelSeries Input Protection
+Comment=OOM-protect and RAM-pin Marco and Xorg to prevent input freeze under memory pressure
+Exec=/usr/lib/steelseries-config/steelseries-input-protect
+Hidden=false
+X-MATE-Autostart-enabled=true
+X-MATE-Autostart-Phase=Application
+X-MATE-Autostart-Delay=5
+NoDisplay=true
+EOF
+
+    # XDG autostart -- grab recovery (marco grab refresh after USB settle)
+    install -Dm644 /dev/stdin \
+        "${pkgdir}/etc/xdg/autostart/steelseries-grab-recovery.desktop" <<'EOF'
+[Desktop Entry]
+Type=Application
+Name=SteelSeries Grab Recovery
+Comment=Refresh Marco window grabs after SteelSeries USB re-enumeration settles
+Exec=/usr/lib/steelseries-config/steelseries-grab-recovery
+Hidden=false
+X-MATE-Autostart-enabled=true
+X-MATE-Autostart-Phase=Application
+X-MATE-Autostart-Delay=3
+NoDisplay=true
+EOF
+}

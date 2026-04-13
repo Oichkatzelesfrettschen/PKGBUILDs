@@ -1,0 +1,18 @@
+pkgbase = nvidia-oc-nvml
+	pkgdesc = NVIDIA GPU overclock via NVML API -- works with open and proprietary kernel modules, X11 and Wayland
+	pkgver = 1.0.0
+	pkgrel = 1
+	url = https://github.com/Oichkatzelesfrettschen/nvidia-oc-nvml
+	arch = any
+	license = MIT
+	depends = python
+	depends = nvidia-utils
+	backup = etc/nvidia-oc-nvml.conf
+	source = nvidia-oc-nvml
+	source = nvidia-oc-nvml.conf
+	source = nvidia-oc-nvml.service
+	sha256sums = SKIP
+	sha256sums = SKIP
+	sha256sums = SKIP
+
+pkgname = nvidia-oc-nvml

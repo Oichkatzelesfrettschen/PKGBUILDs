@@ -1,0 +1,635 @@
+- generic [ref=e2]:
+  - region
+  - generic [ref=e3]:
+    - link "Skip to content" [ref=e4] [cursor=pointer]:
+      - /url: "#start-of-content"
+    - banner [ref=e6]:
+      - heading "Navigation Menu" [level=2] [ref=e7]
+      - generic [ref=e8]:
+        - link "Homepage" [ref=e10] [cursor=pointer]:
+          - /url: /
+          - img [ref=e11]
+        - generic [ref=e13]:
+          - navigation "Global" [ref=e16]:
+            - list [ref=e17]:
+              - listitem [ref=e18]:
+                - button "Platform" [ref=e20] [cursor=pointer]:
+                  - text: Platform
+                  - img [ref=e21]
+              - listitem [ref=e23]:
+                - button "Solutions" [ref=e25] [cursor=pointer]:
+                  - text: Solutions
+                  - img [ref=e26]
+              - listitem [ref=e28]:
+                - button "Resources" [ref=e30] [cursor=pointer]:
+                  - text: Resources
+                  - img [ref=e31]
+              - listitem [ref=e33]:
+                - button "Open Source" [ref=e35] [cursor=pointer]:
+                  - text: Open Source
+                  - img [ref=e36]
+              - listitem [ref=e38]:
+                - button "Enterprise" [ref=e40] [cursor=pointer]:
+                  - text: Enterprise
+                  - img [ref=e41]
+              - listitem [ref=e43]:
+                - link "Pricing" [ref=e44] [cursor=pointer]:
+                  - /url: https://github.com/pricing
+                  - generic [ref=e45]: Pricing
+          - generic [ref=e46]:
+            - button "Search or jump to…" [ref=e49] [cursor=pointer]:
+              - img [ref=e51]
+            - link "Sign in" [ref=e54] [cursor=pointer]:
+              - /url: /login?return_to=https%3A%2F%2Fgithub.com%2Fcachyos%2Fcachyos-wallpapers
+            - link "Sign up" [ref=e55] [cursor=pointer]:
+              - /url: /signup?ref_cta=Sign+up&ref_loc=header+logged+out&ref_page=%2F%3Cuser-name%3E%2F%3Crepo-name%3E&source=header-repo&source_repo=CachyOS%2Fcachyos-wallpapers
+            - button "Appearance settings" [ref=e58] [cursor=pointer]:
+              - img
+  - main [ref=e62]:
+    - generic [ref=e63]:
+      - generic [ref=e64]:
+        - generic [ref=e66]:
+          - img [ref=e67]
+          - link "CachyOS" [ref=e70] [cursor=pointer]:
+            - /url: /CachyOS
+          - generic [ref=e71]: /
+          - strong [ref=e72]:
+            - link "cachyos-wallpapers" [ref=e73] [cursor=pointer]:
+              - /url: /CachyOS/cachyos-wallpapers
+          - generic [ref=e74]: Public
+        - generic [ref=e75]:
+          - list:
+            - listitem [ref=e76]:
+              - link "You must be signed in to change notification settings" [ref=e77] [cursor=pointer]:
+                - /url: /login?return_to=%2FCachyOS%2Fcachyos-wallpapers
+                - img [ref=e78]
+                - text: Notifications
+            - listitem [ref=e80]:
+              - link "Fork 18" [ref=e81] [cursor=pointer]:
+                - /url: /login?return_to=%2FCachyOS%2Fcachyos-wallpapers
+                - img [ref=e82]
+                - text: Fork
+                - generic "18" [ref=e84]
+            - listitem [ref=e85]:
+              - link "You must be signed in to star a repository" [ref=e87] [cursor=pointer]:
+                - /url: /login?return_to=%2FCachyOS%2Fcachyos-wallpapers
+                - img [ref=e88]
+                - text: Star
+                - generic "49 users starred this repository" [ref=e90]: "49"
+      - navigation "Repository" [ref=e91]:
+        - list [ref=e92]:
+          - listitem [ref=e93]:
+            - link "Code" [ref=e94] [cursor=pointer]:
+              - /url: /CachyOS/cachyos-wallpapers
+              - img [ref=e95]
+              - generic [ref=e97]: Code
+          - listitem [ref=e98]:
+            - link "Issues 3" [ref=e99] [cursor=pointer]:
+              - /url: /CachyOS/cachyos-wallpapers/issues
+              - img [ref=e100]
+              - generic [ref=e103]: Issues
+              - generic "3" [ref=e104]
+          - listitem [ref=e105]:
+            - link "Pull requests 10" [ref=e106] [cursor=pointer]:
+              - /url: /CachyOS/cachyos-wallpapers/pulls
+              - img [ref=e107]
+              - generic [ref=e109]: Pull requests
+              - generic "10" [ref=e110]
+          - listitem [ref=e111]:
+            - link "Projects" [ref=e112] [cursor=pointer]:
+              - /url: /CachyOS/cachyos-wallpapers/projects
+              - img [ref=e113]
+              - generic [ref=e115]: Projects
+          - listitem [ref=e116]:
+            - link "Security and quality" [ref=e117] [cursor=pointer]:
+              - /url: /CachyOS/cachyos-wallpapers/security
+              - img [ref=e118]
+              - generic [ref=e120]: Security and quality
+          - listitem [ref=e121]:
+            - link "Insights" [ref=e122] [cursor=pointer]:
+              - /url: /CachyOS/cachyos-wallpapers/pulse
+              - img [ref=e123]
+              - generic [ref=e125]: Insights
+    - generic [ref=e138]:
+      - heading "CachyOS/cachyos-wallpapers" [level=1] [ref=e140]
+      - generic [ref=e141]:
+        - generic [ref=e144]:
+          - generic [ref=e145]:
+            - generic [ref=e146]:
+              - button "develop branch" [ref=e148] [cursor=pointer]:
+                - generic [ref=e149]:
+                  - generic [ref=e151]:
+                    - img [ref=e153]
+                    - generic [ref=e156]: develop
+                  - generic:
+                    - img
+              - generic [ref=e157]:
+                - link "2 Branches" [ref=e158] [cursor=pointer]:
+                  - /url: /CachyOS/cachyos-wallpapers/branches
+                  - generic [ref=e159]:
+                    - generic:
+                      - img
+                    - generic [ref=e161]:
+                      - strong [ref=e162]: "2"
+                      - text: Branches
+                - link "1 Tag" [ref=e163] [cursor=pointer]:
+                  - /url: /CachyOS/cachyos-wallpapers/tags
+                  - generic [ref=e164]:
+                    - generic:
+                      - img
+                    - generic [ref=e166]:
+                      - strong [ref=e167]: "1"
+                      - text: Tag
+            - generic [ref=e168]:
+              - generic [ref=e172]:
+                - img [ref=e174]
+                - combobox "Go to file" [ref=e176]
+              - button "Code" [ref=e177] [cursor=pointer]:
+                - generic [ref=e178]:
+                  - generic:
+                    - img
+                  - generic [ref=e179]: Code
+                  - generic:
+                    - img
+          - generic [ref=e180]:
+            - generic [ref=e181]:
+              - heading "Folders and files" [level=2] [ref=e182]
+              - table "Folders and files" [ref=e183]:
+                - rowgroup:
+                  - row "Name Last commit message Last commit date":
+                    - columnheader "Name"
+                    - columnheader "Last commit message":
+                      - generic "Last commit message"
+                    - columnheader "Last commit date":
+                      - generic "Last commit date"
+                - rowgroup [ref=e184]:
+                  - 'row "Latest commit ptr1337 commits by ptr1337 wallpapers: optimize with oxipng -o 6 --strip safe Open commit details Commit 964263e · Jan 22, 20263 months ago History 23 Commits" [ref=e185]':
+                    - 'cell "Latest commit ptr1337 commits by ptr1337 wallpapers: optimize with oxipng -o 6 --strip safe Open commit details Commit 964263e · Jan 22, 20263 months ago History 23 Commits" [ref=e186]':
+                      - generic [ref=e187]:
+                        - heading "Latest commit" [level=2] [ref=e188]
+                        - generic [ref=e189]:
+                          - generic [ref=e191]:
+                            - link "ptr1337" [ref=e192] [cursor=pointer]:
+                              - /url: /ptr1337
+                              - img "ptr1337" [ref=e193]
+                            - link "commits by ptr1337" [ref=e194] [cursor=pointer]:
+                              - /url: /CachyOS/cachyos-wallpapers/commits?author=ptr1337
+                              - text: ptr1337
+                          - generic [ref=e195]:
+                            - 'link "wallpapers: optimize with oxipng -o 6 --strip safe" [ref=e198] [cursor=pointer]':
+                              - /url: /CachyOS/cachyos-wallpapers/commit/964263ed8a0abf4fa9cbec3c85c3207f05cb2b5f
+                            - button "Open commit details" [ref=e199] [cursor=pointer]:
+                              - img [ref=e200]
+                        - generic [ref=e202]:
+                          - generic [ref=e204]:
+                            - link "Commit 964263e" [ref=e205] [cursor=pointer]:
+                              - /url: /CachyOS/cachyos-wallpapers/commit/964263ed8a0abf4fa9cbec3c85c3207f05cb2b5f
+                              - text: 964263e
+                            - text: ·
+                            - generic "Jan 22, 2026, 10:58 AM PST" [ref=e206]: Jan 22, 20263 months ago
+                          - generic [ref=e207]:
+                            - heading "History" [level=2] [ref=e208]
+                            - link "23 Commits" [ref=e209] [cursor=pointer]:
+                              - /url: /CachyOS/cachyos-wallpapers/commits/develop/
+                              - generic [ref=e210]:
+                                - generic:
+                                  - img
+                                - generic [ref=e211]: 23 Commits
+                  - 'row "usr/share/wallpapers/cachyos-wallpapers, (Directory) wallpapers: optimize with oxipng -o 6 --strip safe Jan 22, 20263 months ago" [ref=e212]':
+                    - cell "usr/share/wallpapers/cachyos-wallpapers, (Directory)" [ref=e213]:
+                      - generic [ref=e214]:
+                        - img [ref=e215]
+                        - link "usr/share/wallpapers/cachyos-wallpapers, (Directory)" [ref=e220] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/tree/develop/usr/share/wallpapers/cachyos-wallpapers
+                          - text: usr/share/wallpapers/cachyos-wallpapers
+                    - 'cell "wallpapers: optimize with oxipng -o 6 --strip safe" [ref=e221]':
+                      - 'link "wallpapers: optimize with oxipng -o 6 --strip safe" [ref=e224] [cursor=pointer]':
+                        - /url: /CachyOS/cachyos-wallpapers/commit/964263ed8a0abf4fa9cbec3c85c3207f05cb2b5f
+                    - cell "Jan 22, 20263 months ago" [ref=e225]:
+                      - generic [ref=e226]: Jan 22, 20263 months ago
+                  - row "README.md, (File) Add EmeraldNekoLady.png, fix blobs in readme (#12) Jun 29, 202510 months ago" [ref=e227]:
+                    - cell "README.md, (File)" [ref=e228]:
+                      - generic [ref=e229]:
+                        - img [ref=e230]
+                        - link "README.md, (File)" [ref=e235] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/blob/develop/README.md
+                          - text: README.md
+                    - cell "Add EmeraldNekoLady.png, fix blobs in readme (#12)" [ref=e236]:
+                      - generic [ref=e238]:
+                        - link "Add EmeraldNekoLady.png, fix blobs in readme (" [ref=e239] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/commit/44649252c6ae64fcb3d5950adbcce41744fc86e5
+                        - link "#12" [ref=e240] [cursor=pointer]:
+                          - /url: https://github.com/CachyOS/cachyos-wallpapers/pull/12
+                        - link ")" [ref=e241] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/commit/44649252c6ae64fcb3d5950adbcce41744fc86e5
+                    - cell "Jun 29, 202510 months ago" [ref=e242]:
+                      - generic [ref=e243]: Jun 29, 202510 months ago
+            - generic [ref=e245]:
+              - generic [ref=e246]:
+                - heading "Repository files navigation" [level=2] [ref=e247]
+                - navigation "Repository files" [ref=e248]:
+                  - list [ref=e249]:
+                    - listitem [ref=e250]:
+                      - link "README" [ref=e251] [cursor=pointer]:
+                        - /url: "#"
+                        - img [ref=e253]
+                        - generic [ref=e255]: README
+                - button "Outline" [ref=e256] [cursor=pointer]:
+                  - img [ref=e257]
+              - article [ref=e260]:
+                - generic [ref=e261]:
+                  - heading "cachyos-wallpapers" [level=2] [ref=e262]
+                  - 'link "Permalink: cachyos-wallpapers" [ref=e263] [cursor=pointer]':
+                    - /url: "#cachyos-wallpapers"
+                    - img [ref=e264]
+                - paragraph [ref=e266]: Wallpapers for CachyOS
+                - generic [ref=e267]:
+                  - heading "North" [level=4] [ref=e268]
+                  - 'link "Permalink: North" [ref=e269] [cursor=pointer]':
+                    - /url: "#north"
+                    - img [ref=e270]
+                - paragraph [ref=e272]:
+                  - link "north" [ref=e273] [cursor=pointer]:
+                    - /url: https://github.com/CachyOS/cachyos-wallpapers/blob/develop/usr/share/wallpapers/cachyos-wallpapers/north.png
+                    - img "north" [ref=e274]
+                - generic [ref=e275]:
+                  - heading "Wave" [level=4] [ref=e276]
+                  - 'link "Permalink: Wave" [ref=e277] [cursor=pointer]':
+                    - /url: "#wave"
+                    - img [ref=e278]
+                - paragraph [ref=e280]:
+                  - link "abstractwave" [ref=e281] [cursor=pointer]:
+                    - /url: https://github.com/CachyOS/cachyos-wallpapers/blob/develop/usr/share/wallpapers/cachyos-wallpapers/wave.png
+                    - img "abstractwave" [ref=e282]
+                - generic [ref=e283]:
+                  - heading "Wave2 Dark" [level=4] [ref=e284]
+                  - 'link "Permalink: Wave2 Dark" [ref=e285] [cursor=pointer]':
+                    - /url: "#wave2-dark"
+                    - img [ref=e286]
+                - paragraph [ref=e288]:
+                  - link "abstractwave" [ref=e289] [cursor=pointer]:
+                    - /url: https://github.com/CachyOS/cachyos-wallpapers/blob/develop/usr/share/wallpapers/cachyos-wallpapers/wave2.png
+                    - img "abstractwave" [ref=e290]
+                - generic [ref=e291]:
+                  - heading "Abstract" [level=4] [ref=e292]
+                  - 'link "Permalink: Abstract" [ref=e293] [cursor=pointer]':
+                    - /url: "#abstract"
+                    - img [ref=e294]
+                - paragraph [ref=e296]:
+                  - link "abstract" [ref=e297] [cursor=pointer]:
+                    - /url: https://github.com/birbkeks/cachyos-wallpapers/blob/develop/usr/share/wallpapers/cachyos-wallpapers/Abstract.png
+                    - img "abstract" [ref=e298]
+                - generic [ref=e299]:
+                  - heading "BlueFeathers" [level=4] [ref=e300]
+                  - 'link "Permalink: BlueFeathers" [ref=e301] [cursor=pointer]':
+                    - /url: "#bluefeathers"
+                    - img [ref=e302]
+                - paragraph [ref=e304]:
+                  - link "bluefeathers" [ref=e305] [cursor=pointer]:
+                    - /url: https://github.com/birbkeks/cachyos-wallpapers/blob/develop/usr/share/wallpapers/cachyos-wallpapers/BlueFeathers.png
+                    - img "bluefeathers" [ref=e306]
+                - generic [ref=e307]:
+                  - heading "BlueLady" [level=4] [ref=e308]
+                  - 'link "Permalink: BlueLady" [ref=e309] [cursor=pointer]':
+                    - /url: "#bluelady"
+                    - img [ref=e310]
+                - paragraph [ref=e312]:
+                  - link "bluelady" [ref=e313] [cursor=pointer]:
+                    - /url: https://github.com/birbkeks/cachyos-wallpapers/blob/develop/usr/share/wallpapers/cachyos-wallpapers/BlueLady.png
+                    - img "bluelady" [ref=e314]
+                - generic [ref=e315]:
+                  - heading "BlueNekoLady" [level=4] [ref=e316]
+                  - 'link "Permalink: BlueNekoLady" [ref=e317] [cursor=pointer]':
+                    - /url: "#bluenekolady"
+                    - img [ref=e318]
+                - paragraph [ref=e320]:
+                  - link "bluenekolady" [ref=e321] [cursor=pointer]:
+                    - /url: https://github.com/birbkeks/cachyos-wallpapers/blob/develop/usr/share/wallpapers/cachyos-wallpapers/BlueNekoLady.png
+                    - img "bluenekolady" [ref=e322]
+                - generic [ref=e323]:
+                  - heading "Cachy depths 5K" [level=4] [ref=e324]
+                  - 'link "Permalink: Cachy depths 5K" [ref=e325] [cursor=pointer]':
+                    - /url: "#cachy-depths-5k"
+                    - img [ref=e326]
+                - paragraph [ref=e328]:
+                  - link "cachydepths5k":
+                    - /url: https://github.com/birbkeks/cachyos-wallpapers/blob/develop/usr/share/wallpapers/cachyos-wallpapers/Cachy%20depths%205K.png
+                    - img "cachydepths5k"
+                - generic [ref=e329]:
+                  - heading "CachyAdventure169" [level=4] [ref=e330]
+                  - 'link "Permalink: CachyAdventure169" [ref=e331] [cursor=pointer]':
+                    - /url: "#cachyadventure169"
+                    - img [ref=e332]
+                - paragraph [ref=e334]:
+                  - link "cachyadventure169":
+                    - /url: https://github.com/birbkeks/cachyos-wallpapers/blob/develop/usr/share/wallpapers/cachyos-wallpapers/CachyAdventure169.png
+                    - img "cachyadventure169"
+                - generic [ref=e335]:
+                  - heading "Cachyadventure219" [level=4] [ref=e336]
+                  - 'link "Permalink: Cachyadventure219" [ref=e337] [cursor=pointer]':
+                    - /url: "#cachyadventure219"
+                    - img [ref=e338]
+                - paragraph [ref=e340]:
+                  - link "cachyadventure219":
+                    - /url: https://github.com/birbkeks/cachyos-wallpapers/blob/develop/usr/share/wallpapers/cachyos-wallpapers/Cachyadventure219.png
+                    - img "cachyadventure219"
+                - generic [ref=e341]:
+                  - heading "DarkStreaks" [level=4] [ref=e342]
+                  - 'link "Permalink: DarkStreaks" [ref=e343] [cursor=pointer]':
+                    - /url: "#darkstreaks"
+                    - img [ref=e344]
+                - paragraph [ref=e346]:
+                  - link "darkstreaks" [ref=e347] [cursor=pointer]:
+                    - /url: https://github.com/birbkeks/cachyos-wallpapers/blob/develop/usr/share/wallpapers/cachyos-wallpapers/DarkStreaks.png
+                    - img "darkstreaks" [ref=e348]
+                - generic [ref=e349]:
+                  - heading "Dimensions" [level=4] [ref=e350]
+                  - 'link "Permalink: Dimensions" [ref=e351] [cursor=pointer]':
+                    - /url: "#dimensions"
+                    - img [ref=e352]
+                - paragraph [ref=e354]:
+                  - link "dimensions":
+                    - /url: https://github.com/birbkeks/cachyos-wallpapers/blob/develop/usr/share/wallpapers/cachyos-wallpapers/Dimensions.png
+                    - img "dimensions"
+                - generic [ref=e355]:
+                  - heading "Dracula" [level=4] [ref=e356]
+                  - 'link "Permalink: Dracula" [ref=e357] [cursor=pointer]':
+                    - /url: "#dracula"
+                    - img [ref=e358]
+                - paragraph [ref=e360]:
+                  - link "dracula" [ref=e361] [cursor=pointer]:
+                    - /url: https://github.com/birbkeks/cachyos-wallpapers/blob/develop/usr/share/wallpapers/cachyos-wallpapers/Dracula.png
+                    - img "dracula" [ref=e362]
+                - generic [ref=e363]:
+                  - heading "GreenFeathers" [level=4] [ref=e364]
+                  - 'link "Permalink: GreenFeathers" [ref=e365] [cursor=pointer]':
+                    - /url: "#greenfeathers"
+                    - img [ref=e366]
+                - paragraph [ref=e368]:
+                  - link "greenfeathers" [ref=e369] [cursor=pointer]:
+                    - /url: https://github.com/birbkeks/cachyos-wallpapers/blob/develop/usr/share/wallpapers/cachyos-wallpapers/GreenFeathers.png
+                    - img "greenfeathers" [ref=e370]
+                - generic [ref=e371]:
+                  - heading "EmeraldNekoLady" [level=4] [ref=e372]
+                  - 'link "Permalink: EmeraldNekoLady" [ref=e373] [cursor=pointer]':
+                    - /url: "#emeraldnekolady"
+                    - img [ref=e374]
+                - paragraph [ref=e376]:
+                  - link "emeraldnekolady" [ref=e377] [cursor=pointer]:
+                    - /url: https://github.com/CachyOS/cachyos-wallpapers/blob/develop/usr/share/wallpapers/cachyos-wallpapers/EmeraldNekoLady.png
+                    - img "emeraldnekolady" [ref=e378]
+                - generic [ref=e379]:
+                  - heading "GreenNekoLady" [level=4] [ref=e380]
+                  - 'link "Permalink: GreenNekoLady" [ref=e381] [cursor=pointer]':
+                    - /url: "#greennekolady"
+                    - img [ref=e382]
+                - paragraph [ref=e384]:
+                  - link "greennekolady":
+                    - /url: https://github.com/birbkeks/cachyos-wallpapers/blob/develop/usr/share/wallpapers/cachyos-wallpapers/GreenNekoLady.png
+                    - img "greennekolady"
+                - generic [ref=e385]:
+                  - heading "Lines" [level=4] [ref=e386]
+                  - 'link "Permalink: Lines" [ref=e387] [cursor=pointer]':
+                    - /url: "#lines"
+                    - img [ref=e388]
+                - paragraph [ref=e390]:
+                  - link "lines" [ref=e391] [cursor=pointer]:
+                    - /url: https://github.com/birbkeks/cachyos-wallpapers/blob/develop/usr/share/wallpapers/cachyos-wallpapers/Lines.png
+                    - img "lines" [ref=e392]
+                - generic [ref=e393]:
+                  - heading "Liquid" [level=4] [ref=e394]
+                  - 'link "Permalink: Liquid" [ref=e395] [cursor=pointer]':
+                    - /url: "#liquid"
+                    - img [ref=e396]
+                - paragraph [ref=e398]:
+                  - link "liquid":
+                    - /url: https://github.com/birbkeks/cachyos-wallpapers/blob/develop/usr/share/wallpapers/cachyos-wallpapers/Liquid.png
+                    - img "liquid"
+                - generic [ref=e399]:
+                  - heading "Metal" [level=4] [ref=e400]
+                  - 'link "Permalink: Metal" [ref=e401] [cursor=pointer]':
+                    - /url: "#metal"
+                    - img [ref=e402]
+                - paragraph [ref=e404]:
+                  - link "metal":
+                    - /url: https://github.com/birbkeks/cachyos-wallpapers/blob/develop/usr/share/wallpapers/cachyos-wallpapers/Metal.png
+                    - img "metal"
+                - generic [ref=e405]:
+                  - heading "OrangeFeathers" [level=4] [ref=e406]
+                  - 'link "Permalink: OrangeFeathers" [ref=e407] [cursor=pointer]':
+                    - /url: "#orangefeathers"
+                    - img [ref=e408]
+                - paragraph [ref=e410]:
+                  - link "orangefeathers" [ref=e411] [cursor=pointer]:
+                    - /url: https://github.com/birbkeks/cachyos-wallpapers/blob/develop/usr/share/wallpapers/cachyos-wallpapers/OrangeFeathers.png
+                    - img "orangefeathers" [ref=e412]
+                - generic [ref=e413]:
+                  - heading "PinkLady" [level=4] [ref=e414]
+                  - 'link "Permalink: PinkLady" [ref=e415] [cursor=pointer]':
+                    - /url: "#pinklady"
+                    - img [ref=e416]
+                - paragraph [ref=e418]:
+                  - link "pinklady":
+                    - /url: https://github.com/birbkeks/cachyos-wallpapers/blob/develop/usr/share/wallpapers/cachyos-wallpapers/PinkLady.png
+                    - img "pinklady"
+                - generic [ref=e419]:
+                  - heading "PurpleFeathers" [level=4] [ref=e420]
+                  - 'link "Permalink: PurpleFeathers" [ref=e421] [cursor=pointer]':
+                    - /url: "#purplefeathers"
+                    - img [ref=e422]
+                - paragraph [ref=e424]:
+                  - link "purplefeathers":
+                    - /url: https://github.com/birbkeks/cachyos-wallpapers/blob/develop/usr/share/wallpapers/cachyos-wallpapers/PurpleFeathers.png
+                    - img "purplefeathers"
+                - generic [ref=e425]:
+                  - heading "RedNekoLady" [level=4] [ref=e426]
+                  - 'link "Permalink: RedNekoLady" [ref=e427] [cursor=pointer]':
+                    - /url: "#rednekolady"
+                    - img [ref=e428]
+                - paragraph [ref=e430]:
+                  - link "rednekolady":
+                    - /url: https://github.com/birbkeks/cachyos-wallpapers/blob/develop/usr/share/wallpapers/cachyos-wallpapers/RedNekoLady.png
+                    - img "rednekolady"
+                - generic [ref=e431]:
+                  - heading "Skyscraper" [level=4] [ref=e432]
+                  - 'link "Permalink: Skyscraper" [ref=e433] [cursor=pointer]':
+                    - /url: "#skyscraper"
+                    - img [ref=e434]
+                - paragraph [ref=e436]:
+                  - link "skyscraper":
+                    - /url: https://github.com/birbkeks/cachyos-wallpapers/blob/develop/usr/share/wallpapers/cachyos-wallpapers/Skyscraper.png
+                    - img "skyscraper"
+                - generic [ref=e437]:
+                  - heading "Spectrum" [level=4] [ref=e438]
+                  - 'link "Permalink: Spectrum" [ref=e439] [cursor=pointer]':
+                    - /url: "#spectrum"
+                    - img [ref=e440]
+                - paragraph [ref=e442]:
+                  - link "spectrum":
+                    - /url: https://github.com/birbkeks/cachyos-wallpapers/blob/develop/usr/share/wallpapers/cachyos-wallpapers/Spectrum.png
+                    - img "spectrum"
+                - generic [ref=e443]:
+                  - heading "cachysurf3" [level=4] [ref=e444]
+                  - 'link "Permalink: cachysurf3" [ref=e445] [cursor=pointer]':
+                    - /url: "#cachysurf3"
+                    - img [ref=e446]
+                - paragraph [ref=e448]:
+                  - link "cachysurf":
+                    - /url: https://github.com/birbkeks/cachyos-wallpapers/blob/develop/usr/share/wallpapers/cachyos-wallpapers/cachysurf3.jpg
+                    - img "cachysurf"
+                - generic [ref=e449]:
+                  - heading "cachysurf4" [level=4] [ref=e450]
+                  - 'link "Permalink: cachysurf4" [ref=e451] [cursor=pointer]':
+                    - /url: "#cachysurf4"
+                    - img [ref=e452]
+                - paragraph [ref=e454]:
+                  - link "cachysurf4":
+                    - /url: https://github.com/birbkeks/cachyos-wallpapers/blob/develop/usr/share/wallpapers/cachyos-wallpapers/cachysurf4.jpg
+                    - img "cachysurf4"
+                - generic [ref=e455]:
+                  - heading "paper" [level=4] [ref=e456]
+                  - 'link "Permalink: paper" [ref=e457] [cursor=pointer]':
+                    - /url: "#paper"
+                    - img [ref=e458]
+                - paragraph [ref=e460]:
+                  - link "paper" [ref=e461] [cursor=pointer]:
+                    - /url: https://github.com/birbkeks/cachyos-wallpapers/blob/develop/usr/share/wallpapers/cachyos-wallpapers/paper.png
+                    - img "paper" [ref=e462]
+                - generic [ref=e463]:
+                  - heading "splash" [level=4] [ref=e464]
+                  - 'link "Permalink: splash" [ref=e465] [cursor=pointer]':
+                    - /url: "#splash"
+                    - img [ref=e466]
+                - paragraph [ref=e468]:
+                  - link "splash":
+                    - /url: https://github.com/birbkeks/cachyos-wallpapers/blob/develop/usr/share/wallpapers/cachyos-wallpapers/splash.png
+                    - img "splash"
+        - generic [ref=e472]:
+          - generic [ref=e475]:
+            - heading "About" [level=2] [ref=e476]
+            - paragraph [ref=e477]: Wallpapers for CachyOS
+            - heading "Resources" [level=3] [ref=e478]
+            - link "Readme" [ref=e480] [cursor=pointer]:
+              - /url: "#readme-ov-file"
+              - img [ref=e481]
+              - text: Readme
+            - link "Activity" [ref=e484] [cursor=pointer]:
+              - /url: /CachyOS/cachyos-wallpapers/activity
+              - img [ref=e485]
+              - text: Activity
+            - link "Custom properties" [ref=e488] [cursor=pointer]:
+              - /url: /CachyOS/cachyos-wallpapers/custom-properties
+              - img [ref=e489]
+              - text: Custom properties
+            - heading "Stars" [level=3] [ref=e491]
+            - link "49 stars" [ref=e493] [cursor=pointer]:
+              - /url: /CachyOS/cachyos-wallpapers/stargazers
+              - img [ref=e494]
+              - strong [ref=e496]: "49"
+              - text: stars
+            - heading "Watchers" [level=3] [ref=e497]
+            - link "1 watching" [ref=e499] [cursor=pointer]:
+              - /url: /CachyOS/cachyos-wallpapers/watchers
+              - img [ref=e500]
+              - strong [ref=e502]: "1"
+              - text: watching
+            - heading "Forks" [level=3] [ref=e503]
+            - link "18 forks" [ref=e505] [cursor=pointer]:
+              - /url: /CachyOS/cachyos-wallpapers/forks
+              - img [ref=e506]
+              - strong [ref=e508]: "18"
+              - text: forks
+            - link "Report repository" [ref=e510] [cursor=pointer]:
+              - /url: /contact/report-content?content_url=https%3A%2F%2Fgithub.com%2FCachyOS%2Fcachyos-wallpapers&report=CachyOS+%28user%29
+          - generic [ref=e512]:
+            - heading "Releases" [level=2] [ref=e513]:
+              - link "Releases" [ref=e514] [cursor=pointer]:
+                - /url: /CachyOS/cachyos-wallpapers/releases
+            - link "1 tags" [ref=e515] [cursor=pointer]:
+              - /url: /CachyOS/cachyos-wallpapers/tags
+              - img [ref=e516]
+              - text: 1 tags
+          - generic [ref=e519]:
+            - heading "Packages" [level=2] [ref=e520]:
+              - link "Packages" [ref=e521] [cursor=pointer]:
+                - /url: /orgs/CachyOS/packages?repo_name=cachyos-wallpapers
+            - generic [ref=e522]: No packages published
+          - generic [ref=e524]:
+            - heading "Contributors 9" [level=2] [ref=e525]:
+              - link "Contributors 9" [ref=e526] [cursor=pointer]:
+                - /url: /CachyOS/cachyos-wallpapers/graphs/contributors
+                - text: Contributors
+                - generic "9" [ref=e527]
+            - list [ref=e528]:
+              - listitem [ref=e529]:
+                - link "@sirlucjan" [ref=e530] [cursor=pointer]:
+                  - /url: https://github.com/sirlucjan
+                  - img "@sirlucjan" [ref=e531]
+              - listitem [ref=e532]:
+                - link "@ptr1337" [ref=e533] [cursor=pointer]:
+                  - /url: https://github.com/ptr1337
+                  - img "@ptr1337" [ref=e534]
+              - listitem [ref=e535]:
+                - link "@SaberJ2X" [ref=e536] [cursor=pointer]:
+                  - /url: https://github.com/SaberJ2X
+                  - img "@SaberJ2X" [ref=e537]
+              - listitem [ref=e538]:
+                - link "@Jackomighty" [ref=e539] [cursor=pointer]:
+                  - /url: https://github.com/Jackomighty
+                  - img "@Jackomighty" [ref=e540]
+              - listitem [ref=e541]:
+                - link "@vnepogodin" [ref=e542] [cursor=pointer]:
+                  - /url: https://github.com/vnepogodin
+                  - img "@vnepogodin" [ref=e543]
+              - listitem [ref=e544]:
+                - link "@syrupderg" [ref=e545] [cursor=pointer]:
+                  - /url: https://github.com/syrupderg
+                  - img "@syrupderg" [ref=e546]
+              - listitem [ref=e547]:
+                - link "@diegons490" [ref=e548] [cursor=pointer]:
+                  - /url: https://github.com/diegons490
+                  - img "@diegons490" [ref=e549]
+              - listitem [ref=e550]:
+                - link "@qpcheese" [ref=e551] [cursor=pointer]:
+                  - /url: https://github.com/qpcheese
+                  - img "@qpcheese" [ref=e552]
+              - listitem [ref=e553]:
+                - link "@helpme970" [ref=e554] [cursor=pointer]:
+                  - /url: https://github.com/helpme970
+                  - img "@helpme970" [ref=e555]
+  - contentinfo [ref=e557]:
+    - heading "Footer" [level=2] [ref=e558]
+    - generic [ref=e559]:
+      - generic [ref=e560]:
+        - link "GitHub Homepage" [ref=e561] [cursor=pointer]:
+          - /url: https://github.com
+          - img [ref=e562]
+        - generic [ref=e564]: © 2026 GitHub, Inc.
+      - navigation "Footer" [ref=e565]:
+        - heading "Footer navigation" [level=3] [ref=e566]
+        - list "Footer navigation" [ref=e567]:
+          - listitem [ref=e568]:
+            - link "Terms" [ref=e569] [cursor=pointer]:
+              - /url: https://docs.github.com/site-policy/github-terms/github-terms-of-service
+          - listitem [ref=e570]:
+            - link "Privacy" [ref=e571] [cursor=pointer]:
+              - /url: https://docs.github.com/site-policy/privacy-policies/github-privacy-statement
+          - listitem [ref=e572]:
+            - link "Security" [ref=e573] [cursor=pointer]:
+              - /url: https://github.com/security
+          - listitem [ref=e574]:
+            - link "Status" [ref=e575] [cursor=pointer]:
+              - /url: https://www.githubstatus.com/
+          - listitem [ref=e576]:
+            - link "Community" [ref=e577] [cursor=pointer]:
+              - /url: https://github.community/
+          - listitem [ref=e578]:
+            - link "Docs" [ref=e579] [cursor=pointer]:
+              - /url: https://docs.github.com/
+          - listitem [ref=e580]:
+            - link "Contact" [ref=e581] [cursor=pointer]:
+              - /url: https://support.github.com?tags=dotcom-footer
+          - listitem [ref=e582]:
+            - button "Manage cookies" [ref=e584] [cursor=pointer]
+          - listitem [ref=e585]:
+            - button "Do not share my personal information" [ref=e587] [cursor=pointer]

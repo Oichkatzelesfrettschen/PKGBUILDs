@@ -1,0 +1,25 @@
+pkgbase = greenboost-dkms
+	pkgdesc = GreenBoost 3-tier GPU memory extension: DKMS kernel module plus CUDA LD_PRELOAD shim
+	pkgver = 2.5
+	pkgrel = 3
+	url = https://gitlab.com/IsolatedOctopi/nvidia_greenboost
+	install = greenboost-dkms.install
+	arch = x86_64
+	license = GPL2
+	makedepends = git
+	makedepends = clang
+	depends = dkms
+	depends = glibc
+	optdepends = nvidia-utils: NVIDIA user-space runtime and libcuda.so for the CUDA shim
+	optdepends = cuda: CUDA runtime stack for applications using the LD_PRELOAD shim
+	optdepends = linux-cachyos-headers: headers for the CachyOS kernel
+	provides = greenboost
+	conflicts = greenboost
+	source = git+https://gitlab.com/IsolatedOctopi/nvidia_greenboost.git#tag=v2.5
+	source = dkms.conf
+	source = greenboost-cuda13-symbols.patch
+	sha256sums = 4dc674ddb8182bcff8f6233d4e6b2876ecfcc73d24177abe7bb1f6a402fa5d51
+	sha256sums = ca6d832f88dc4454c77d10091c411fb22980fd8fc510ddd4fe89161e7a0196f8
+	sha256sums = e3da42d349d23ecd3945a4e92c9f0b8036613540bc855235eef8015be6e0e607
+
+pkgname = greenboost-dkms

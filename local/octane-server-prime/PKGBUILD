@@ -1,0 +1,29 @@
+_filename=octane_server_prime_2025.5-30.11.0-stable
+pkgname=octane-server-prime
+pkgver=2025.5_30.11.0
+pkgrel=1
+pkgdesc="The free tier OctaneRender server by OTOY"
+arch=('x86_64')
+license=('proprietary')
+url="https://home.otoy.com/render/octane-render/demo/"
+source=('https://render.otoy.com/plugindownloads/ae/e5/77/a5/octane_server_prime_2025.5-30.11.0-stable.run')
+noextract=('octane_server_prime_2025.5-30.11.0-stable.run')
+sha256sums=('b4179a738b9febd8f713005de23c97baa2c3488bc210b703dcb6654d4be478fc')
+
+prepare() {
+  chmod +x "${_filename}.run"
+  ./"${_filename}.run" -e
+}
+
+package() {
+  mkdir -p "${pkgdir}/usr/local" "${pkgdir}/usr/bin"
+  cp -rf ./OctaneForBlender/usr/local/OctaneServer "${pkgdir}/usr/local/"
+
+  cat > "${pkgdir}/usr/bin/OctaneServer" <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+unset OCIO
+exec /usr/local/OctaneServer/OctaneServer "$@"
+EOF
+  chmod 755 "${pkgdir}/usr/bin/OctaneServer"
+}

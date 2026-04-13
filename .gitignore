@@ -5,5 +5,17 @@
 *.pkg.tar.*
 *.src.tar.*
 
-# Embedded AUR git repos
+# Embedded AUR git repos (both .git.bak renamed copies and same-name subdirs)
 **/.git.bak
+bout-next/bout-next/
+
+# makepkg build artifact directories (created by makepkg inside package dirs)
+**/pkg/
+**/src/
+
+# spline-cp437-limine-font generated artifacts
+local/spline-cp437-limine-font/build/
+local/spline-cp437-limine-font/reports/
+
+# Dated backup snapshots
+local/*.backup-*

@@ -1,0 +1,992 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - region
+    - generic [ref=e3]:
+      - link "Skip to content" [ref=e4] [cursor=pointer]:
+        - /url: "#start-of-content"
+      - banner [ref=e6]:
+        - heading "Navigation Menu" [level=2] [ref=e7]
+        - generic [ref=e8]:
+          - link "Homepage" [ref=e10] [cursor=pointer]:
+            - /url: /
+            - img [ref=e11]
+          - generic [ref=e13]:
+            - navigation "Global" [ref=e16]:
+              - list [ref=e17]:
+                - listitem [ref=e18]:
+                  - button "Platform" [ref=e20] [cursor=pointer]:
+                    - text: Platform
+                    - img [ref=e21]
+                - listitem [ref=e23]:
+                  - button "Solutions" [ref=e25] [cursor=pointer]:
+                    - text: Solutions
+                    - img [ref=e26]
+                - listitem [ref=e28]:
+                  - button "Resources" [ref=e30] [cursor=pointer]:
+                    - text: Resources
+                    - img [ref=e31]
+                - listitem [ref=e33]:
+                  - button "Open Source" [ref=e35] [cursor=pointer]:
+                    - text: Open Source
+                    - img [ref=e36]
+                - listitem [ref=e38]:
+                  - button "Enterprise" [ref=e40] [cursor=pointer]:
+                    - text: Enterprise
+                    - img [ref=e41]
+                - listitem [ref=e43]:
+                  - link "Pricing" [ref=e44] [cursor=pointer]:
+                    - /url: https://github.com/pricing
+                    - generic [ref=e45]: Pricing
+            - generic [ref=e46]:
+              - button "Search or jump to…" [ref=e49] [cursor=pointer]:
+                - img [ref=e51]
+              - link "Sign in" [ref=e54] [cursor=pointer]:
+                - /url: /login?return_to=https%3A%2F%2Fgithub.com%2Fcachyos%2Fcachyos-wallpapers%2Ftree%2Fdevelop%2Fusr%2Fshare%2Fwallpapers%2Fcachyos-wallpapers
+              - link "Sign up" [ref=e55] [cursor=pointer]:
+                - /url: /signup?ref_cta=Sign+up&ref_loc=header+logged+out&ref_page=%2F%3Cuser-name%3E%2F%3Crepo-name%3E%2Ffiles%2Fdisambiguate&source=header-repo&source_repo=CachyOS%2Fcachyos-wallpapers
+              - button "Appearance settings" [ref=e58] [cursor=pointer]:
+                - img
+    - main [ref=e62]:
+      - generic [ref=e63]:
+        - generic [ref=e64]:
+          - generic [ref=e66]:
+            - img [ref=e67]
+            - link "CachyOS" [ref=e70] [cursor=pointer]:
+              - /url: /CachyOS
+            - generic [ref=e71]: /
+            - strong [ref=e72]:
+              - link "cachyos-wallpapers" [ref=e73] [cursor=pointer]:
+                - /url: /CachyOS/cachyos-wallpapers
+            - generic [ref=e74]: Public
+          - generic [ref=e75]:
+            - list:
+              - listitem [ref=e76]:
+                - link "You must be signed in to change notification settings" [ref=e77] [cursor=pointer]:
+                  - /url: /login?return_to=%2FCachyOS%2Fcachyos-wallpapers
+                  - img [ref=e78]
+                  - text: Notifications
+              - listitem [ref=e80]:
+                - link "Fork 18" [ref=e81] [cursor=pointer]:
+                  - /url: /login?return_to=%2FCachyOS%2Fcachyos-wallpapers
+                  - img [ref=e82]
+                  - text: Fork
+                  - generic "18" [ref=e84]
+              - listitem [ref=e85]:
+                - link "You must be signed in to star a repository" [ref=e87] [cursor=pointer]:
+                  - /url: /login?return_to=%2FCachyOS%2Fcachyos-wallpapers
+                  - img [ref=e88]
+                  - text: Star
+                  - generic "49 users starred this repository" [ref=e90]: "49"
+        - navigation "Repository" [ref=e91]:
+          - list [ref=e92]:
+            - listitem [ref=e93]:
+              - link "Code" [ref=e94] [cursor=pointer]:
+                - /url: /CachyOS/cachyos-wallpapers
+                - img [ref=e95]
+                - generic [ref=e97]: Code
+            - listitem [ref=e98]:
+              - link "Issues 3" [ref=e99] [cursor=pointer]:
+                - /url: /CachyOS/cachyos-wallpapers/issues
+                - img [ref=e100]
+                - generic [ref=e103]: Issues
+                - generic "3" [ref=e104]
+            - listitem [ref=e105]:
+              - link "Pull requests 10" [ref=e106] [cursor=pointer]:
+                - /url: /CachyOS/cachyos-wallpapers/pulls
+                - img [ref=e107]
+                - generic [ref=e109]: Pull requests
+                - generic "10" [ref=e110]
+            - listitem [ref=e111]:
+              - link "Projects" [ref=e112] [cursor=pointer]:
+                - /url: /CachyOS/cachyos-wallpapers/projects
+                - img [ref=e113]
+                - generic [ref=e115]: Projects
+            - listitem [ref=e116]:
+              - link "Security and quality" [ref=e117] [cursor=pointer]:
+                - /url: /CachyOS/cachyos-wallpapers/security
+                - img [ref=e118]
+                - generic [ref=e120]: Security and quality
+            - listitem [ref=e121]:
+              - link "Insights" [ref=e122] [cursor=pointer]:
+                - /url: /CachyOS/cachyos-wallpapers/pulse
+                - img [ref=e123]
+                - generic [ref=e125]: Insights
+      - generic [ref=e133]:
+        - generic [ref=e135]:
+          - generic [ref=e138]:
+            - generic [ref=e139]:
+              - generic [ref=e140]:
+                - heading "Collapse file tree" [level=2] [ref=e141]:
+                  - button "Collapse file tree" [expanded] [ref=e142] [cursor=pointer]:
+                    - img [ref=e143]
+                - heading "Files" [level=2] [ref=e146]
+              - generic [ref=e147]:
+                - button "develop branch" [ref=e149] [cursor=pointer]:
+                  - generic [ref=e150]:
+                    - generic [ref=e152]:
+                      - img [ref=e154]
+                      - generic [ref=e157]: develop
+                    - generic:
+                      - img
+                - button "Search this repository (forward slash)" [ref=e159] [cursor=pointer]:
+                  - img [ref=e160]
+            - generic [ref=e163]:
+              - img [ref=e165]
+              - combobox "Go to file" [ref=e167]
+            - navigation "File Tree Navigation" [ref=e173]:
+              - tree "Files" [ref=e175]:
+                - treeitem "usr/share/wallpapers/cachyos-wallpapers" [expanded] [level=1] [ref=e176]:
+                  - generic [ref=e177] [cursor=pointer]:
+                    - img [ref=e179]
+                    - generic [ref=e181]:
+                      - img [ref=e185]
+                      - generic [ref=e188]: usr/share/wallpapers/cachyos-wallpapers
+                  - group "usr/share/wallpapers/cachyos-wallpapers" [ref=e189]:
+                    - treeitem "Abstract.png" [level=2] [ref=e190]:
+                      - generic [ref=e195] [cursor=pointer]:
+                        - img [ref=e198]
+                        - generic [ref=e200]: Abstract.png
+                    - treeitem "BlueFeathers.png" [level=2] [ref=e201]:
+                      - generic [ref=e206] [cursor=pointer]:
+                        - img [ref=e209]
+                        - generic [ref=e211]: BlueFeathers.png
+                    - treeitem "BlueLady.png" [level=2] [ref=e212]:
+                      - generic [ref=e217] [cursor=pointer]:
+                        - img [ref=e220]
+                        - generic [ref=e222]: BlueLady.png
+                    - treeitem "BlueNekoLady.png" [level=2] [ref=e223]:
+                      - generic [ref=e228] [cursor=pointer]:
+                        - img [ref=e231]
+                        - generic [ref=e233]: BlueNekoLady.png
+                    - treeitem "Cachy depths 5K.png" [level=2] [ref=e234]:
+                      - generic [ref=e239] [cursor=pointer]:
+                        - img [ref=e242]
+                        - generic [ref=e244]: Cachy depths 5K.png
+                    - treeitem "CachyAdventure169.png" [level=2] [ref=e245]:
+                      - generic [ref=e250] [cursor=pointer]:
+                        - img [ref=e253]
+                        - generic [ref=e255]: CachyAdventure169.png
+                    - treeitem "CachyOS_GreenSpace.png" [level=2] [ref=e256]:
+                      - generic [ref=e261] [cursor=pointer]:
+                        - img [ref=e264]
+                        - generic [ref=e266]: CachyOS_GreenSpace.png
+                    - treeitem "CachyOS_Moon.jpg" [level=2] [ref=e267]:
+                      - generic [ref=e272] [cursor=pointer]:
+                        - img [ref=e275]
+                        - generic [ref=e277]: CachyOS_Moon.jpg
+                    - treeitem "Cachy_Topography.jpg" [level=2] [ref=e278]:
+                      - generic [ref=e283] [cursor=pointer]:
+                        - img [ref=e286]
+                        - generic [ref=e288]: Cachy_Topography.jpg
+                    - treeitem "Cachy_Topography1.jpg" [level=2] [ref=e289]:
+                      - generic [ref=e294] [cursor=pointer]:
+                        - img [ref=e297]
+                        - generic [ref=e299]: Cachy_Topography1.jpg
+                    - treeitem "Cachy_Topography2.jpg" [level=2] [ref=e300]:
+                      - generic [ref=e305] [cursor=pointer]:
+                        - img [ref=e308]
+                        - generic [ref=e310]: Cachy_Topography2.jpg
+                    - treeitem "Cachy_Topography3.jpg" [level=2] [ref=e311]:
+                      - generic [ref=e316] [cursor=pointer]:
+                        - img [ref=e319]
+                        - generic [ref=e321]: Cachy_Topography3.jpg
+                    - treeitem "Cachy_Topography4.jpg" [level=2] [ref=e322]:
+                      - generic [ref=e327] [cursor=pointer]:
+                        - img [ref=e330]
+                        - generic [ref=e332]: Cachy_Topography4.jpg
+                    - treeitem "Cachy_Topography5.jpg" [level=2] [ref=e333]:
+                      - generic [ref=e338] [cursor=pointer]:
+                        - img [ref=e341]
+                        - generic [ref=e343]: Cachy_Topography5.jpg
+                    - treeitem "Cachy_Topography6.jpg" [level=2] [ref=e344]:
+                      - generic [ref=e349] [cursor=pointer]:
+                        - img [ref=e352]
+                        - generic [ref=e354]: Cachy_Topography6.jpg
+                    - treeitem "Cachyadventure219.png" [level=2] [ref=e355]:
+                      - generic [ref=e360] [cursor=pointer]:
+                        - img [ref=e363]
+                        - generic [ref=e365]: Cachyadventure219.png
+                    - treeitem "DarkStreaks.png" [level=2] [ref=e366]:
+                      - generic [ref=e371] [cursor=pointer]:
+                        - img [ref=e374]
+                        - generic [ref=e376]: DarkStreaks.png
+                    - treeitem "Dimensions.png" [level=2] [ref=e377]:
+                      - generic [ref=e382] [cursor=pointer]:
+                        - img [ref=e385]
+                        - generic [ref=e387]: Dimensions.png
+                    - treeitem "Dracula.png" [level=2] [ref=e388]:
+                      - generic [ref=e393] [cursor=pointer]:
+                        - img [ref=e396]
+                        - generic [ref=e398]: Dracula.png
+                    - treeitem "EmeraldNekoLady.png" [level=2] [ref=e399]:
+                      - generic [ref=e404] [cursor=pointer]:
+                        - img [ref=e407]
+                        - generic [ref=e409]: EmeraldNekoLady.png
+                    - treeitem "GreenFeathers.png" [level=2] [ref=e410]:
+                      - generic [ref=e415] [cursor=pointer]:
+                        - img [ref=e418]
+                        - generic [ref=e420]: GreenFeathers.png
+                    - treeitem "GreenNekoLady.png" [level=2] [ref=e421]:
+                      - generic [ref=e426] [cursor=pointer]:
+                        - img [ref=e429]
+                        - generic [ref=e431]: GreenNekoLady.png
+                    - treeitem "Lines.png" [level=2] [ref=e432]:
+                      - generic [ref=e437] [cursor=pointer]:
+                        - img [ref=e440]
+                        - generic [ref=e442]: Lines.png
+                    - treeitem "Liquid.png" [level=2] [ref=e443]:
+                      - generic [ref=e448] [cursor=pointer]:
+                        - img [ref=e451]
+                        - generic [ref=e453]: Liquid.png
+                    - treeitem "Metal.png" [level=2] [ref=e454]:
+                      - generic [ref=e459] [cursor=pointer]:
+                        - img [ref=e462]
+                        - generic [ref=e464]: Metal.png
+                    - treeitem "OrangeFeathers.png" [level=2] [ref=e465]:
+                      - generic [ref=e470] [cursor=pointer]:
+                        - img [ref=e473]
+                        - generic [ref=e475]: OrangeFeathers.png
+                    - treeitem "PinkLady.png" [level=2] [ref=e476]:
+                      - generic [ref=e481] [cursor=pointer]:
+                        - img [ref=e484]
+                        - generic [ref=e486]: PinkLady.png
+                    - treeitem "PurpleFeathers.png" [level=2] [ref=e487]:
+                      - generic [ref=e492] [cursor=pointer]:
+                        - img [ref=e495]
+                        - generic [ref=e497]: PurpleFeathers.png
+                    - treeitem "RedNekoLady.png" [level=2] [ref=e498]:
+                      - generic [ref=e503] [cursor=pointer]:
+                        - img [ref=e506]
+                        - generic [ref=e508]: RedNekoLady.png
+                    - treeitem "Skyscraper.png" [level=2] [ref=e509]:
+                      - generic [ref=e514] [cursor=pointer]:
+                        - img [ref=e517]
+                        - generic [ref=e519]: Skyscraper.png
+                    - treeitem "Spectrum.png" [level=2] [ref=e520]:
+                      - generic [ref=e525] [cursor=pointer]:
+                        - img [ref=e528]
+                        - generic [ref=e530]: Spectrum.png
+                    - treeitem "cachygalaxy99.jpg" [level=2] [ref=e531]:
+                      - generic [ref=e536] [cursor=pointer]:
+                        - img [ref=e539]
+                        - generic [ref=e541]: cachygalaxy99.jpg
+                    - treeitem "cachysurf3.jpg" [level=2] [ref=e542]:
+                      - generic [ref=e547] [cursor=pointer]:
+                        - img [ref=e550]
+                        - generic [ref=e552]: cachysurf3.jpg
+                    - treeitem "cachysurf4.jpg" [level=2] [ref=e553]:
+                      - generic [ref=e558] [cursor=pointer]:
+                        - img [ref=e561]
+                        - generic [ref=e563]: cachysurf4.jpg
+                    - treeitem "limine-splash.png" [level=2] [ref=e564]:
+                      - generic [ref=e569] [cursor=pointer]:
+                        - img [ref=e572]
+                        - generic [ref=e574]: limine-splash.png
+                    - treeitem "north.png" [level=2] [ref=e575]:
+                      - generic [ref=e580] [cursor=pointer]:
+                        - img [ref=e583]
+                        - generic [ref=e585]: north.png
+                    - treeitem "paper.png" [level=2] [ref=e586]:
+                      - generic [ref=e591] [cursor=pointer]:
+                        - img [ref=e594]
+                        - generic [ref=e596]: paper.png
+                    - treeitem "splash.png" [level=2] [ref=e597]:
+                      - generic [ref=e602] [cursor=pointer]:
+                        - img [ref=e605]
+                        - generic [ref=e607]: splash.png
+                    - treeitem "wave.png" [level=2] [ref=e608]:
+                      - generic [ref=e613] [cursor=pointer]:
+                        - img [ref=e616]
+                        - generic [ref=e618]: wave.png
+                    - treeitem "wave2.png" [level=2] [ref=e619]:
+                      - generic [ref=e624] [cursor=pointer]:
+                        - img [ref=e627]
+                        - generic [ref=e629]: wave2.png
+                - treeitem "README.md" [level=1] [ref=e630]:
+                  - generic [ref=e632] [cursor=pointer]:
+                    - img [ref=e635]
+                    - generic [ref=e637]: README.md
+          - slider "Draggable pane splitter" [ref=e639]
+        - generic [ref=e642]:
+          - generic [ref=e646]:
+            - generic [ref=e648]:
+              - navigation "Breadcrumbs" [ref=e649]:
+                - heading "Breadcrumbs" [level=2] [ref=e650]
+                - list [ref=e651]:
+                  - listitem [ref=e652]:
+                    - link "cachyos-wallpapers" [ref=e653] [cursor=pointer]:
+                      - /url: /CachyOS/cachyos-wallpapers/tree/develop
+                  - listitem [ref=e654]:
+                    - text: /
+                    - link "usr" [ref=e655] [cursor=pointer]:
+                      - /url: /CachyOS/cachyos-wallpapers/tree/develop/usr
+                  - listitem [ref=e656]:
+                    - text: /
+                    - link "share" [ref=e657] [cursor=pointer]:
+                      - /url: /CachyOS/cachyos-wallpapers/tree/develop/usr/share
+                  - listitem [ref=e658]:
+                    - text: /
+                    - link "wallpapers" [ref=e659] [cursor=pointer]:
+                      - /url: /CachyOS/cachyos-wallpapers/tree/develop/usr/share/wallpapers
+              - generic [ref=e660]:
+                - text: /
+                - heading "cachyos-wallpapers" [level=1] [ref=e661]
+                - text: /
+              - button "Copy path" [ref=e662] [cursor=pointer]:
+                - img [ref=e663]
+            - generic [ref=e668]:
+              - heading "Directory actions" [level=2] [ref=e669]
+              - heading "More options" [level=2] [ref=e670]
+              - button "More options" [ref=e671] [cursor=pointer]:
+                - img [ref=e672]
+          - generic [ref=e674]:
+            - generic [ref=e676]:
+              - heading "Latest commit" [level=2] [ref=e677]
+              - generic [ref=e678]:
+                - generic [ref=e680]:
+                  - link "ptr1337" [ref=e681] [cursor=pointer]:
+                    - /url: /ptr1337
+                    - img "ptr1337" [ref=e682]
+                  - link "commits by ptr1337" [ref=e683] [cursor=pointer]:
+                    - /url: /CachyOS/cachyos-wallpapers/commits?author=ptr1337
+                    - text: ptr1337
+                - generic [ref=e684]:
+                  - 'link "wallpapers: optimize with oxipng -o 6 --strip safe" [ref=e687] [cursor=pointer]':
+                    - /url: /CachyOS/cachyos-wallpapers/commit/964263ed8a0abf4fa9cbec3c85c3207f05cb2b5f
+                  - button "Open commit details" [ref=e688] [cursor=pointer]:
+                    - img [ref=e689]
+              - generic [ref=e691]:
+                - generic [ref=e693]:
+                  - link "Commit 964263e" [ref=e694] [cursor=pointer]:
+                    - /url: /CachyOS/cachyos-wallpapers/commit/964263ed8a0abf4fa9cbec3c85c3207f05cb2b5f
+                    - text: 964263e
+                  - text: ·
+                  - generic "Jan 22, 2026, 10:58 AM PST" [ref=e695]: Jan 22, 20263 months ago
+                - generic [ref=e696]:
+                  - heading "History" [level=2] [ref=e697]
+                  - link "History" [ref=e698] [cursor=pointer]:
+                    - /url: /CachyOS/cachyos-wallpapers/commits/develop/usr/share/wallpapers/cachyos-wallpapers
+                    - generic [ref=e699]:
+                      - generic:
+                        - img
+                      - generic [ref=e700]: History
+            - generic [ref=e702]:
+              - heading "Folders and files" [level=2] [ref=e703]
+              - table "Folders and files" [ref=e704]:
+                - rowgroup [ref=e705]:
+                  - row "Name Last commit message Last commit date" [ref=e706]:
+                    - columnheader "Name" [ref=e707]
+                    - columnheader "Last commit message" [ref=e708]:
+                      - generic "Last commit message" [ref=e709]
+                    - columnheader "Last commit date" [ref=e710]:
+                      - generic "Last commit date" [ref=e711]
+                - rowgroup [ref=e712]:
+                  - row "parent directory Parent directory" [ref=e713]:
+                    - cell "parent directory Parent directory" [ref=e714]:
+                      - heading "parent directory" [level=3] [ref=e715]
+                      - link "Parent directory" [ref=e716] [cursor=pointer]:
+                        - /url: /CachyOS/cachyos-wallpapers/tree/develop/usr/share/wallpapers
+                        - generic [ref=e717]:
+                          - img [ref=e718]
+                          - text: ..
+                  - row "Abstract.png, (File) decreased image size (#17) Jan 22, 20263 months ago" [ref=e720]:
+                    - cell "Abstract.png, (File)" [ref=e721]:
+                      - generic [ref=e722]:
+                        - img [ref=e723]
+                        - link "Abstract.png, (File)" [ref=e728] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/blob/develop/usr/share/wallpapers/cachyos-wallpapers/Abstract.png
+                          - text: Abstract.png
+                    - cell "decreased image size (#17)" [ref=e729]:
+                      - generic [ref=e731]:
+                        - link "decreased image size (" [ref=e732] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/commit/d366fbcfa73d5b4e173ea3c0cf898c98a02ceba6
+                        - link "#17" [ref=e733] [cursor=pointer]:
+                          - /url: https://github.com/CachyOS/cachyos-wallpapers/pull/17
+                        - link ")" [ref=e734] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/commit/d366fbcfa73d5b4e173ea3c0cf898c98a02ceba6
+                    - cell "Jan 22, 20263 months ago" [ref=e735]:
+                      - generic [ref=e736]: Jan 22, 20263 months ago
+                  - 'row "BlueFeathers.png, (File) wallpapers: optimize with oxipng -o 6 --strip safe Jan 22, 20263 months ago" [ref=e737]':
+                    - cell "BlueFeathers.png, (File)" [ref=e738]:
+                      - generic [ref=e739]:
+                        - img [ref=e740]
+                        - link "BlueFeathers.png, (File)" [ref=e745] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/blob/develop/usr/share/wallpapers/cachyos-wallpapers/BlueFeathers.png
+                          - text: BlueFeathers.png
+                    - 'cell "wallpapers: optimize with oxipng -o 6 --strip safe" [ref=e746]':
+                      - 'link "wallpapers: optimize with oxipng -o 6 --strip safe" [ref=e749] [cursor=pointer]':
+                        - /url: /CachyOS/cachyos-wallpapers/commit/964263ed8a0abf4fa9cbec3c85c3207f05cb2b5f
+                    - cell "Jan 22, 20263 months ago" [ref=e750]:
+                      - generic [ref=e751]: Jan 22, 20263 months ago
+                  - row "BlueLady.png, (File) decreased image size (#17) Jan 22, 20263 months ago" [ref=e752]:
+                    - cell "BlueLady.png, (File)" [ref=e753]:
+                      - generic [ref=e754]:
+                        - img [ref=e755]
+                        - link "BlueLady.png, (File)" [ref=e760] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/blob/develop/usr/share/wallpapers/cachyos-wallpapers/BlueLady.png
+                          - text: BlueLady.png
+                    - cell "decreased image size (#17)" [ref=e761]:
+                      - generic [ref=e763]:
+                        - link "decreased image size (" [ref=e764] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/commit/d366fbcfa73d5b4e173ea3c0cf898c98a02ceba6
+                        - link "#17" [ref=e765] [cursor=pointer]:
+                          - /url: https://github.com/CachyOS/cachyos-wallpapers/pull/17
+                        - link ")" [ref=e766] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/commit/d366fbcfa73d5b4e173ea3c0cf898c98a02ceba6
+                    - cell "Jan 22, 20263 months ago" [ref=e767]:
+                      - generic [ref=e768]: Jan 22, 20263 months ago
+                  - row "BlueNekoLady.png, (File) decreased image size (#17) Jan 22, 20263 months ago" [ref=e769]:
+                    - cell "BlueNekoLady.png, (File)" [ref=e770]:
+                      - generic [ref=e771]:
+                        - img [ref=e772]
+                        - link "BlueNekoLady.png, (File)" [ref=e777] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/blob/develop/usr/share/wallpapers/cachyos-wallpapers/BlueNekoLady.png
+                          - text: BlueNekoLady.png
+                    - cell "decreased image size (#17)" [ref=e778]:
+                      - generic [ref=e780]:
+                        - link "decreased image size (" [ref=e781] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/commit/d366fbcfa73d5b4e173ea3c0cf898c98a02ceba6
+                        - link "#17" [ref=e782] [cursor=pointer]:
+                          - /url: https://github.com/CachyOS/cachyos-wallpapers/pull/17
+                        - link ")" [ref=e783] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/commit/d366fbcfa73d5b4e173ea3c0cf898c98a02ceba6
+                    - cell "Jan 22, 20263 months ago" [ref=e784]:
+                      - generic [ref=e785]: Jan 22, 20263 months ago
+                  - 'row "Cachy depths 5K.png, (File) wallpapers: optimize with oxipng -o 6 --strip safe Jan 22, 20263 months ago" [ref=e786]':
+                    - cell "Cachy depths 5K.png, (File)" [ref=e787]:
+                      - generic [ref=e788]:
+                        - img [ref=e789]
+                        - link "Cachy depths 5K.png, (File)" [ref=e794] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/blob/develop/usr/share/wallpapers/cachyos-wallpapers/Cachy%20depths%205K.png
+                          - text: Cachy depths 5K.png
+                    - 'cell "wallpapers: optimize with oxipng -o 6 --strip safe" [ref=e795]':
+                      - 'link "wallpapers: optimize with oxipng -o 6 --strip safe" [ref=e798] [cursor=pointer]':
+                        - /url: /CachyOS/cachyos-wallpapers/commit/964263ed8a0abf4fa9cbec3c85c3207f05cb2b5f
+                    - cell "Jan 22, 20263 months ago" [ref=e799]:
+                      - generic [ref=e800]: Jan 22, 20263 months ago
+                  - row "CachyAdventure169.png, (File) decreased image size (#17) Jan 22, 20263 months ago" [ref=e801]:
+                    - cell "CachyAdventure169.png, (File)" [ref=e802]:
+                      - generic [ref=e803]:
+                        - img [ref=e804]
+                        - link "CachyAdventure169.png, (File)" [ref=e809] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/blob/develop/usr/share/wallpapers/cachyos-wallpapers/CachyAdventure169.png
+                          - text: CachyAdventure169.png
+                    - cell "decreased image size (#17)" [ref=e810]:
+                      - generic [ref=e812]:
+                        - link "decreased image size (" [ref=e813] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/commit/d366fbcfa73d5b4e173ea3c0cf898c98a02ceba6
+                        - link "#17" [ref=e814] [cursor=pointer]:
+                          - /url: https://github.com/CachyOS/cachyos-wallpapers/pull/17
+                        - link ")" [ref=e815] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/commit/d366fbcfa73d5b4e173ea3c0cf898c98a02ceba6
+                    - cell "Jan 22, 20263 months ago" [ref=e816]:
+                      - generic [ref=e817]: Jan 22, 20263 months ago
+                  - 'row "CachyOS_GreenSpace.png, (File) wallpapers: optimize with oxipng -o 6 --strip safe Jan 22, 20263 months ago" [ref=e818]':
+                    - cell "CachyOS_GreenSpace.png, (File)" [ref=e819]:
+                      - generic [ref=e820]:
+                        - img [ref=e821]
+                        - link "CachyOS_GreenSpace.png, (File)" [ref=e826] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/blob/develop/usr/share/wallpapers/cachyos-wallpapers/CachyOS_GreenSpace.png
+                          - text: CachyOS_GreenSpace.png
+                    - 'cell "wallpapers: optimize with oxipng -o 6 --strip safe" [ref=e827]':
+                      - 'link "wallpapers: optimize with oxipng -o 6 --strip safe" [ref=e830] [cursor=pointer]':
+                        - /url: /CachyOS/cachyos-wallpapers/commit/964263ed8a0abf4fa9cbec3c85c3207f05cb2b5f
+                    - cell "Jan 22, 20263 months ago" [ref=e831]:
+                      - generic [ref=e832]: Jan 22, 20263 months ago
+                  - row "CachyOS_Moon.jpg, (File) Added New Space Wallpapers (#14) Jan 22, 20263 months ago" [ref=e833]:
+                    - cell "CachyOS_Moon.jpg, (File)" [ref=e834]:
+                      - generic [ref=e835]:
+                        - img [ref=e836]
+                        - link "CachyOS_Moon.jpg, (File)" [ref=e841] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/blob/develop/usr/share/wallpapers/cachyos-wallpapers/CachyOS_Moon.jpg
+                          - text: CachyOS_Moon.jpg
+                    - cell "Added New Space Wallpapers (#14)" [ref=e842]:
+                      - generic [ref=e844]:
+                        - link "Added New Space Wallpapers (" [ref=e845] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/commit/f5432fa7eb60e5acaacb1bedac060d58e9beb1cf
+                        - link "#14" [ref=e846] [cursor=pointer]:
+                          - /url: https://github.com/CachyOS/cachyos-wallpapers/pull/14
+                        - link ")" [ref=e847] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/commit/f5432fa7eb60e5acaacb1bedac060d58e9beb1cf
+                    - cell "Jan 22, 20263 months ago" [ref=e848]:
+                      - generic [ref=e849]: Jan 22, 20263 months ago
+                  - row "Cachy_Topography.jpg, (File) Move wallpapers into proper dir Jan 22, 20263 months ago" [ref=e850]:
+                    - cell "Cachy_Topography.jpg, (File)" [ref=e851]:
+                      - generic [ref=e852]:
+                        - img [ref=e853]
+                        - link "Cachy_Topography.jpg, (File)" [ref=e858] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/blob/develop/usr/share/wallpapers/cachyos-wallpapers/Cachy_Topography.jpg
+                          - text: Cachy_Topography.jpg
+                    - cell "Move wallpapers into proper dir" [ref=e859]:
+                      - link "Move wallpapers into proper dir" [ref=e862] [cursor=pointer]:
+                        - /url: /CachyOS/cachyos-wallpapers/commit/b6ab7087770b9d2c7397d35142d1684cdba6e539
+                    - cell "Jan 22, 20263 months ago" [ref=e863]:
+                      - generic [ref=e864]: Jan 22, 20263 months ago
+                  - row "Cachy_Topography1.jpg, (File) Move wallpapers into proper dir Jan 22, 20263 months ago" [ref=e865]:
+                    - cell "Cachy_Topography1.jpg, (File)" [ref=e866]:
+                      - generic [ref=e867]:
+                        - img [ref=e868]
+                        - link "Cachy_Topography1.jpg, (File)" [ref=e873] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/blob/develop/usr/share/wallpapers/cachyos-wallpapers/Cachy_Topography1.jpg
+                          - text: Cachy_Topography1.jpg
+                    - cell "Move wallpapers into proper dir" [ref=e874]:
+                      - link "Move wallpapers into proper dir" [ref=e877] [cursor=pointer]:
+                        - /url: /CachyOS/cachyos-wallpapers/commit/b6ab7087770b9d2c7397d35142d1684cdba6e539
+                    - cell "Jan 22, 20263 months ago" [ref=e878]:
+                      - generic [ref=e879]: Jan 22, 20263 months ago
+                  - row "Cachy_Topography2.jpg, (File) Move wallpapers into proper dir Jan 22, 20263 months ago" [ref=e880]:
+                    - cell "Cachy_Topography2.jpg, (File)" [ref=e881]:
+                      - generic [ref=e882]:
+                        - img [ref=e883]
+                        - link "Cachy_Topography2.jpg, (File)" [ref=e888] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/blob/develop/usr/share/wallpapers/cachyos-wallpapers/Cachy_Topography2.jpg
+                          - text: Cachy_Topography2.jpg
+                    - cell "Move wallpapers into proper dir" [ref=e889]:
+                      - link "Move wallpapers into proper dir" [ref=e892] [cursor=pointer]:
+                        - /url: /CachyOS/cachyos-wallpapers/commit/b6ab7087770b9d2c7397d35142d1684cdba6e539
+                    - cell "Jan 22, 20263 months ago" [ref=e893]:
+                      - generic [ref=e894]: Jan 22, 20263 months ago
+                  - row "Cachy_Topography3.jpg, (File) Move wallpapers into proper dir Jan 22, 20263 months ago" [ref=e895]:
+                    - cell "Cachy_Topography3.jpg, (File)" [ref=e896]:
+                      - generic [ref=e897]:
+                        - img [ref=e898]
+                        - link "Cachy_Topography3.jpg, (File)" [ref=e903] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/blob/develop/usr/share/wallpapers/cachyos-wallpapers/Cachy_Topography3.jpg
+                          - text: Cachy_Topography3.jpg
+                    - cell "Move wallpapers into proper dir" [ref=e904]:
+                      - link "Move wallpapers into proper dir" [ref=e907] [cursor=pointer]:
+                        - /url: /CachyOS/cachyos-wallpapers/commit/b6ab7087770b9d2c7397d35142d1684cdba6e539
+                    - cell "Jan 22, 20263 months ago" [ref=e908]:
+                      - generic [ref=e909]: Jan 22, 20263 months ago
+                  - row "Cachy_Topography4.jpg, (File) Move wallpapers into proper dir Jan 22, 20263 months ago" [ref=e910]:
+                    - cell "Cachy_Topography4.jpg, (File)" [ref=e911]:
+                      - generic [ref=e912]:
+                        - img [ref=e913]
+                        - link "Cachy_Topography4.jpg, (File)" [ref=e918] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/blob/develop/usr/share/wallpapers/cachyos-wallpapers/Cachy_Topography4.jpg
+                          - text: Cachy_Topography4.jpg
+                    - cell "Move wallpapers into proper dir" [ref=e919]:
+                      - link "Move wallpapers into proper dir" [ref=e922] [cursor=pointer]:
+                        - /url: /CachyOS/cachyos-wallpapers/commit/b6ab7087770b9d2c7397d35142d1684cdba6e539
+                    - cell "Jan 22, 20263 months ago" [ref=e923]:
+                      - generic [ref=e924]: Jan 22, 20263 months ago
+                  - row "Cachy_Topography5.jpg, (File) Move wallpapers into proper dir Jan 22, 20263 months ago" [ref=e925]:
+                    - cell "Cachy_Topography5.jpg, (File)" [ref=e926]:
+                      - generic [ref=e927]:
+                        - img [ref=e928]
+                        - link "Cachy_Topography5.jpg, (File)" [ref=e933] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/blob/develop/usr/share/wallpapers/cachyos-wallpapers/Cachy_Topography5.jpg
+                          - text: Cachy_Topography5.jpg
+                    - cell "Move wallpapers into proper dir" [ref=e934]:
+                      - link "Move wallpapers into proper dir" [ref=e937] [cursor=pointer]:
+                        - /url: /CachyOS/cachyos-wallpapers/commit/b6ab7087770b9d2c7397d35142d1684cdba6e539
+                    - cell "Jan 22, 20263 months ago" [ref=e938]:
+                      - generic [ref=e939]: Jan 22, 20263 months ago
+                  - row "Cachy_Topography6.jpg, (File) Move wallpapers into proper dir Jan 22, 20263 months ago" [ref=e940]:
+                    - cell "Cachy_Topography6.jpg, (File)" [ref=e941]:
+                      - generic [ref=e942]:
+                        - img [ref=e943]
+                        - link "Cachy_Topography6.jpg, (File)" [ref=e948] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/blob/develop/usr/share/wallpapers/cachyos-wallpapers/Cachy_Topography6.jpg
+                          - text: Cachy_Topography6.jpg
+                    - cell "Move wallpapers into proper dir" [ref=e949]:
+                      - link "Move wallpapers into proper dir" [ref=e952] [cursor=pointer]:
+                        - /url: /CachyOS/cachyos-wallpapers/commit/b6ab7087770b9d2c7397d35142d1684cdba6e539
+                    - cell "Jan 22, 20263 months ago" [ref=e953]:
+                      - generic [ref=e954]: Jan 22, 20263 months ago
+                  - row "Cachyadventure219.png, (File) decreased image size (#17) Jan 22, 20263 months ago" [ref=e955]:
+                    - cell "Cachyadventure219.png, (File)" [ref=e956]:
+                      - generic [ref=e957]:
+                        - img [ref=e958]
+                        - link "Cachyadventure219.png, (File)" [ref=e963] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/blob/develop/usr/share/wallpapers/cachyos-wallpapers/Cachyadventure219.png
+                          - text: Cachyadventure219.png
+                    - cell "decreased image size (#17)" [ref=e964]:
+                      - generic [ref=e966]:
+                        - link "decreased image size (" [ref=e967] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/commit/d366fbcfa73d5b4e173ea3c0cf898c98a02ceba6
+                        - link "#17" [ref=e968] [cursor=pointer]:
+                          - /url: https://github.com/CachyOS/cachyos-wallpapers/pull/17
+                        - link ")" [ref=e969] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/commit/d366fbcfa73d5b4e173ea3c0cf898c98a02ceba6
+                    - cell "Jan 22, 20263 months ago" [ref=e970]:
+                      - generic [ref=e971]: Jan 22, 20263 months ago
+                  - 'row "DarkStreaks.png, (File) wallpapers: optimize with oxipng -o 6 --strip safe Jan 22, 20263 months ago" [ref=e972]':
+                    - cell "DarkStreaks.png, (File)" [ref=e973]:
+                      - generic [ref=e974]:
+                        - img [ref=e975]
+                        - link "DarkStreaks.png, (File)" [ref=e980] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/blob/develop/usr/share/wallpapers/cachyos-wallpapers/DarkStreaks.png
+                          - text: DarkStreaks.png
+                    - 'cell "wallpapers: optimize with oxipng -o 6 --strip safe" [ref=e981]':
+                      - 'link "wallpapers: optimize with oxipng -o 6 --strip safe" [ref=e984] [cursor=pointer]':
+                        - /url: /CachyOS/cachyos-wallpapers/commit/964263ed8a0abf4fa9cbec3c85c3207f05cb2b5f
+                    - cell "Jan 22, 20263 months ago" [ref=e985]:
+                      - generic [ref=e986]: Jan 22, 20263 months ago
+                  - row "Dimensions.png, (File) decreased image size (#17) Jan 22, 20263 months ago" [ref=e987]:
+                    - cell "Dimensions.png, (File)" [ref=e988]:
+                      - generic [ref=e989]:
+                        - img [ref=e990]
+                        - link "Dimensions.png, (File)" [ref=e995] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/blob/develop/usr/share/wallpapers/cachyos-wallpapers/Dimensions.png
+                          - text: Dimensions.png
+                    - cell "decreased image size (#17)" [ref=e996]:
+                      - generic [ref=e998]:
+                        - link "decreased image size (" [ref=e999] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/commit/d366fbcfa73d5b4e173ea3c0cf898c98a02ceba6
+                        - link "#17" [ref=e1000] [cursor=pointer]:
+                          - /url: https://github.com/CachyOS/cachyos-wallpapers/pull/17
+                        - link ")" [ref=e1001] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/commit/d366fbcfa73d5b4e173ea3c0cf898c98a02ceba6
+                    - cell "Jan 22, 20263 months ago" [ref=e1002]:
+                      - generic [ref=e1003]: Jan 22, 20263 months ago
+                  - row "Dracula.png, (File) decreased image size (#17) Jan 22, 20263 months ago" [ref=e1004]:
+                    - cell "Dracula.png, (File)" [ref=e1005]:
+                      - generic [ref=e1006]:
+                        - img [ref=e1007]
+                        - link "Dracula.png, (File)" [ref=e1012] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/blob/develop/usr/share/wallpapers/cachyos-wallpapers/Dracula.png
+                          - text: Dracula.png
+                    - cell "decreased image size (#17)" [ref=e1013]:
+                      - generic [ref=e1015]:
+                        - link "decreased image size (" [ref=e1016] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/commit/d366fbcfa73d5b4e173ea3c0cf898c98a02ceba6
+                        - link "#17" [ref=e1017] [cursor=pointer]:
+                          - /url: https://github.com/CachyOS/cachyos-wallpapers/pull/17
+                        - link ")" [ref=e1018] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/commit/d366fbcfa73d5b4e173ea3c0cf898c98a02ceba6
+                    - cell "Jan 22, 20263 months ago" [ref=e1019]:
+                      - generic [ref=e1020]: Jan 22, 20263 months ago
+                  - row "EmeraldNekoLady.png, (File) decreased image size (#17) Jan 22, 20263 months ago" [ref=e1021]:
+                    - cell "EmeraldNekoLady.png, (File)" [ref=e1022]:
+                      - generic [ref=e1023]:
+                        - img [ref=e1024]
+                        - link "EmeraldNekoLady.png, (File)" [ref=e1029] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/blob/develop/usr/share/wallpapers/cachyos-wallpapers/EmeraldNekoLady.png
+                          - text: EmeraldNekoLady.png
+                    - cell "decreased image size (#17)" [ref=e1030]:
+                      - generic [ref=e1032]:
+                        - link "decreased image size (" [ref=e1033] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/commit/d366fbcfa73d5b4e173ea3c0cf898c98a02ceba6
+                        - link "#17" [ref=e1034] [cursor=pointer]:
+                          - /url: https://github.com/CachyOS/cachyos-wallpapers/pull/17
+                        - link ")" [ref=e1035] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/commit/d366fbcfa73d5b4e173ea3c0cf898c98a02ceba6
+                    - cell "Jan 22, 20263 months ago" [ref=e1036]:
+                      - generic [ref=e1037]: Jan 22, 20263 months ago
+                  - row "GreenFeathers.png, (File) decreased image size (#17) Jan 22, 20263 months ago" [ref=e1038]:
+                    - cell "GreenFeathers.png, (File)" [ref=e1039]:
+                      - generic [ref=e1040]:
+                        - img [ref=e1041]
+                        - link "GreenFeathers.png, (File)" [ref=e1046] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/blob/develop/usr/share/wallpapers/cachyos-wallpapers/GreenFeathers.png
+                          - text: GreenFeathers.png
+                    - cell "decreased image size (#17)" [ref=e1047]:
+                      - generic [ref=e1049]:
+                        - link "decreased image size (" [ref=e1050] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/commit/d366fbcfa73d5b4e173ea3c0cf898c98a02ceba6
+                        - link "#17" [ref=e1051] [cursor=pointer]:
+                          - /url: https://github.com/CachyOS/cachyos-wallpapers/pull/17
+                        - link ")" [ref=e1052] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/commit/d366fbcfa73d5b4e173ea3c0cf898c98a02ceba6
+                    - cell "Jan 22, 20263 months ago" [ref=e1053]:
+                      - generic [ref=e1054]: Jan 22, 20263 months ago
+                  - row "GreenNekoLady.png, (File) decreased image size (#17) Jan 22, 20263 months ago" [ref=e1055]:
+                    - cell "GreenNekoLady.png, (File)" [ref=e1056]:
+                      - generic [ref=e1057]:
+                        - img [ref=e1058]
+                        - link "GreenNekoLady.png, (File)" [ref=e1063] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/blob/develop/usr/share/wallpapers/cachyos-wallpapers/GreenNekoLady.png
+                          - text: GreenNekoLady.png
+                    - cell "decreased image size (#17)" [ref=e1064]:
+                      - generic [ref=e1066]:
+                        - link "decreased image size (" [ref=e1067] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/commit/d366fbcfa73d5b4e173ea3c0cf898c98a02ceba6
+                        - link "#17" [ref=e1068] [cursor=pointer]:
+                          - /url: https://github.com/CachyOS/cachyos-wallpapers/pull/17
+                        - link ")" [ref=e1069] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/commit/d366fbcfa73d5b4e173ea3c0cf898c98a02ceba6
+                    - cell "Jan 22, 20263 months ago" [ref=e1070]:
+                      - generic [ref=e1071]: Jan 22, 20263 months ago
+                  - row "Lines.png, (File) decreased image size (#17) Jan 22, 20263 months ago" [ref=e1072]:
+                    - cell "Lines.png, (File)" [ref=e1073]:
+                      - generic [ref=e1074]:
+                        - img [ref=e1075]
+                        - link "Lines.png, (File)" [ref=e1080] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/blob/develop/usr/share/wallpapers/cachyos-wallpapers/Lines.png
+                          - text: Lines.png
+                    - cell "decreased image size (#17)" [ref=e1081]:
+                      - generic [ref=e1083]:
+                        - link "decreased image size (" [ref=e1084] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/commit/d366fbcfa73d5b4e173ea3c0cf898c98a02ceba6
+                        - link "#17" [ref=e1085] [cursor=pointer]:
+                          - /url: https://github.com/CachyOS/cachyos-wallpapers/pull/17
+                        - link ")" [ref=e1086] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/commit/d366fbcfa73d5b4e173ea3c0cf898c98a02ceba6
+                    - cell "Jan 22, 20263 months ago" [ref=e1087]:
+                      - generic [ref=e1088]: Jan 22, 20263 months ago
+                  - 'row "Liquid.png, (File) wallpapers: optimize with oxipng -o 6 --strip safe Jan 22, 20263 months ago" [ref=e1089]':
+                    - cell "Liquid.png, (File)" [ref=e1090]:
+                      - generic [ref=e1091]:
+                        - img [ref=e1092]
+                        - link "Liquid.png, (File)" [ref=e1097] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/blob/develop/usr/share/wallpapers/cachyos-wallpapers/Liquid.png
+                          - text: Liquid.png
+                    - 'cell "wallpapers: optimize with oxipng -o 6 --strip safe" [ref=e1098]':
+                      - 'link "wallpapers: optimize with oxipng -o 6 --strip safe" [ref=e1101] [cursor=pointer]':
+                        - /url: /CachyOS/cachyos-wallpapers/commit/964263ed8a0abf4fa9cbec3c85c3207f05cb2b5f
+                    - cell "Jan 22, 20263 months ago" [ref=e1102]:
+                      - generic [ref=e1103]: Jan 22, 20263 months ago
+                  - row "Metal.png, (File) decreased image size (#17) Jan 22, 20263 months ago" [ref=e1104]:
+                    - cell "Metal.png, (File)" [ref=e1105]:
+                      - generic [ref=e1106]:
+                        - img [ref=e1107]
+                        - link "Metal.png, (File)" [ref=e1112] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/blob/develop/usr/share/wallpapers/cachyos-wallpapers/Metal.png
+                          - text: Metal.png
+                    - cell "decreased image size (#17)" [ref=e1113]:
+                      - generic [ref=e1115]:
+                        - link "decreased image size (" [ref=e1116] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/commit/d366fbcfa73d5b4e173ea3c0cf898c98a02ceba6
+                        - link "#17" [ref=e1117] [cursor=pointer]:
+                          - /url: https://github.com/CachyOS/cachyos-wallpapers/pull/17
+                        - link ")" [ref=e1118] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/commit/d366fbcfa73d5b4e173ea3c0cf898c98a02ceba6
+                    - cell "Jan 22, 20263 months ago" [ref=e1119]:
+                      - generic [ref=e1120]: Jan 22, 20263 months ago
+                  - row "OrangeFeathers.png, (File) decreased image size (#17) Jan 22, 20263 months ago" [ref=e1121]:
+                    - cell "OrangeFeathers.png, (File)" [ref=e1122]:
+                      - generic [ref=e1123]:
+                        - img [ref=e1124]
+                        - link "OrangeFeathers.png, (File)" [ref=e1129] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/blob/develop/usr/share/wallpapers/cachyos-wallpapers/OrangeFeathers.png
+                          - text: OrangeFeathers.png
+                    - cell "decreased image size (#17)" [ref=e1130]:
+                      - generic [ref=e1132]:
+                        - link "decreased image size (" [ref=e1133] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/commit/d366fbcfa73d5b4e173ea3c0cf898c98a02ceba6
+                        - link "#17" [ref=e1134] [cursor=pointer]:
+                          - /url: https://github.com/CachyOS/cachyos-wallpapers/pull/17
+                        - link ")" [ref=e1135] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/commit/d366fbcfa73d5b4e173ea3c0cf898c98a02ceba6
+                    - cell "Jan 22, 20263 months ago" [ref=e1136]:
+                      - generic [ref=e1137]: Jan 22, 20263 months ago
+                  - row "PinkLady.png, (File) decreased image size (#17) Jan 22, 20263 months ago" [ref=e1138]:
+                    - cell "PinkLady.png, (File)" [ref=e1139]:
+                      - generic [ref=e1140]:
+                        - img [ref=e1141]
+                        - link "PinkLady.png, (File)" [ref=e1146] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/blob/develop/usr/share/wallpapers/cachyos-wallpapers/PinkLady.png
+                          - text: PinkLady.png
+                    - cell "decreased image size (#17)" [ref=e1147]:
+                      - generic [ref=e1149]:
+                        - link "decreased image size (" [ref=e1150] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/commit/d366fbcfa73d5b4e173ea3c0cf898c98a02ceba6
+                        - link "#17" [ref=e1151] [cursor=pointer]:
+                          - /url: https://github.com/CachyOS/cachyos-wallpapers/pull/17
+                        - link ")" [ref=e1152] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/commit/d366fbcfa73d5b4e173ea3c0cf898c98a02ceba6
+                    - cell "Jan 22, 20263 months ago" [ref=e1153]:
+                      - generic [ref=e1154]: Jan 22, 20263 months ago
+                  - 'row "PurpleFeathers.png, (File) wallpapers: optimize with oxipng -o 6 --strip safe Jan 22, 20263 months ago" [ref=e1155]':
+                    - cell "PurpleFeathers.png, (File)" [ref=e1156]:
+                      - generic [ref=e1157]:
+                        - img [ref=e1158]
+                        - link "PurpleFeathers.png, (File)" [ref=e1163] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/blob/develop/usr/share/wallpapers/cachyos-wallpapers/PurpleFeathers.png
+                          - text: PurpleFeathers.png
+                    - 'cell "wallpapers: optimize with oxipng -o 6 --strip safe" [ref=e1164]':
+                      - 'link "wallpapers: optimize with oxipng -o 6 --strip safe" [ref=e1167] [cursor=pointer]':
+                        - /url: /CachyOS/cachyos-wallpapers/commit/964263ed8a0abf4fa9cbec3c85c3207f05cb2b5f
+                    - cell "Jan 22, 20263 months ago" [ref=e1168]:
+                      - generic [ref=e1169]: Jan 22, 20263 months ago
+                  - row "RedNekoLady.png, (File) decreased image size (#17) Jan 22, 20263 months ago" [ref=e1170]:
+                    - cell "RedNekoLady.png, (File)" [ref=e1171]:
+                      - generic [ref=e1172]:
+                        - img [ref=e1173]
+                        - link "RedNekoLady.png, (File)" [ref=e1178] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/blob/develop/usr/share/wallpapers/cachyos-wallpapers/RedNekoLady.png
+                          - text: RedNekoLady.png
+                    - cell "decreased image size (#17)" [ref=e1179]:
+                      - generic [ref=e1181]:
+                        - link "decreased image size (" [ref=e1182] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/commit/d366fbcfa73d5b4e173ea3c0cf898c98a02ceba6
+                        - link "#17" [ref=e1183] [cursor=pointer]:
+                          - /url: https://github.com/CachyOS/cachyos-wallpapers/pull/17
+                        - link ")" [ref=e1184] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/commit/d366fbcfa73d5b4e173ea3c0cf898c98a02ceba6
+                    - cell "Jan 22, 20263 months ago" [ref=e1185]:
+                      - generic [ref=e1186]: Jan 22, 20263 months ago
+                  - row "Skyscraper.png, (File) decreased image size (#17) Jan 22, 20263 months ago" [ref=e1187]:
+                    - cell "Skyscraper.png, (File)" [ref=e1188]:
+                      - generic [ref=e1189]:
+                        - img [ref=e1190]
+                        - link "Skyscraper.png, (File)" [ref=e1195] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/blob/develop/usr/share/wallpapers/cachyos-wallpapers/Skyscraper.png
+                          - text: Skyscraper.png
+                    - cell "decreased image size (#17)" [ref=e1196]:
+                      - generic [ref=e1198]:
+                        - link "decreased image size (" [ref=e1199] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/commit/d366fbcfa73d5b4e173ea3c0cf898c98a02ceba6
+                        - link "#17" [ref=e1200] [cursor=pointer]:
+                          - /url: https://github.com/CachyOS/cachyos-wallpapers/pull/17
+                        - link ")" [ref=e1201] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/commit/d366fbcfa73d5b4e173ea3c0cf898c98a02ceba6
+                    - cell "Jan 22, 20263 months ago" [ref=e1202]:
+                      - generic [ref=e1203]: Jan 22, 20263 months ago
+                  - 'row "Spectrum.png, (File) wallpapers: optimize with oxipng -o 6 --strip safe Jan 22, 20263 months ago" [ref=e1204]':
+                    - cell "Spectrum.png, (File)" [ref=e1205]:
+                      - generic [ref=e1206]:
+                        - img [ref=e1207]
+                        - link "Spectrum.png, (File)" [ref=e1212] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/blob/develop/usr/share/wallpapers/cachyos-wallpapers/Spectrum.png
+                          - text: Spectrum.png
+                    - 'cell "wallpapers: optimize with oxipng -o 6 --strip safe" [ref=e1213]':
+                      - 'link "wallpapers: optimize with oxipng -o 6 --strip safe" [ref=e1216] [cursor=pointer]':
+                        - /url: /CachyOS/cachyos-wallpapers/commit/964263ed8a0abf4fa9cbec3c85c3207f05cb2b5f
+                    - cell "Jan 22, 20263 months ago" [ref=e1217]:
+                      - generic [ref=e1218]: Jan 22, 20263 months ago
+                  - row "cachygalaxy99.jpg, (File) Added wallpaper (#5) Apr 14, 2025last year" [ref=e1219]:
+                    - cell "cachygalaxy99.jpg, (File)" [ref=e1220]:
+                      - generic [ref=e1221]:
+                        - img [ref=e1222]
+                        - link "cachygalaxy99.jpg, (File)" [ref=e1227] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/blob/develop/usr/share/wallpapers/cachyos-wallpapers/cachygalaxy99.jpg
+                          - text: cachygalaxy99.jpg
+                    - cell "Added wallpaper (#5)" [ref=e1228]:
+                      - generic [ref=e1230]:
+                        - link "Added wallpaper (" [ref=e1231] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/commit/3f5b812af2d570507b006d273026f797c3626cde
+                        - link "#5" [ref=e1232] [cursor=pointer]:
+                          - /url: https://github.com/CachyOS/cachyos-wallpapers/pull/5
+                        - link ")" [ref=e1233] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/commit/3f5b812af2d570507b006d273026f797c3626cde
+                    - cell "Apr 14, 2025last year" [ref=e1234]:
+                      - generic [ref=e1235]: Apr 14, 2025last year
+                  - row "cachysurf3.jpg, (File) Optimized PNGs and cachytan surboard (#3) Dec 23, 20242 years ago" [ref=e1236]:
+                    - cell "cachysurf3.jpg, (File)" [ref=e1237]:
+                      - generic [ref=e1238]:
+                        - img [ref=e1239]
+                        - link "cachysurf3.jpg, (File)" [ref=e1244] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/blob/develop/usr/share/wallpapers/cachyos-wallpapers/cachysurf3.jpg
+                          - text: cachysurf3.jpg
+                    - cell "Optimized PNGs and cachytan surboard (#3)" [ref=e1245]:
+                      - generic [ref=e1247]:
+                        - link "Optimized PNGs and cachytan surboard (" [ref=e1248] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/commit/41021e372c4b09e25d5fe2f3528a8797369e71f6
+                        - link "#3" [ref=e1249] [cursor=pointer]:
+                          - /url: https://github.com/CachyOS/cachyos-wallpapers/pull/3
+                        - link ")" [ref=e1250] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/commit/41021e372c4b09e25d5fe2f3528a8797369e71f6
+                    - cell "Dec 23, 20242 years ago" [ref=e1251]:
+                      - generic [ref=e1252]: Dec 23, 20242 years ago
+                  - row "cachysurf4.jpg, (File) Optimized PNGs and cachytan surboard (#3) Dec 23, 20242 years ago" [ref=e1253]:
+                    - cell "cachysurf4.jpg, (File)" [ref=e1254]:
+                      - generic [ref=e1255]:
+                        - img [ref=e1256]
+                        - link "cachysurf4.jpg, (File)" [ref=e1261] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/blob/develop/usr/share/wallpapers/cachyos-wallpapers/cachysurf4.jpg
+                          - text: cachysurf4.jpg
+                    - cell "Optimized PNGs and cachytan surboard (#3)" [ref=e1262]:
+                      - generic [ref=e1264]:
+                        - link "Optimized PNGs and cachytan surboard (" [ref=e1265] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/commit/41021e372c4b09e25d5fe2f3528a8797369e71f6
+                        - link "#3" [ref=e1266] [cursor=pointer]:
+                          - /url: https://github.com/CachyOS/cachyos-wallpapers/pull/3
+                        - link ")" [ref=e1267] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/commit/41021e372c4b09e25d5fe2f3528a8797369e71f6
+                    - cell "Dec 23, 20242 years ago" [ref=e1268]:
+                      - generic [ref=e1269]: Dec 23, 20242 years ago
+                  - row "limine-splash.png, (File) decreased image size (#17) Jan 22, 20263 months ago" [ref=e1270]:
+                    - cell "limine-splash.png, (File)" [ref=e1271]:
+                      - generic [ref=e1272]:
+                        - img [ref=e1273]
+                        - link "limine-splash.png, (File)" [ref=e1278] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/blob/develop/usr/share/wallpapers/cachyos-wallpapers/limine-splash.png
+                          - text: limine-splash.png
+                    - cell "decreased image size (#17)" [ref=e1279]:
+                      - generic [ref=e1281]:
+                        - link "decreased image size (" [ref=e1282] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/commit/d366fbcfa73d5b4e173ea3c0cf898c98a02ceba6
+                        - link "#17" [ref=e1283] [cursor=pointer]:
+                          - /url: https://github.com/CachyOS/cachyos-wallpapers/pull/17
+                        - link ")" [ref=e1284] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/commit/d366fbcfa73d5b4e173ea3c0cf898c98a02ceba6
+                    - cell "Jan 22, 20263 months ago" [ref=e1285]:
+                      - generic [ref=e1286]: Jan 22, 20263 months ago
+                  - row "north.png, (File) decreased image size (#17) Jan 22, 20263 months ago" [ref=e1287]:
+                    - cell "north.png, (File)" [ref=e1288]:
+                      - generic [ref=e1289]:
+                        - img [ref=e1290]
+                        - link "north.png, (File)" [ref=e1295] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/blob/develop/usr/share/wallpapers/cachyos-wallpapers/north.png
+                          - text: north.png
+                    - cell "decreased image size (#17)" [ref=e1296]:
+                      - generic [ref=e1298]:
+                        - link "decreased image size (" [ref=e1299] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/commit/d366fbcfa73d5b4e173ea3c0cf898c98a02ceba6
+                        - link "#17" [ref=e1300] [cursor=pointer]:
+                          - /url: https://github.com/CachyOS/cachyos-wallpapers/pull/17
+                        - link ")" [ref=e1301] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/commit/d366fbcfa73d5b4e173ea3c0cf898c98a02ceba6
+                    - cell "Jan 22, 20263 months ago" [ref=e1302]:
+                      - generic [ref=e1303]: Jan 22, 20263 months ago
+                  - row "paper.png, (File) decreased image size (#17) Jan 22, 20263 months ago" [ref=e1304]:
+                    - cell "paper.png, (File)" [ref=e1305]:
+                      - generic [ref=e1306]:
+                        - img [ref=e1307]
+                        - link "paper.png, (File)" [ref=e1312] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/blob/develop/usr/share/wallpapers/cachyos-wallpapers/paper.png
+                          - text: paper.png
+                    - cell "decreased image size (#17)" [ref=e1313]:
+                      - generic [ref=e1315]:
+                        - link "decreased image size (" [ref=e1316] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/commit/d366fbcfa73d5b4e173ea3c0cf898c98a02ceba6
+                        - link "#17" [ref=e1317] [cursor=pointer]:
+                          - /url: https://github.com/CachyOS/cachyos-wallpapers/pull/17
+                        - link ")" [ref=e1318] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/commit/d366fbcfa73d5b4e173ea3c0cf898c98a02ceba6
+                    - cell "Jan 22, 20263 months ago" [ref=e1319]:
+                      - generic [ref=e1320]: Jan 22, 20263 months ago
+                  - row "splash.png, (File) decreased image size (#17) Jan 22, 20263 months ago" [ref=e1321]:
+                    - cell "splash.png, (File)" [ref=e1322]:
+                      - generic [ref=e1323]:
+                        - img [ref=e1324]
+                        - link "splash.png, (File)" [ref=e1329] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/blob/develop/usr/share/wallpapers/cachyos-wallpapers/splash.png
+                          - text: splash.png
+                    - cell "decreased image size (#17)" [ref=e1330]:
+                      - generic [ref=e1332]:
+                        - link "decreased image size (" [ref=e1333] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/commit/d366fbcfa73d5b4e173ea3c0cf898c98a02ceba6
+                        - link "#17" [ref=e1334] [cursor=pointer]:
+                          - /url: https://github.com/CachyOS/cachyos-wallpapers/pull/17
+                        - link ")" [ref=e1335] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/commit/d366fbcfa73d5b4e173ea3c0cf898c98a02ceba6
+                    - cell "Jan 22, 20263 months ago" [ref=e1336]:
+                      - generic [ref=e1337]: Jan 22, 20263 months ago
+                  - 'row "wave.png, (File) wallpapers: optimize with oxipng -o 6 --strip safe Jan 22, 20263 months ago" [ref=e1338]':
+                    - cell "wave.png, (File)" [ref=e1339]:
+                      - generic [ref=e1340]:
+                        - img [ref=e1341]
+                        - link "wave.png, (File)" [ref=e1346] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/blob/develop/usr/share/wallpapers/cachyos-wallpapers/wave.png
+                          - text: wave.png
+                    - 'cell "wallpapers: optimize with oxipng -o 6 --strip safe" [ref=e1347]':
+                      - 'link "wallpapers: optimize with oxipng -o 6 --strip safe" [ref=e1350] [cursor=pointer]':
+                        - /url: /CachyOS/cachyos-wallpapers/commit/964263ed8a0abf4fa9cbec3c85c3207f05cb2b5f
+                    - cell "Jan 22, 20263 months ago" [ref=e1351]:
+                      - generic [ref=e1352]: Jan 22, 20263 months ago
+                  - 'row "wave2.png, (File) wallpapers: optimize with oxipng -o 6 --strip safe Jan 22, 20263 months ago" [ref=e1353]':
+                    - cell "wave2.png, (File)" [ref=e1354]:
+                      - generic [ref=e1355]:
+                        - img [ref=e1356]
+                        - link "wave2.png, (File)" [ref=e1361] [cursor=pointer]:
+                          - /url: /CachyOS/cachyos-wallpapers/blob/develop/usr/share/wallpapers/cachyos-wallpapers/wave2.png
+                          - text: wave2.png
+                    - 'cell "wallpapers: optimize with oxipng -o 6 --strip safe" [ref=e1362]':
+                      - 'link "wallpapers: optimize with oxipng -o 6 --strip safe" [ref=e1365] [cursor=pointer]':
+                        - /url: /CachyOS/cachyos-wallpapers/commit/964263ed8a0abf4fa9cbec3c85c3207f05cb2b5f
+                    - cell "Jan 22, 20263 months ago" [ref=e1366]:
+                      - generic [ref=e1367]: Jan 22, 20263 months ago
+  - alert [ref=e1371]

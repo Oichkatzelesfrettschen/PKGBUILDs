@@ -1,0 +1,199 @@
+#!/bin/sh
+# steelseries-button-watchdog -- Detect and recover stuck mouse buttons.
+#
+# WHY:  SteelSeries Rival 710 firmware declares phantom button codes
+#       (BTN_FORWARD, BTN_BACK, BTN_TASK) that can get stuck "pressed" at the
+#       kernel evdev level.  When this happens, X11 click-drag and text
+#       selection break because the button mask is permanently dirty.
+#       The libinput AttrEventCode quirk prevents NEW phantom events, but
+#       cannot recover from a button already stuck before the quirk loaded.
+#
+# WHAT: Queries evdev key state for all SteelSeries mouse devices.  If any
+#       phantom button (0x115-0x117) is stuck pressed, recovers by cycling
+#       the xinput device (disable/enable).  Also checks X11 button state
+#       via xinput query-state as a secondary verification.
+#
+# HOW:  Run as a systemd user timer (every 30s) or invoked manually.
+#       Requires: python3 (for evdev ioctl), xinput.
+
+set -eu
+
+LOG_TAG="steelseries-button-watchdog"
+
+log() {
+    logger -t "$LOG_TAG" "$1"
+}
+
+# Phantom button codes (evdev): BTN_FORWARD, BTN_BACK, BTN_TASK
+PHANTOM_CODES="277 278 279"
+
+check_evdev_stuck() {
+    _event_dev="$1"
+    # Query evdev key state via Python ioctl
+    python3 -c "
+import struct, fcntl, os, array, sys
+try:
+    fd = os.open('$_event_dev', os.O_RDONLY | os.O_NONBLOCK)
+except PermissionError:
+    sys.exit(0)
+except FileNotFoundError:
+    sys.exit(0)
+KEY_MAX = 0x2ff
+nbytes = (KEY_MAX + 7) // 8
+buf = array.array('B', [0] * nbytes)
+try:
+    fcntl.ioctl(fd, 0x80000000 | (nbytes << 16) | (0x45 << 8) | 0x18, buf)
+except OSError:
+    os.close(fd)
+    sys.exit(0)
+os.close(fd)
+stuck = []
+for code in [277, 278, 279]:
+    if buf[code // 8] & (1 << (code % 8)):
+        stuck.append(str(code))
+if stuck:
+    print(' '.join(stuck))
+    sys.exit(1)
+sys.exit(0)
+" 2>/dev/null
+}
+
+# Find SteelSeries mouse event devices
+find_steelseries_event_devs() {
+    for dev in /sys/class/input/event*; do
+        evname=$(basename "$dev")
+        devpath="/dev/input/$evname"
+        vendor=$(cat "$dev/device/id/vendor" 2>/dev/null || echo "")
+        if [ "$vendor" = "1038" ]; then
+            # Check if this is a mouse (has REL_X capability)
+            caps_rel=$(cat "$dev/device/capabilities/rel" 2>/dev/null || echo "0")
+            if [ "$caps_rel" != "0" ]; then
+                echo "$devpath"
+            fi
+        fi
+    done
+}
+
+# Find xinput device IDs for SteelSeries pointers
+find_steelseries_xinput_ids() {
+    xinput list 2>/dev/null | grep -i "SteelSeries" | grep "pointer" | \
+        sed -n 's/.*id=\([0-9]*\).*/\1/p'
+}
+
+recover_xinput() {
+    _xinput_id="$1"
+    _dev_name=$(xinput list-props "$_xinput_id" 2>/dev/null | head -1 || echo "device $_xinput_id")
+    log "Recovering $_dev_name (xinput ID $_xinput_id)"
+
+    xinput disable "$_xinput_id" 2>/dev/null
+    sleep 1
+    xinput enable "$_xinput_id" 2>/dev/null
+
+    if [ $? -eq 0 ]; then
+        log "Recovery complete for xinput ID $_xinput_id"
+    else
+        log "WARNING: recovery failed for xinput ID $_xinput_id"
+    fi
+}
+
+# USB unbind/rebind to clear kernel evdev state (requires sudo)
+recover_usb() {
+    _event_dev="$1"
+    _evname=$(basename "$_event_dev")
+
+    # Walk sysfs to find the USB device path
+    _usb_path=""
+    _hid_path=$(readlink -f "/sys/class/input/$_evname/device" 2>/dev/null || echo "")
+    if [ -n "$_hid_path" ]; then
+        # Walk up to find the USB interface (has "unbind" file)
+        _dir="$_hid_path"
+        _depth=0
+        while [ "$_depth" -lt 8 ]; do
+            _dir=$(dirname "$_dir")
+            if [ -f "$_dir/driver/unbind" ] && [ -d "$_dir/driver" ]; then
+                _usb_id=$(basename "$_dir")
+                _driver_path="$_dir/driver"
+                _usb_path="$_dir"
+                break
+            fi
+            _depth=$((_depth + 1))
+        done
+    fi
+
+    if [ -z "$_usb_path" ]; then
+        log "WARNING: could not find USB path for $_event_dev, skipping USB rebind"
+        return 1
+    fi
+
+    log "USB rebind: unbinding $_usb_id from $(basename $(readlink -f "$_driver_path"))"
+    ASKPASS="/usr/bin/unified-askpass"
+    if SUDO_ASKPASS="$ASKPASS" sudo -A sh -c "echo '$_usb_id' > '$_driver_path/unbind'" 2>/dev/null; then
+        sleep 2
+        if SUDO_ASKPASS="$ASKPASS" sudo -A sh -c "echo '$_usb_id' > '$_driver_path/bind'" 2>/dev/null; then
+            log "USB rebind complete for $_usb_id"
+            sleep 2
+            return 0
+        else
+            log "ERROR: USB rebind failed for $_usb_id -- device may need manual reconnect"
+            return 1
+        fi
+    else
+        log "WARNING: USB unbind failed (no sudo access?), skipping"
+        return 1
+    fi
+}
+
+# Also check X11 button state as secondary verification
+check_x11_stuck() {
+    _xinput_id="$1"
+    # Check buttons 10, 11, 12 (X11 mapping of phantom codes)
+    state=$(xinput query-state "$_xinput_id" 2>/dev/null || echo "")
+    for btn in 10 11 12; do
+        if echo "$state" | grep -q "button\[$btn\]=down"; then
+            log "X11 button $btn stuck on xinput ID $_xinput_id"
+            return 1
+        fi
+    done
+    return 0
+}
+
+# Main
+needs_recovery=0
+
+# Check evdev level
+for evdev in $(find_steelseries_event_devs); do
+    stuck=$(check_evdev_stuck "$evdev" || true)
+    if [ -n "$stuck" ]; then
+        log "STUCK evdev buttons on $evdev: codes $stuck"
+        needs_recovery=1
+    fi
+done
+
+# Check X11 level
+for xid in $(find_steelseries_xinput_ids); do
+    if ! check_x11_stuck "$xid"; then
+        needs_recovery=1
+    fi
+done
+
+# Recover if needed
+if [ "$needs_recovery" -eq 1 ]; then
+    log "Stuck buttons detected, initiating X11 recovery"
+
+    # Stage 1: xinput disable/enable (clears X11 state, fast)
+    for xid in $(find_steelseries_xinput_ids); do
+        recover_xinput "$xid"
+    done
+
+    # Stage 2: re-check evdev -- if still stuck, do USB rebind
+    for evdev in $(find_steelseries_event_devs); do
+        stuck=$(check_evdev_stuck "$evdev" || true)
+        if [ -n "$stuck" ]; then
+            log "evdev still stuck on $evdev after X11 recovery: codes $stuck"
+            log "Escalating to USB unbind/rebind"
+            recover_usb "$evdev" || true
+        fi
+    done
+fi
+
+exit 0

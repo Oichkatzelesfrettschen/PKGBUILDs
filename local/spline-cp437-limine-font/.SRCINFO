@@ -1,0 +1,26 @@
+pkgbase = spline-cp437-limine-font
+	pkgdesc = Hybrid Spline Sans Mono plus Terminus CP437 Limine font with packaged build artifacts
+	pkgver = 0.4.0
+	pkgrel = 1
+	url = https://github.com/eirikr/pkgbuilds
+	install = spline-cp437-limine-font.install
+	arch = any
+	license = 0BSD
+	depends = python
+	depends = python-fonttools
+	depends = python-pillow
+	depends = kbd
+	depends = ttf-spline-sans-mono
+	optdepends = fontforge: alternate rasterization experiments
+	optdepends = xorg-fonttosfnt: generate bitmap-only OTB previews from the merged BDF
+	optdepends = freetype2-demos: inspect generated OTB and raster quality
+	source = README.md
+	source = Makefile
+	source = build-plan.md
+	source = spline-cp437-limine-font.install
+	sha256sums = SKIP
+	sha256sums = SKIP
+	sha256sums = SKIP
+	sha256sums = SKIP
+
+pkgname = spline-cp437-limine-font

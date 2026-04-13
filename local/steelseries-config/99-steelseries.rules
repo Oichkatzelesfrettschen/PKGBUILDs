@@ -1,0 +1,29 @@
+# SteelSeries USB devices -- udev rules
+#
+# WHY:  rivalcfg, openrgb, and user-space HID tools need read/write access
+#       to SteelSeries hidraw and usb device nodes without root.
+#
+# WHAT: Sets MODE=0660, GROUP=input for all SteelSeries devices (vendor 1038).
+#       Uses GROUP=input instead of MODE=0666 for least-privilege access.
+#       Specific product IDs are listed for documentation; the vendor-wide
+#       catch-all ensures new devices work immediately.
+#
+# HOW:  Installed to /etc/udev/rules.d/99-steelseries.rules.
+#       Replaces the old steelseries-config 1.0.0 rules (MODE=0666, no GROUP).
+
+# -- Vendor-wide catch-all (1038 = SteelSeries) --
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="1038", MODE="0660", GROUP="input"
+SUBSYSTEM=="usb", ATTR{idVendor}=="1038", MODE="0660", GROUP="input"
+
+# -- Rival 710 (1038:1730) --
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="1038", ATTRS{idProduct}=="1730", MODE="0660", GROUP="input"
+SUBSYSTEM=="usb", ATTR{idVendor}=="1038", ATTR{idProduct}=="1730", MODE="0660", GROUP="input"
+
+# -- Apex Pro (1038:1610) --
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="1038", ATTRS{idProduct}=="1610", MODE="0660", GROUP="input"
+SUBSYSTEM=="usb", ATTR{idVendor}=="1038", ATTR{idProduct}=="1610", MODE="0660", GROUP="input"
+
+# -- Force re-trigger of libinput after SteelSeries device settle --
+# WHY: Rival 710 re-enumerates 3 times during init.  After the final
+#      enumeration, poke the input subsystem so libinput re-reads the device.
+ACTION=="add", SUBSYSTEM=="input", ATTRS{idVendor}=="1038", ENV{LIBINPUT_IGNORE_DEVICE}!="1", RUN+="/bin/sh -c 'echo add > /sys/class/input/%k/uevent'"

@@ -1,0 +1,19 @@
+diff --git a/greenboost_cuda_shim.c b/greenboost_cuda_shim.c
+index 604c23d..4ef5179 100644
+--- a/greenboost_cuda_shim.c
++++ b/greenboost_cuda_shim.c
+@@ -587,9 +587,13 @@ static void gb_shim_init(void)
+     if (!real_cuDeviceTotalMem_v2)
+         real_cuDeviceTotalMem_v2 = (pfn_cuDeviceTotalMem_v2) dlsym(libcuda, "cuDeviceTotalMem");
+-    real_cuMemHostRegister = (pfn_cuMemHostRegister) dlsym(libcuda, "cuMemHostRegister");
++    real_cuMemHostRegister = (pfn_cuMemHostRegister) dlsym(libcuda, "cuMemHostRegister_v2");
++    if (!real_cuMemHostRegister)
++        real_cuMemHostRegister = (pfn_cuMemHostRegister) dlsym(libcuda, "cuMemHostRegister");
+     real_cuMemHostUnregister = (pfn_cuMemHostUnregister) dlsym(libcuda, "cuMemHostUnregister");
+-    real_cuMemHostGetDevicePointer = (pfn_cuMemHostGetDevicePointer) dlsym(libcuda, "cuMemHostGetDevicePointer");
++    real_cuMemHostGetDevicePointer = (pfn_cuMemHostGetDevicePointer) dlsym(libcuda, "cuMemHostGetDevicePointer_v2");
++    if (!real_cuMemHostGetDevicePointer)
++        real_cuMemHostGetDevicePointer = (pfn_cuMemHostGetDevicePointer) dlsym(libcuda, "cuMemHostGetDevicePointer");
+     real_cuMemPrefetchAsync = (pfn_cuMemPrefetchAsync) dlsym(libcuda, "cuMemPrefetchAsync");
+     real_cuMemAdvise = (pfn_cuMemAdvise) dlsym(libcuda, "cuMemAdvise");
+

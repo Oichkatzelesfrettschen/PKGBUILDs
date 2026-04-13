@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+theme_helper="/usr/bin/cachyos-limine-theme"
+theme_name="metal-official"
+theme_state_file="/boot/limine/themes/cachyos-official/.state.env"
+
+refresh_live_theme_font_if_active() {
+  if [[ ! -f "${theme_state_file}" ]]; then
+    return 0
+  fi
+  if [[ ! -f "${theme_helper}" ]]; then
+    printf 'spline-cp437-limine-font: theme helper not found, skipping live font restage\n' >&2
+    return 0
+  fi
+
+  printf 'Refreshing staged Limine font for active CachyOS theme...\n'
+  if bash "${theme_helper}" apply "${theme_name}"; then
+    bash "${theme_helper}" verify
+    printf 'Staged Limine font refreshed successfully.\n'
+  else
+    printf 'spline-cp437-limine-font: live font restage failed\n' >&2
+    return 1
+  fi
+}
+
+post_install() {
+  refresh_live_theme_font_if_active
+}
+
+post_upgrade() {
+  refresh_live_theme_font_if_active
+}

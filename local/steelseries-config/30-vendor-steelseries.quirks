@@ -1,0 +1,48 @@
+# SteelSeries gaming peripherals -- libinput quirks
+#
+# WHY:  The Rival 710 firmware declares BTN_FORWARD (0x115), BTN_BACK (0x116),
+#       and BTN_TASK (0x117) in its HID capabilities but has no physical buttons
+#       for them.  Under USB re-enumeration or memory pressure, phantom events
+#       fire on these ghost codes and get stuck "pressed" at the evdev level,
+#       breaking X11 click-drag and text selection.  This is the same class of
+#       bug as the Madcatz RAT3 (see 30-vendor-madcatz.quirks upstream).
+#
+#       Additionally, SteelSeries mice suffer from debounce timing drops when
+#       the host falls behind on event processing (swap thrashing, OOM storms).
+#       ModelBouncingKeys adds a software debounce layer as a safety net.
+#
+# WHAT: 1) Strip phantom button codes (0x115, 0x116, 0x117) via AttrEventCode.
+#       2) Enable ModelBouncingKeys for all SteelSeries mice.
+#
+# HOW:  Installed to /etc/libinput/local-overrides.quirks by steelseries-config.
+#       Survives libinput package updates (system quirks in /usr/share/libinput/
+#       are overwritten on update; /etc/libinput/ is not).
+
+# -- Catch-all for any SteelSeries mouse --
+[SteelSeries Gaming Mouse]
+MatchUdevType=mouse
+MatchBus=usb
+MatchVendor=0x1038
+ModelBouncingKeys=1
+
+# -- Rival 710 (tested hardware: 1038:1730) --
+# Firmware declares 8 button codes (BTN_LEFT..BTN_TASK) but only 5 have
+# physical switches.  Strip the 3 phantom codes to prevent ghost events.
+# Same pattern as Madcatz RAT3 (upstream 30-vendor-madcatz.quirks).
+[SteelSeries Rival 710]
+MatchUdevType=mouse
+MatchBus=usb
+MatchVendor=0x1038
+MatchProduct=0x1730
+ModelBouncingKeys=1
+AttrEventCode=-EV_KEY:0x115;-EV_KEY:0x116;-EV_KEY:0x117
+
+# -- Apex Pro keyboard (tested hardware: 1038:1610) --
+# The Apex Pro exposes a "mouse" endpoint for its scroll wheel;
+# keyboard endpoint is a separate evdev node and not matched here.
+[SteelSeries Apex Pro Scroll]
+MatchUdevType=mouse
+MatchBus=usb
+MatchVendor=0x1038
+MatchProduct=0x1610
+ModelBouncingKeys=1

@@ -1,0 +1,108 @@
+# Maintainer: Martin Diehl <aur@martin-diehl.net>
+# Contributor: Andreas Bilke <abilke at cosy dot sbg dot ac dot at>
+# Contributor: Myles English <myles at rockhead dot biz>
+# Contributor: Lucas H. Gabrielli <heitzmann at gmail dot com>
+pkgver=3.24.4
+pkgrel=2
+pkgname=petsc
+pkgdesc="Portable, extensible toolkit for scientific computation"
+arch=('i686' 'x86_64')
+url="https://petsc.org"
+license=('BSD-2-Clause')
+options=(staticlibs)
+depends=('openmpi' 'lapack' 'bison' 'fftw' 'fftw-openmpi' 'gsl' 'hdf5' 'hwloc' 'libjpeg-turbo' 'libyaml'
+         'pastix' 'scotch' 'suitesparse' 'superlu' 'superlu_dist' 'zfp' 'zlib'
+         'python-numpy' 'python-mpi4py')
+makedepends=('gcc' 'gcc-fortran' 'cmake' 'cython' 'python-setuptools')
+provides=('petsc4py')
+optdepends=(
+  'hypre: support for HYPRE'
+  'kokkos: support Kokkos'
+  'metis: support for METIS'
+  'mumps: support for MUMPS'
+  'parmetis: support for ParMETIS'
+  'scalapack: support for ScaLAPACK'
+  'triangle: support for Triangle'
+  'zoltan: support for zoltan'
+  )
+
+install=petsc.install
+source=(http://web.cels.anl.gov/projects/petsc/download/release-snapshots/${pkgname}-${pkgver}.tar.gz
+        test_optdepends.sh
+        setuptools.patch)
+sha512sums=('6bc4bdfb4cbc70c7716caa5c363608eaa0ffbb94f93052f79e47928416c640a1f2ce2e1b345a93a0a494d2870f3e22a5deaabf2025922a4832202b39388f4b96'
+            '4dc58de1393c2920de6ca08dcab71af0b13d21391d6b46f4a48aab122f087a3f4e4deae7b72b15fde5c7d344bcf12f5b766ff7c0ba4d816b074f94091a00cb97'
+            '3b89914d70a9788d8a0ecc059283320beabd96c163302f0d3c89405afac9969d282462e1372830025f74509c925c2b9b5a80a81e62a9e48fc7dcb8adbf18fe23')
+
+PETSC_ARCH=linux-c-opt
+_install_dir=/opt/petsc/${PETSC_ARCH}
+
+prepare() {
+  cd ${pkgname}-${pkgver}
+  patch -Np1 -i ../setuptools.patch
+}
+
+
+build() {
+  cd ${pkgname}-${pkgver}
+  export PETSC_DIR=${PWD}
+  export PETSC_ARCH=${PETSC_ARCH}
+
+  CONFOPTS="--with-shared-libraries=1 \
+            --with-petsc4py=1 \
+            --with-mpi-f90module-visibility=0 \
+            --with-cmake=0 \
+            --with-mpi-dir=/usr \
+            --with-fftw=1 \
+            --with-gsl=1 \
+            --with-hdf5=1 --with-hdf5-fortran-bindings=0 \
+            --with-fortran-bindings=0 \
+            --with-hwloc=1 \
+            --with-libjpeg=1 \
+            --with-pastix=1 \
+            --with-ptscotch=1 --with-bison=1 --with-ptscotch-lib=[libesmumps.so,libptscotch.so,libptscotcherr.so,libscotch.so,libscotcherr.so] --with-ptscotch-include=/usr/include/scotch \
+            --with-suitesparse=1 \
+            --with-superlu-lib=-lsuperlu --with-superlu-include=/usr/include/superlu \
+            --with-superlu_dist-lib=-lsuperlu_dist --with-superlu_dist-include=/usr/include/superlu_dist \
+            --with-yaml=1 \
+            --with-zfp=1 \
+            $(sh ${srcdir}/test_optdepends.sh)"
+
+  echo './configure' ${CONFOPTS}
+  echo 'CFLAGS='${CFLAGS}
+  echo 'CXXFLAGS='${CXXFLAGS}
+  echo 'FFLAGS='${FFLAGS}
+  echo 'LDFLAGS='${LDFLAGS}
+  echo 'MAKEFLAGS='${MAKEFLAGS}
+
+  ./configure --prefix=${_install_dir} ${CONFOPTS} \
+              "CFLAGS=$CFLAGS" \
+              "CXXFLAGS=$CXXFLAGS" \
+              "FFLAGS=$FFLAGS" \
+              "LDFLAGS=$LDFLAGS -lstdc++" \
+              "MAKEFLAGS=$MAKEFLAGS"
+
+  make all
+}
+
+package() {
+  cd ${pkgname}-${pkgver}
+  export PETSC_DIR=${PWD}
+  export PETSC_ARCH=${PETSC_ARCH}
+
+  make DESTDIR=${pkgdir} install
+
+  install -Dm 644 LICENSE ${pkgdir}/usr/share/licenses/$pkgname/LICENSE
+
+  mkdir -p ${pkgdir}/etc/profile.d
+  echo export PETSC_DIR=${_install_dir} > ${pkgdir}/etc/profile.d/petsc.sh
+  echo export PYTHONPATH=${_install_dir}/lib:'${PYTHONPATH}' >> ${pkgdir}/etc/profile.d/petsc.sh
+  chmod 644 ${pkgdir}/etc/profile.d/petsc.sh
+
+  # show where the shared libraries are
+  install -dm 755 ${pkgdir}/etc/ld.so.conf.d/
+  echo ${_install_dir}/lib > ${pkgdir}/etc/ld.so.conf.d/petsc.conf
+
+  # install pkgconfig settings
+  install -Dm 644 ${PETSC_ARCH}/lib/pkgconfig/PETSc.pc ${pkgdir}/usr/share/pkgconfig/PETSc.pc
+}

@@ -1,0 +1,216 @@
+#!/usr/bin/env python3
+"""NVIDIA GPU overclock via NVML -- works with both open and proprietary kernel modules.
+
+Uses nvmlDeviceSetGpcClkVfOffset / nvmlDeviceSetMemClkVfOffset to apply
+clock offsets without nvidia-settings or Coolbits. Supports Wayland and X11.
+
+Usage:
+    nvidia-oc-nvml                        # Apply defaults from /etc/nvidia-oc-nvml.conf
+    nvidia-oc-nvml --core 200 --mem 1000  # Override offsets
+    nvidia-oc-nvml --power 340            # Set power limit
+    nvidia-oc-nvml --status               # Show current state
+    nvidia-oc-nvml --reset                # Reset all offsets to 0
+"""
+import argparse
+import configparser
+import ctypes
+import os
+import subprocess
+import sys
+
+CONF_PATH = "/etc/nvidia-oc-nvml.conf"
+DEFAULT_CORE = 200
+DEFAULT_MEM = 1000
+DEFAULT_POWER = 340
+
+
+def load_nvml():
+    try:
+        nvml = ctypes.CDLL("libnvidia-ml.so.1")
+    except OSError:
+        print("ERROR: libnvidia-ml.so.1 not found. Is the NVIDIA driver installed?",
+              file=sys.stderr)
+        sys.exit(1)
+    ret = nvml.nvmlInit_v2()
+    if ret != 0:
+        print(f"ERROR: nvmlInit_v2 failed with code {ret}", file=sys.stderr)
+        sys.exit(1)
+    return nvml
+
+
+def get_handle(nvml, gpu_index=0):
+    handle = ctypes.c_void_p()
+    ret = nvml.nvmlDeviceGetHandleByIndex_v2(gpu_index, ctypes.byref(handle))
+    if ret != 0:
+        print(f"ERROR: Could not get GPU {gpu_index} handle (code {ret})",
+              file=sys.stderr)
+        sys.exit(1)
+    return handle
+
+
+def get_name(nvml, handle):
+    buf = ctypes.create_string_buffer(256)
+    nvml.nvmlDeviceGetName(handle, buf, 256)
+    return buf.value.decode("utf-8", errors="replace")
+
+
+def get_clocks(nvml, handle):
+    gfx = ctypes.c_uint()
+    mem = ctypes.c_uint()
+    nvml.nvmlDeviceGetClockInfo(handle, 0, ctypes.byref(gfx))   # GRAPHICS=0
+    # Try all memory clock types (varies by driver version)
+    for mem_type in (2, 4, 1):
+        ret = nvml.nvmlDeviceGetClockInfo(handle, mem_type, ctypes.byref(mem))
+        if ret == 0 and mem.value > 0:
+            break
+    # Fallback: parse nvidia-smi if NVML returns 0 for memory
+    if mem.value == 0:
+        try:
+            out = subprocess.run(
+                ["nvidia-smi", "--query-gpu=clocks.current.memory",
+                 "--format=csv,noheader,nounits"],
+                capture_output=True, text=True, timeout=5,
+            )
+            mem.value = int(out.stdout.strip())
+        except Exception:
+            pass
+    return gfx.value, mem.value
+
+
+def get_power(nvml, handle):
+    power = ctypes.c_uint()
+    nvml.nvmlDeviceGetPowerUsage(handle, ctypes.byref(power))
+    return power.value / 1000.0  # mW -> W
+
+
+def get_power_limit(nvml, handle):
+    limit = ctypes.c_uint()
+    nvml.nvmlDeviceGetPowerManagementLimit(handle, ctypes.byref(limit))
+    return limit.value / 1000.0  # mW -> W
+
+
+def get_temp(nvml, handle):
+    temp = ctypes.c_uint()
+    nvml.nvmlDeviceGetTemperature(handle, 0, ctypes.byref(temp))
+    return temp.value
+
+
+def set_core_offset(nvml, handle, offset_mhz):
+    ret = nvml.nvmlDeviceSetGpcClkVfOffset(handle, offset_mhz)
+    if ret != 0:
+        codes = {4: "NO_PERMISSION (run as root)", 12: "NOT_SUPPORTED"}
+        msg = codes.get(ret, f"code {ret}")
+        print(f"ERROR: Core offset failed: {msg}", file=sys.stderr)
+        return False
+    return True
+
+
+def set_mem_offset(nvml, handle, offset_mhz):
+    ret = nvml.nvmlDeviceSetMemClkVfOffset(handle, offset_mhz)
+    if ret != 0:
+        codes = {4: "NO_PERMISSION (run as root)", 12: "NOT_SUPPORTED"}
+        msg = codes.get(ret, f"code {ret}")
+        print(f"ERROR: Memory offset failed: {msg}", file=sys.stderr)
+        return False
+    return True
+
+
+def set_power_limit(nvml, handle, watts):
+    # NVML uses milliwatts
+    ret = nvml.nvmlDeviceSetPowerManagementLimit(handle, int(watts * 1000))
+    if ret != 0:
+        codes = {4: "NO_PERMISSION (run as root)", 12: "NOT_SUPPORTED"}
+        msg = codes.get(ret, f"code {ret}")
+        print(f"ERROR: Power limit failed: {msg}", file=sys.stderr)
+        return False
+    return True
+
+
+def load_config():
+    """Load defaults from config file."""
+    config = {"core": DEFAULT_CORE, "mem": DEFAULT_MEM, "power": DEFAULT_POWER}
+    if os.path.exists(CONF_PATH):
+        cp = configparser.ConfigParser()
+        cp.read(CONF_PATH)
+        if cp.has_section("overclock"):
+            config["core"] = cp.getint("overclock", "core_offset_mhz",
+                                       fallback=DEFAULT_CORE)
+            config["mem"] = cp.getint("overclock", "mem_offset_mhz",
+                                      fallback=DEFAULT_MEM)
+            config["power"] = cp.getint("overclock", "power_limit_watts",
+                                        fallback=DEFAULT_POWER)
+    return config
+
+
+def cmd_status(nvml, handle):
+    name = get_name(nvml, handle)
+    gfx, mem = get_clocks(nvml, handle)
+    power = get_power(nvml, handle)
+    pl = get_power_limit(nvml, handle)
+    temp = get_temp(nvml, handle)
+    print(f"GPU:         {name}")
+    print(f"Core clock:  {gfx} MHz")
+    print(f"Mem clock:   {mem} MHz")
+    print(f"Power:       {power:.1f}W / {pl:.0f}W limit")
+    print(f"Temperature: {temp} C")
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="NVIDIA GPU overclock via NVML (open + proprietary kernel modules)")
+    parser.add_argument("--core", type=int, default=None,
+                        help="Core clock offset in MHz (default: from config)")
+    parser.add_argument("--mem", type=int, default=None,
+                        help="Memory clock offset in MHz (default: from config)")
+    parser.add_argument("--power", type=int, default=None,
+                        help="Power limit in watts (default: from config)")
+    parser.add_argument("--gpu", type=int, default=0,
+                        help="GPU index (default: 0)")
+    parser.add_argument("--status", action="store_true",
+                        help="Show current GPU state and exit")
+    parser.add_argument("--reset", action="store_true",
+                        help="Reset all offsets to 0")
+    args = parser.parse_args()
+
+    nvml = load_nvml()
+    handle = get_handle(nvml, args.gpu)
+
+    if args.status:
+        cmd_status(nvml, handle)
+        nvml.nvmlShutdown()
+        return
+
+    if args.reset:
+        print("Resetting offsets to 0...")
+        set_core_offset(nvml, handle, 0)
+        set_mem_offset(nvml, handle, 0)
+        cmd_status(nvml, handle)
+        nvml.nvmlShutdown()
+        return
+
+    # Load config, override with CLI args
+    conf = load_config()
+    core = args.core if args.core is not None else conf["core"]
+    mem = args.mem if args.mem is not None else conf["mem"]
+    power = args.power if args.power is not None else conf["power"]
+
+    name = get_name(nvml, handle)
+    print(f"GPU: {name}")
+    print(f"Applying: core +{core} MHz, mem +{mem} MHz, power {power}W")
+
+    ok = True
+    ok &= set_power_limit(nvml, handle, power)
+    ok &= set_core_offset(nvml, handle, core)
+    ok &= set_mem_offset(nvml, handle, mem)
+
+    if ok:
+        print("All settings applied successfully.")
+    else:
+        print("Some settings failed (see errors above).", file=sys.stderr)
+
+    cmd_status(nvml, handle)
+    nvml.nvmlShutdown()
+
+
+if __name__ == "__main__":
+    main()

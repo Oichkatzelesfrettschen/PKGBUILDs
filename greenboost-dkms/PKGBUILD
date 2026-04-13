@@ -1,0 +1,97 @@
+# Maintainer: eirikr <151315375+Oichkatzelesfrettschen@users.noreply.github.com>
+# Why: GreenBoost is not packaged in the AUR or official repos, but the upstream
+#      GitLab project publishes source for a kernel module and CUDA LD_PRELOAD
+#      shim. Package the useful pieces conservatively for Arch:
+#      - greenboost kernel module via DKMS
+#      - libgreenboost_cuda.so in /usr/lib
+#      - upstream helper scripts/docs in /usr/share/greenboost
+#      We intentionally do not run upstream full-install logic because it edits
+#      GRUB, sysctl, systemd services, udev rules, and /etc/ld.so.preload.
+
+pkgname=greenboost-dkms
+pkgver=2.5
+pkgrel=3
+pkgdesc='GreenBoost 3-tier GPU memory extension: DKMS kernel module plus CUDA LD_PRELOAD shim'
+arch=('x86_64')
+url='https://gitlab.com/IsolatedOctopi/nvidia_greenboost'
+license=('GPL2')
+depends=('dkms' 'glibc')
+makedepends=('git' 'clang')
+optdepends=(
+  'nvidia-utils: NVIDIA user-space runtime and libcuda.so for the CUDA shim'
+  'cuda: CUDA runtime stack for applications using the LD_PRELOAD shim'
+  'linux-cachyos-headers: headers for the CachyOS kernel'
+)
+provides=('greenboost')
+conflicts=('greenboost')
+install="${pkgname}.install"
+
+source=(
+  "git+https://gitlab.com/IsolatedOctopi/nvidia_greenboost.git#tag=v${pkgver}"
+  'dkms.conf'
+  'greenboost-cuda13-symbols.patch'
+)
+sha256sums=('4dc674ddb8182bcff8f6233d4e6b2876ecfcc73d24177abe7bb1f6a402fa5d51'
+            'ca6d832f88dc4454c77d10091c411fb22980fd8fc510ddd4fe89161e7a0196f8'
+            'e3da42d349d23ecd3945a4e92c9f0b8036613540bc855235eef8015be6e0e607')
+
+prepare() {
+  cd "${srcdir}/nvidia_greenboost"
+
+  patch -Np1 -i "${srcdir}/greenboost-cuda13-symbols.patch"
+
+  rm -f libgreenboost_cuda.so greenboost.ko greenboost.o greenboost.mod \
+        greenboost.mod.c greenboost.mod.o Module.symvers modules.order
+  find . -maxdepth 1 -name '.*.cmd' -delete
+  find . -maxdepth 1 -name '*.o' -delete
+  find . -maxdepth 1 -name '*.cmd' -delete
+}
+
+build() {
+  cd "${srcdir}/nvidia_greenboost"
+
+  gcc -shared -fPIC -O2 -std=gnu11 \
+      -o libgreenboost_cuda.so \
+      greenboost_cuda_shim.c \
+      -ldl -lpthread \
+      -Wl,--version-script=greenboost_cuda.map
+}
+
+package() {
+  local _srcdir="${srcdir}/nvidia_greenboost"
+  local _dkmsdir="${pkgdir}/usr/src/greenboost-${pkgver}"
+
+  install -d "${_dkmsdir}"
+  install -m644 "${_srcdir}/Makefile" "${_dkmsdir}/"
+  install -m644 "${_srcdir}/greenboost.c" "${_dkmsdir}/"
+  install -m644 "${_srcdir}/greenboost_ioctl.h" "${_dkmsdir}/"
+  sed "s/@PKGVER@/${pkgver}/g" "${srcdir}/dkms.conf" > "${srcdir}/dkms.conf.rendered"
+  install -m644 "${srcdir}/dkms.conf.rendered" "${_dkmsdir}/dkms.conf"
+
+  install -d "${pkgdir}/usr/lib"
+  install -m755 "${_srcdir}/libgreenboost_cuda.so" "${pkgdir}/usr/lib/"
+
+  install -d "${pkgdir}/usr/share/greenboost"
+  install -m755 "${_srcdir}/greenboost_setup.sh" "${pkgdir}/usr/share/greenboost/"
+  install -m755 "${_srcdir}/greenboost_setup_rocky.sh" "${pkgdir}/usr/share/greenboost/"
+  install -m644 "${_srcdir}/README.md" "${pkgdir}/usr/share/greenboost/"
+  install -m644 "${_srcdir}/architecture.md" "${pkgdir}/usr/share/greenboost/"
+  install -m644 "${_srcdir}/container_vm_mode.md" "${pkgdir}/usr/share/greenboost/"
+  install -m644 "${_srcdir}/greenboost_cuda.map" "${pkgdir}/usr/share/greenboost/"
+  install -m644 "${_srcdir}/greenboost_cuda_shim.c" "${pkgdir}/usr/share/greenboost/"
+  install -m644 "${_srcdir}/greenboost_ioctl.h" "${pkgdir}/usr/share/greenboost/"
+
+  if [[ -d "${_srcdir}/tools" ]]; then
+    install -d "${pkgdir}/usr/share/greenboost/tools"
+    find "${_srcdir}/tools" -maxdepth 1 -type f -print0 | while IFS= read -r -d '' file; do
+      install -m755 "${file}" "${pkgdir}/usr/share/greenboost/tools/"
+    done
+  fi
+
+  install -d "${pkgdir}/usr/bin"
+  ln -sr "${pkgdir}/usr/share/greenboost/greenboost_setup.sh" \
+         "${pkgdir}/usr/bin/greenboost-setup"
+
+  install -d "${pkgdir}/usr/share/licenses/${pkgname}"
+  install -m644 "${_srcdir}/LICENSE" "${pkgdir}/usr/share/licenses/${pkgname}/"
+}

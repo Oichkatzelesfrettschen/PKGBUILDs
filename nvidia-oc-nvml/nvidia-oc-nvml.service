@@ -1,0 +1,12 @@
+[Unit]
+Description=NVIDIA GPU overclock via NVML (core/mem offset + power limit)
+After=nvidia-persistenced.service
+After=multi-user.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/nvidia-oc-nvml
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
