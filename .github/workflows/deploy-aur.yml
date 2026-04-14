@@ -45,11 +45,9 @@ jobs:
           - python-nvidia-dali-cuda130
           - python-torch-tensorrt-cp314
 
-    env:
-      # Single source of truth for the canonical AUR committer identity.
-      # WHY: keeps all personal identifiers out of the workflow file.
-      # The display name is derived from this at runtime (strip numeric prefix).
-      AUR_EMAIL: ${{ secrets.AUR_EMAIL }}
+    # TODO: move AUR_EMAIL to a repository secret so no personal identifiers
+    # appear in this file. Pattern: secrets.AUR_EMAIL -> env.AUR_EMAIL, then
+    # derive user.name at runtime via: sed 's/^[0-9]*+//;s/@.*//'
 
     steps:
       - uses: actions/checkout@v4
@@ -88,10 +86,9 @@ jobs:
 
       - name: Configure Git identity
         if: steps.changed.outputs.deploy == 'true'
+        env:
+          AUR_EMAIL: "151315375+Oichkatzelesfrettschen@users.noreply.github.com"
         run: |
-          # Derive display name from the noreply email at runtime.
-          # Format: <digits>+<username>@users.noreply.github.com -> <username>
-          # No personal names hardcoded here.
           _name=$(printf '%s' "$AUR_EMAIL" | sed 's/^[0-9]*+//;s/@.*//')
           git config --global user.name "$_name"
           git config --global user.email "$AUR_EMAIL"
@@ -144,8 +141,9 @@ jobs:
           # Idempotent: already-correct lines produce no diff.
           # WHY % delimiter: | inside (Maintainer|Contributor) alternation would
           # conflict with sed's | separator.
+          _aur_email="151315375+Oichkatzelesfrettschen@users.noreply.github.com"
           sed -i -E \
-            "s%(# (Maintainer|Contributor):[^<]*)<[^>]+>%\1<${AUR_EMAIL}>%" \
+            "s%(# (Maintainer|Contributor):[^<]*)<[^>]+>%\1<${_aur_email}>%" \
             "$WORK/PKGBUILD"
 
           # Commit and push if there are changes
