@@ -45,6 +45,12 @@ jobs:
           - python-nvidia-dali-cuda130
           - python-torch-tensorrt-cp314
 
+    env:
+      # Single source of truth for the canonical AUR committer identity.
+      # WHY: keeps all personal identifiers out of the workflow file.
+      # The display name is derived from this at runtime (strip numeric prefix).
+      AUR_EMAIL: ${{ secrets.AUR_EMAIL }}
+
     steps:
       - uses: actions/checkout@v4
         with:
@@ -83,8 +89,12 @@ jobs:
       - name: Configure Git identity
         if: steps.changed.outputs.deploy == 'true'
         run: |
-          git config --global user.name "eirikr"
-          git config --global user.email "151315375+Oichkatzelesfrettschen@users.noreply.github.com"
+          # Derive display name from the noreply email at runtime.
+          # Format: <digits>+<username>@users.noreply.github.com -> <username>
+          # No personal names hardcoded here.
+          _name=$(printf '%s' "$AUR_EMAIL" | sed 's/^[0-9]*+//;s/@.*//')
+          git config --global user.name "$_name"
+          git config --global user.email "$AUR_EMAIL"
 
       - name: Install SSH key and add AUR host key
         if: steps.changed.outputs.deploy == 'true'
@@ -130,14 +140,12 @@ jobs:
 
           # Sanitize Maintainer/Contributor emails in PKGBUILD.
           # WHY: personal or machine-local emails must never appear in AUR.
-          # Replace any <email> on # Maintainer / # Contributor lines with the
-          # canonical GH noreply.  Idempotent: lines already using the noreply
-          # address are rewritten identically (no diff produced).
-          GH_NOREPLY="151315375+Oichkatzelesfrettschen@users.noreply.github.com"
+          # Replace any <email> on Maintainer/Contributor lines with AUR_EMAIL.
+          # Idempotent: already-correct lines produce no diff.
           # WHY % delimiter: | inside (Maintainer|Contributor) alternation would
-          # be treated as another delimiter by sed if | were used as separator.
+          # conflict with sed's | separator.
           sed -i -E \
-            "s%(# (Maintainer|Contributor):[^<]*)<[^>]+>%\1<${GH_NOREPLY}>%" \
+            "s%(# (Maintainer|Contributor):[^<]*)<[^>]+>%\1<${AUR_EMAIL}>%" \
             "$WORK/PKGBUILD"
 
           # Commit and push if there are changes
