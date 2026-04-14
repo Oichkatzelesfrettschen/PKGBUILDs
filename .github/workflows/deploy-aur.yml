@@ -128,6 +128,18 @@ jobs:
             cp "$f" "$WORK/$(basename "$f")"
           done
 
+          # Sanitize Maintainer/Contributor emails in PKGBUILD.
+          # WHY: personal or machine-local emails must never appear in AUR.
+          # Replace any <email> on # Maintainer / # Contributor lines with the
+          # canonical GH noreply.  Idempotent: lines already using the noreply
+          # address are rewritten identically (no diff produced).
+          GH_NOREPLY="151315375+Oichkatzelesfrettschen@users.noreply.github.com"
+          # WHY % delimiter: | inside (Maintainer|Contributor) alternation would
+          # be treated as another delimiter by sed if | were used as separator.
+          sed -i -E \
+            "s%(# (Maintainer|Contributor):[^<]*)<[^>]+>%\1<${GH_NOREPLY}>%" \
+            "$WORK/PKGBUILD"
+
           # Commit and push if there are changes
           git -C "$WORK" add -A
           if git -C "$WORK" diff --cached --quiet; then
