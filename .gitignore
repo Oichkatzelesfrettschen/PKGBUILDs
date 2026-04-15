@@ -1,5 +1,7 @@
 # Large binaries
 *.tar.gz
+*.tar.bz2
+*.tar.xz
 *.tar.zst
 *.whl
 *.pkg.tar.*
